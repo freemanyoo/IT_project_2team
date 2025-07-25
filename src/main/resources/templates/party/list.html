@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>파티 모집 목록</title>
+</head>
+<body>
+<h1>🍽 파티 모집 목록</h1>
+
+<!-- ✅ 검색/필터 폼 -->
+<form method="get" th:action="@{/party/list}">
+    <input type="text" name="keyword" placeholder="제목 검색" th:value="${requestDTO.keyword}" />
+
+    <select name="foodCategory">
+        <option value="">카테고리 선택</option>
+        <option value="한식" th:selected="${requestDTO.foodCategory == '한식'}">한식</option>
+        <option value="양식" th:selected="${requestDTO.foodCategory == '양식'}">양식</option>
+        <option value="중식" th:selected="${requestDTO.foodCategory == '중식'}">중식</option>
+        <option value="일식" th:selected="${requestDTO.foodCategory == '일식'}">일식</option>
+    </select>
+
+    <select name="genderLimit">
+        <option value="">성별 제한</option>
+        <option value="ALL" th:selected="${requestDTO.genderLimit == 'ALL'}">모두</option>
+        <option value="MALE" th:selected="${requestDTO.genderLimit == 'MALE'}">남자만</option>
+        <option value="FEMALE" th:selected="${requestDTO.genderLimit == 'FEMALE'}">여자만</option>
+    </select>
+
+    <button type="submit">검색</button>
+</form>
+
+<br/>
+
+<!-- 게시글 목록 테이블 -->
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>카테고리</th>
+        <th>모임 시간</th>
+        <th>남은 시간</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="party : ${response.dtoList}"
+        th:class="${party.remainingTime == '마감됨'} ? 'expired' : ''">
+        <td th:text="${party.id}">1</td>
+        <td><a th:href="@{/party/read(id=${party.id})}" th:text="${party.title}">제목</a></td>
+        <td th:text="${party.writerId}">작성자</td>
+        <td th:text="${party.foodCategory}">카테고리</td>
+        <td th:text="${party.partyTime}">모임 시간</td>
+        <td th:text="${party.remainingTime}">남은 시간</td>
+    </tr>
+    </tbody>
+</table>
+
+
+<!-- ✅ 페이징 영역 -->
+<div>
+    <ul style="list-style:none; display:flex; gap:5px; padding:0;">
+        <li th:if="${response.prev}">
+            <a th:href="@{/party/list(page=${response.start - 1},
+                                      keyword=${requestDTO.keyword},
+                                      foodCategory=${requestDTO.foodCategory},
+                                      genderLimit=${requestDTO.genderLimit})}">이전</a>
+        </li>
+
+        <li th:each="i : ${#numbers.sequence(response.start, response.end)}">
+            <a th:href="@{/party/list(page=${i},
+                                      keyword=${requestDTO.keyword},
+                                      foodCategory=${requestDTO.foodCategory},
+                                      genderLimit=${requestDTO.genderLimit})}"
+               th:text="${i}"
+               th:classappend="${i == response.page} ? 'active' : ''">
+            </a>
+        </li>
+
+        <li th:if="${response.next}">
+            <a th:href="@{/party/list(page=${response.end + 1},
+                                      keyword=${requestDTO.keyword},
+                                      foodCategory=${requestDTO.foodCategory},
+                                      genderLimit=${requestDTO.genderLimit})}">다음</a>
+        </li>
+    </ul>
+</div>
+
+<!-- 강조 스타일 -->
+<style>
+    .active {
+        font-weight: bold;
+        text-decoration: underline;
+        color: red;
+    }
+
+    .expired {
+        background-color: #e0e0e0;
+        color: gray;
+    }
+
+    .expired a {
+        pointer-events: none;
+        color: gray;
+        text-decoration: line-through;
+    }
+</style>
+
+</body>
+</html>
