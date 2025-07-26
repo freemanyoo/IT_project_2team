@@ -1,12 +1,13 @@
 package webproject_2team.lunch_matching.config;
 
-import com.example.kmj.entity.User;
-import com.example.kmj.repository.UserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import webproject_2team.lunch_matching.domain.User;
+import webproject_2team.lunch_matching.repository.UserRepository;
 
 import java.security.Principal;
 import java.time.LocalDateTime;

@@ -1,12 +1,12 @@
 package kmj.controller;
 
-import com.example.kmj.dto.ReportRequestDTO;
-import com.example.kmj.entity.Board;
-import com.example.kmj.entity.User;
-import com.example.kmj.repository.BoardRepository;
-import com.example.kmj.repository.ReportRepository;
-import com.example.kmj.repository.UserRepository;
-import com.example.kmj.service.BoardService;
+import webproject_2team.lunch_matching.dto.ReportRequestDTO;
+import webproject_2team.lunch_matching.domain.Board;
+import webproject_2team.lunch_matching.domain.User;
+import webproject_2team.lunch_matching.repository.BoardRepository;
+import webproject_2team.lunch_matching.repository.ReportRepository;
+import webproject_2team.lunch_matching.repository.UserRepository;
+import webproject_2team.lunch_matching.service.BoardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

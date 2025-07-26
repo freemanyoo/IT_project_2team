@@ -1,6 +1,6 @@
 package webproject_2team.lunch_matching.dto;
 
-import com.example.kmj.entity.Report;
+import webproject_2team.lunch_matching.domain.Report;
 import lombok.Getter;
 import lombok.Setter;
 

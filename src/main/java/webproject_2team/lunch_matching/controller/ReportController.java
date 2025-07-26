@@ -1,14 +1,5 @@
 package webproject_2team.lunch_matching.controller;
 
-import com.example.kmj.dto.ReportDisplayDTO;
-import com.example.kmj.dto.ReportRequestDTO;
-import com.example.kmj.entity.Board;
-import com.example.kmj.entity.Report;
-import com.example.kmj.entity.User;
-import com.example.kmj.repository.BoardRepository;
-import com.example.kmj.repository.ReportRepository;
-import com.example.kmj.repository.UserRepository;
-import com.example.kmj.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +8,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import webproject_2team.lunch_matching.domain.Board;
+import webproject_2team.lunch_matching.domain.Report;
+import webproject_2team.lunch_matching.domain.User;
+import webproject_2team.lunch_matching.dto.ReportDisplayDTO;
+import webproject_2team.lunch_matching.dto.ReportRequestDTO;
+import webproject_2team.lunch_matching.repository.BoardRepository;
+import webproject_2team.lunch_matching.repository.ReportRepository;
+import webproject_2team.lunch_matching.repository.UserRepository;
+import webproject_2team.lunch_matching.service.BoardService;
 
 import java.security.Principal;
 import java.time.LocalDateTime;

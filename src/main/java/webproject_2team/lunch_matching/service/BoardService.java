@@ -1,6 +1,6 @@
 package webproject_2team.lunch_matching.service;
 
-import com.example.kmj.repository.ReportRepository;
+import webproject_2team.lunch_matching.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

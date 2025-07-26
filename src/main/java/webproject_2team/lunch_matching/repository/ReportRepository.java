@@ -1,6 +1,6 @@
 package webproject_2team.lunch_matching.repository;
 
-import com.example.kmj.entity.Report;
+import webproject_2team.lunch_matching.domain.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

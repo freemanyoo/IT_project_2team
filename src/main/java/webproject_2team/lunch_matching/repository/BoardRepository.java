@@ -1,6 +1,6 @@
 package webproject_2team.lunch_matching.repository;
 
-import com.example.kmj.entity.Board;
+import webproject_2team.lunch_matching.domain.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
