@@ -1,18 +1,16 @@
 package webproject_2team.lunch_matching.service;
 
-import webproject_2team.lunch_matching.domain.PartyBoardVO;
-import webproject_2team.lunch_matching.dto.PageRequestDTO;
-import webproject_2team.lunch_matching.dto.PageResponseDTO;
+import webproject_2team.lunch_matching.domain.PartyBoardEntity;
+import webproject_2team.lunch_matching.dto.PartyPageRequestDTO;
+import webproject_2team.lunch_matching.dto.PartyPageResponseDTO;
 
 import java.util.List;
 
 public interface PartyBoardService {
-    void register(PartyBoardVO vo);
-    List<PartyBoardVO> getList();
-    PartyBoardVO get(Long id);
+    void register(PartyBoardEntity vo);
+    List<PartyBoardEntity> getList();
+    PartyBoardEntity get(Long id);
     void delete(Long id);
-    void update(PartyBoardVO vo);
-    PageResponseDTO<PartyBoardVO> getList(PageRequestDTO requestDTO);
-
-
+    void update(PartyBoardEntity vo);
+    PartyPageResponseDTO<PartyBoardEntity> getList(PartyPageRequestDTO requestDTO);
 }
