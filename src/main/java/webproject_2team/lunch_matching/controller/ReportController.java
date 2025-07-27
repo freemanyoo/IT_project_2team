@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 import webproject_2team.lunch_matching.domain.Board;
 import webproject_2team.lunch_matching.domain.Report;
 import webproject_2team.lunch_matching.domain.User;
@@ -47,9 +48,11 @@ public class ReportController {
      * @return 게시글 목록 페이지로 리다이렉트
      */
     @PostMapping("/report/submit")
-    public String submitReport(@ModelAttribute ReportRequestDTO reportRequestDTO, Principal principal, RedirectAttributes rttr) {
+    @Transactional
+    public String submitReport(@ModelAttribute ReportRequestDTO reportRequestDTO, Principal principal, RedirectAttributes rttr,
+                                 @RequestParam(required = false) String simulatedReporter) {
 
-        String reporter = (principal != null) ? principal.getName() : "anonymous";
+        String reporter = (simulatedReporter != null && !simulatedReporter.isEmpty()) ? simulatedReporter : ((principal != null) ? principal.getName() : "anonymous");
 
         // 중복 신고 확인
         boolean exists = reportRepository.findByBoardIdAndReporter(reportRequestDTO.getBoardId(), reporter).isPresent();
