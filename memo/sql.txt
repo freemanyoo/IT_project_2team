@@ -1,0 +1,36 @@
+-- 신고 테이블 생성 SQL
+CREATE TABLE reports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    board_id BIGINT NOT NULL,
+    reporter VARCHAR(255) NOT NULL,
+    reason TEXT NOT NULL,
+    report_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+
+    -- 인덱스 추가 (성능 향상)
+    INDEX idx_board_id (board_id),
+    INDEX idx_reporter (reporter),
+    INDEX idx_status (status),
+    INDEX idx_report_date (report_date),
+
+    -- 복합 인덱스 (중복 신고 체크용)
+    UNIQUE INDEX idx_board_reporter (board_id, reporter)
+);
+
+-- 초기 데이터 예시 (선택사항)
+INSERT INTO reports (board_id, reporter, reason, status) VALUES
+(1, 'user1', '스팸 게시글입니다', 'PENDING'),
+(2, 'user2', '부적절한 내용이 포함되어 있습니다', 'REVIEWED'),
+(1, 'user3', '광고성 게시글로 보입니다', 'RESOLVED');
+
+
+-- Board 테이블에 블라인드 처리 관련 컬럼 추가
+ALTER TABLE board
+ADD COLUMN is_blinded BOOLEAN DEFAULT FALSE,
+ADD COLUMN blind_reason VARCHAR(255),
+ADD COLUMN blind_date TIMESTAMP,
+ADD COLUMN original_content TEXT,
+ADD COLUMN original_title VARCHAR(255);
+
+-- 기존 데이터에 대한 기본값 설정
+UPDATE board SET is_blinded = FALSE WHERE is_blinded IS NULL;
