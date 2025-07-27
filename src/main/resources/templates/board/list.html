@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>신고하기 테스트</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-5">
+<div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+<div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+<h2>게시글</h2>
+<p>이 게시글은 신고할 수 있습니다.</p>
+
+<!-- ✅ 신고하기 버튼 -->
+<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportModal">
+    🚨 신고하기
+</button>
+
+<!-- ✅ 신고하기 모달 -->
+<div class="modal fade" id="reportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form th:action="@{/report/submit}" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">신고하기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="boardId" value="1" /> <!-- 게시글 ID -->
+                    <label for="reason">신고 사유</label>
+                    <textarea name="reason" id="reason" class="form-control" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">제출</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS (모달 작동용) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package kmj.controller;
 
+import webproject_2team.lunch_matching.controller.ReportController;
 import webproject_2team.lunch_matching.dto.ReportRequestDTO;
 import webproject_2team.lunch_matching.domain.Board;
 import webproject_2team.lunch_matching.domain.User;

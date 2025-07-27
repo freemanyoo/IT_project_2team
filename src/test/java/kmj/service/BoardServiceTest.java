@@ -1,5 +1,6 @@
 package kmj.service;
 
+import webproject_2team.lunch_matching.service.BoardService;
 import webproject_2team.lunch_matching.repository.ReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
