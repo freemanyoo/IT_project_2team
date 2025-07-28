@@ -90,4 +90,5 @@ public class PartyBoardController {
         return "redirect:/party/read?id=" + updatedEntity.getId();
     }
 
+
 }
