@@ -27,7 +27,7 @@
         }
 
         .board-title-box {
-            background-color: #ff7f50; /* 당근 주황색 */
+            background-color: #ff7f50;
             padding: 12px 24px;
             color: white;
             border-radius: 8px;
@@ -67,18 +67,47 @@
             align-items: center;
         }
 
-        .search-write form {
+        .search-form {
             display: flex;
-            width: 50%;
-        }
-
-        .search-write input {
+            align-items: center;
+            gap: 10px;
             width: 60%;
+        }
+
+        .search-form select {
+            width: 120px;
             font-size: 0.9rem;
         }
 
-        .search-write button {
+        .search-form input {
+            flex: 1;
             font-size: 0.9rem;
+        }
+
+        .search-form button {
+            font-size: 0.9rem;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .pagination .page-link {
+            color: #ff7f50;
+            border-color: #ff7f50;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            color: white;
         }
     </style>
 </head>
@@ -112,8 +141,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="b, i : ${boardList}">
-        <td th:text="${i.index + 1}">1</td>
+    <tr th:each="b, i : ${responseDTO.dtoList}">
+        <td th:text="${responseDTO.totalCount - (responseDTO.pageRequestDTO.page - 1) * responseDTO.pageRequestDTO.size - i.index}">1</td>
         <td th:text="${b.title}" class="title-cell">제목</td>
         <td th:text="${b.writer}">글쓴이</td>
         <td th:text="${b.region}">지역</td>
@@ -122,15 +151,54 @@
     </tbody>
 </table>
 
+<!-- 페이징 -->
+<div class="pagination-container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:if="${responseDTO.prev}">
+                <a class="page-link" th:href="@{/board/list(page=${responseDTO.prevPage}, type=${param.type}, keyword=${param.keyword})}">이전</a>
+            </li>
+
+            <li th:each="i : ${responseDTO.pageNumList}"
+                th:class="${i == responseDTO.current} ? 'page-item active' : 'page-item'">
+                <a class="page-link" th:href="@{/board/list(page=${i}, type=${param.type}, keyword=${param.keyword})}" th:text="${i}">1</a>
+            </li>
+
+            <li class="page-item" th:if="${responseDTO.next}">
+                <a class="page-link" th:href="@{/board/list(page=${responseDTO.nextPage}, type=${param.type}, keyword=${param.keyword})}">다음</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
 <!-- 검색 & 글쓰기 -->
 <div class="search-write">
-    <form method="get" action="/board/list">
-        <input class="form-control me-2" type="search" name="keyword" placeholder="Search" aria-label="Search">
+    <form method="get" action="/board/list" class="search-form">
+        <select name="type" class="form-select">
+            <option value="">전체</option>
+            <option value="t" th:selected="${param.type == 't'}">제목</option>
+            <option value="c" th:selected="${param.type == 'c'}">내용</option>
+            <option value="w" th:selected="${param.type == 'w'}">작성자</option>
+            <option value="tc" th:selected="${param.type == 'tc'}">제목+내용</option>
+            <option value="tw" th:selected="${param.type == 'tw'}">제목+작성자</option>
+            <option value="cw" th:selected="${param.type == 'cw'}">내용+작성자</option>
+            <option value="tcw" th:selected="${param.type == 'tcw'}">제목+내용+작성자</option>
+        </select>
+        <input class="form-control" type="search" name="keyword" th:value="${param.keyword}" placeholder="검색어를 입력하세요" aria-label="Search">
         <button class="btn btn-outline-secondary" type="submit">검색</button>
     </form>
     <a href="/board/register">
         <button class="btn btn-dark">글쓰기</button>
     </a>
+</div>
+
+<!-- 게시글 수 정보 -->
+<div class="text-center mt-3">
+    <small class="text-muted">
+        총 <span th:text="${responseDTO.totalCount}">0</span>개의 게시글 중
+        <span th:text="${responseDTO.current}">1</span> 페이지
+        (전체 <span th:text="${(responseDTO.totalCount - 1) / responseDTO.pageRequestDTO.size + 1}">1</span> 페이지)
+    </small>
 </div>
 
 </body>

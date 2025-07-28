@@ -21,10 +21,38 @@ public class BoardService {
     public PageResponseDTO<Board> getBoardList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable("id");
 
-        Page<Board> result = boardRepository.findAll(pageable);
+        Page<Board> result;
+        String keyword = pageRequestDTO.getKeyword();
+        String[] types = pageRequestDTO.getTypes();
+
+        // 검색 조건이 없는 경우
+        if (keyword == null || keyword.trim().isEmpty() || types == null) {
+            result = boardRepository.findAll(pageable);
+        } else {
+            // 검색 타입에 따른 검색
+            boolean searchTitle = false;
+            boolean searchContent = false;
+            boolean searchWriter = false;
+
+            for (String type : types) {
+                switch (type) {
+                    case "t": // title
+                        searchTitle = true;
+                        break;
+                    case "c": // content
+                        searchContent = true;
+                        break;
+                    case "w": // writer
+                        searchWriter = true;
+                        break;
+                }
+            }
+
+            result = boardRepository.findByKeywordAndType(
+                    keyword, searchTitle, searchContent, searchWriter, pageable);
+        }
 
         List<Board> dtoList = result.getContent().stream().collect(Collectors.toList());
-
         int totalCount = (int)result.getTotalElements();
 
         return PageResponseDTO.<Board>withAll()

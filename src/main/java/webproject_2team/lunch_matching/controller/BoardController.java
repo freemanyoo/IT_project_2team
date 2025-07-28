@@ -6,7 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import webproject_2team.lunch_matching.domain.Board;
+import webproject_2team.lunch_matching.dto.PageRequestDTO;
+import webproject_2team.lunch_matching.dto.PageResponseDTO;
 import webproject_2team.lunch_matching.repository.BoardRepository;
+import webproject_2team.lunch_matching.service.BoardService;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +21,12 @@ import java.util.List;
 public class BoardController {
 
     private final BoardRepository boardRepository;
+    private final BoardService boardService;
 
     @GetMapping("/board/list")
-    public String list(Model model) {
-        List<Board> boardList = boardRepository.findAll();
-        model.addAttribute("boardList", boardList);
+    public String list(PageRequestDTO pageRequestDTO, Model model) {
+        PageResponseDTO<Board> responseDTO = boardService.getBoardList(pageRequestDTO);
+        model.addAttribute("responseDTO", responseDTO);
         return "board_list";
     }
 
