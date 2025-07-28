@@ -30,10 +30,18 @@ public class BoardController {
         return "board_list";
     }
 
+    @GetMapping("/board/read")
+    public String read(@RequestParam("id") Long id, Model model) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글"));
+        model.addAttribute("board", board);
+        return "read";
+    }
+
     @GetMapping("/board/register")
     public String registerForm() {
         return "board_register";
     }
+
 
     @PostMapping("/board/register")
     public String register(Board board,
@@ -44,6 +52,8 @@ public class BoardController {
             file.transferTo(new File(uploadPath + fileName));
             board.setImagePath("/uploads/" + fileName);
         }
+
+
 
         board.setCreatedAt(LocalDateTime.now());
         boardRepository.save(board);

@@ -3,40 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <title>모집글쓰기</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container-box {
+            display: flex;
+            margin-top: 30px;
+        }
+
+        .sidebar {
+            width: 200px;
+            margin-right: 30px;
+        }
+
+        .sidebar .menu {
+            background-color: #ff7f50; /* 진한 당근 주황 */
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+            background-color: #ffe2d5; /* 연한 주황 */
+            margin: 0;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .sidebar ul li {
+            margin: 0;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f3c8b8;
+        }
+
+        .sidebar ul li:last-child {
+            border-bottom: none;
+        }
+
+        .form-area {
+            flex-grow: 1;
+        }
+
+        .form-area h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        .form-select {
+            font-size: 0.9rem;
+            width: 38%; /* ✅ 1/5로 줄임 */
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        label.select-label {
+            font-size: 0.9rem; /* ✅ 글자 크기 줄임 */
+            margin-top: 10px;
+            display: block;
+        }
+
+        textarea.form-control {
+            height: 200px;
+        }
+
+        .btn-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+
 </head>
-<body>
-<h2>모집글쓰기</h2>
+<body class="container">
 
-<form method="post" action="/board/register" enctype="multipart/form-data">
-    제목: <input type="text" name="title"><br><br>
-    내용: <textarea name="content" rows="5" cols="40"></textarea><br><br>
-    글쓴이: <input type="text" name="writer"><br><br>
-    지역: <input type="text" name="region"><br><br>
+<div class="container-box">
+    <!-- 왼쪽 메뉴 -->
+    <div class="sidebar">
+        <div class="menu">메뉴</div>
+        <ul>
+            <li><a href="#" style="text-decoration:none;">오점머</a></li>
+            <li><a href="#" style="text-decoration:none;">맛잘알모집소</a></li>
+            <li><a href="#" style="text-decoration:none;">오점완</a></li>
+            <li><a href="#" style="text-decoration:none;">맛집정보</a></li>
+            <li><a href="#" style="text-decoration:none;">신고센터</a></li>
+            <li><a href="#" style="text-decoration:none;">MyPage</a></li>
+            <li><a href="#" style="text-decoration:none;">맛지도</a></li>
+        </ul>
+    </div>
 
-    성별 보기 제한:
-    <select name="genderLimit">
-        <option>성별상관무</option>
-        <option>남</option>
-        <option>여</option>
-    </select><br><br>
+    <!-- 중앙 모집글쓰기 폼 -->
+    <div class="form-area">
+        <h2>모집 게시판</h2>
 
-    음식 카테고리:
-    <select name="foodCategory">
-        <option>종류 안가림</option>
-        <option>한식</option>
-        <option>중식</option>
-        <option>일식</option>
-        <option>분식</option>
-        <option>디저트</option>
-    </select><br><br>
+        <form method="post" action="/board/register" enctype="multipart/form-data">
 
-    이미지 업로드:
-    <input type="file" name="uploadImage"><br><br>
+            <input type="text" name="title" class="form-control" placeholder="제목을 입력하세요">
 
-    <button type="submit">게시 완료</button>
-</form>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>성별 제한</label>
+                    <select name="genderLimit" class="form-select">
+                        <option>성별상관무</option>
+                        <option>남</option>
+                        <option>여</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>음식 카테고리</label>
+                    <select name="foodCategory" class="form-select">
+                        <option>종류 안가림</option>
+                        <option>한식</option>
+                        <option>중식</option>
+                        <option>일식</option>
+                        <option>분식</option>
+                        <option>디저트</option>
+                    </select>
+                </div>
+            </div>
 
-<br>
-<a href="/board/list"><button>목록가기</button></a>
+                     <textarea name="content" class="form-control" placeholder="본문 내용을 작성하세요"></textarea>
+
+            <label class="mt-3">이미지 업로드</label>
+            <input type="file" name="uploadImage" class="form-control">
+
+            <div class="btn-area">
+                <button type="submit" class="btn btn-success">게시 완료</button>
+                <a href="/board/list" class="btn btn-secondary">목록가기</a>
+
+            </div>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>

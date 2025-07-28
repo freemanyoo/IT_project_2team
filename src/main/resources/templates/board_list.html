@@ -99,10 +99,7 @@
             border-color: #ff7f50;
         }
 
-        .pagination .page-item.active .page-link {
-            background-color: #ff7f50;
-            border-color: #ff7f50;
-        }
+
 
         .pagination .page-link:hover {
             background-color: #ff7f50;
@@ -143,7 +140,9 @@
     <tbody>
     <tr th:each="b, i : ${responseDTO.dtoList}">
         <td th:text="${responseDTO.totalCount - (responseDTO.pageRequestDTO.page - 1) * responseDTO.pageRequestDTO.size - i.index}">1</td>
-        <td th:text="${b.title}" class="title-cell">제목</td>
+        <td class="title-cell">
+            <a th:href="@{|/board/read?id=${b.id}|}" th:text="${b.title}">제목</a>
+        </td>
         <td th:text="${b.writer}">글쓴이</td>
         <td th:text="${b.region}">지역</td>
         <td th:text="${#temporals.format(b.createdAt, 'yyyy-MM-dd HH:mm')}">작성시간</td>
