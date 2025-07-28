@@ -58,4 +58,5 @@ public class CommentController {
         commentRepository.deleteByPartyId(partyId);
         return ResponseEntity.noContent().build();
     }
+
 }
