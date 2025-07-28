@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>파티 상세보기</title>
+
+    <!-- ✅ CSRF 토큰 메타 태그로 저장 -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_parameter" th:content="${_csrf.parameterName}" />
 </head>
 <body>
 
@@ -32,6 +36,7 @@
 
     <form th:action="@{/party/delete}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
         <input type="hidden" name="id" th:value="${party.id}" />
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">글 삭제</button>
     </form>
 </div>
@@ -45,9 +50,13 @@
         <span th:text="${comment.writerId}">작성자</span> :
         <span th:text="${comment.content}">내용</span>
 
-        <!-- 수정 버튼 -->
+        <!-- 수정 버튼: 필요한 필드 모두 포함 -->
         <button type="button"
-                th:attr="data-id=${comment.id}, data-partyid=${comment.partyId}, data-content=${comment.content}"
+                th:attr="data-id=${comment.id},
+                         data-partyid=${comment.partyId},
+                         data-content=${comment.content},
+                         data-gender=${comment.gender},
+                         data-writerid=${comment.writerId}"
                 onclick="editComment(this)">
             수정
         </button>
@@ -64,10 +73,12 @@
 <form method="post" action="/comment/add">
     <input type="hidden" name="partyId" th:value="${party.id}" />
     <textarea name="content" placeholder="댓글을 입력하세요" required></textarea>
+    <!-- ✅ CSRF 토큰 -->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <button type="submit">댓글 등록</button>
 </form>
 
-<!-- JS는 반드시 HTML 끝에서 선언 -->
+<!-- JS -->
 <script>
     function deleteComment(commentId, partyId) {
         if (confirm("댓글을 삭제할까요?")) {
@@ -85,8 +96,17 @@
             partyIdInput.name = "partyId";
             partyIdInput.value = partyId;
 
+            // ✅ CSRF 토큰
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfParam = document.querySelector('meta[name="_csrf_parameter"]').getAttribute('content');
+            const csrfInput = document.createElement("input");
+            csrfInput.type = "hidden";
+            csrfInput.name = csrfParam;
+            csrfInput.value = csrfToken;
+
             form.appendChild(idInput);
             form.appendChild(partyIdInput);
+            form.appendChild(csrfInput);
 
             document.body.appendChild(form);
             form.submit();
@@ -97,12 +117,20 @@
         const commentId = button.dataset.id;
         const partyId = button.dataset.partyid;
         const content = button.dataset.content;
+        const gender = button.dataset.gender;
+        const writerId = button.dataset.writerid;
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfParam = document.querySelector('meta[name="_csrf_parameter"]').getAttribute('content');
 
         const commentDiv = document.getElementById("comment-" + commentId);
         const formHTML = `
             <form method="post" action="/comment/update">
                 <input type="hidden" name="id" value="${commentId}" />
                 <input type="hidden" name="partyId" value="${partyId}" />
+                <input type="hidden" name="writerId" value="${writerId}" />
+                <input type="hidden" name="gender" value="${gender}" />
+                <input type="hidden" name="${csrfParam}" value="${csrfToken}" />
                 <textarea name="content" required>${content}</textarea>
                 <button type="submit">저장</button>
                 <button type="button" onclick="cancelEdit()">취소</button>

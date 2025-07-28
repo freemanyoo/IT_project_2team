@@ -77,8 +77,17 @@ public class PartyBoardController {
     }
 
     @PostMapping("/update")
-    public String updateSubmit(PartyBoardEntity entity) {
-        partyBoardService.update(entity);
-        return "redirect:/party/read?id=" + entity.getId();
+    public String updateSubmit(PartyBoardEntity updatedEntity) {
+        // 기존 데이터 조회
+        PartyBoardEntity origin = partyBoardService.get(updatedEntity.getId());
+
+        // ✅ writerId는 수정 안되게 기존 값 유지
+        updatedEntity.setWriterId(origin.getWriterId());
+
+        // 업데이트 수행
+        partyBoardService.update(updatedEntity);
+
+        return "redirect:/party/read?id=" + updatedEntity.getId();
     }
+
 }
