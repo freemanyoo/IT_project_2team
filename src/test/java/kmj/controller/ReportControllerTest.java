@@ -91,7 +91,7 @@ public class ReportControllerTest {
         });
 
         // when
-        reportController.submitReport(reportRequestDTO, null, redirectAttributes);
+        reportController.submitReport(reportRequestDTO, null, redirectAttributes, null);
 
         // then
         assertEquals(1, user.getReportCount()); // 1회 신고 후 reportCount가 1이 되는지 확인
@@ -141,9 +141,9 @@ public class ReportControllerTest {
 
         // when
         // 3회 신고 시뮬레이션
-        reportController.submitReport(reportRequestDTO, null, redirectAttributes); // 1회 신고
-        reportController.submitReport(reportRequestDTO, null, redirectAttributes); // 2회 신고
-        reportController.submitReport(reportRequestDTO, null, redirectAttributes); // 3회 신고
+        reportController.submitReport(reportRequestDTO, null, redirectAttributes, null); // 1회 신고
+        reportController.submitReport(reportRequestDTO, null, redirectAttributes, null); // 2회 신고
+        reportController.submitReport(reportRequestDTO, null, redirectAttributes, null); // 3회 신고
 
         // then
         // boardRepository.save가 1번 호출되었는지 확인 (3회 신고 시에만 호출되므로)
@@ -206,19 +206,19 @@ public class ReportControllerTest {
         Principal principal1 = () -> "user1";
         when(reportRepository.findByBoardIdAndReporter(1L, "user1")).thenReturn(Optional.empty());
         when(reportRepository.countReportsByBoardId(1L)).thenReturn(1L);
-        reportController.submitReport(reportRequestDTO, principal1, redirectAttributes);
+        reportController.submitReport(reportRequestDTO, principal1, redirectAttributes, null);
 
         // 2회 신고 (user2)
         Principal principal2 = () -> "user2";
         when(reportRepository.findByBoardIdAndReporter(1L, "user2")).thenReturn(Optional.empty());
         when(reportRepository.countReportsByBoardId(1L)).thenReturn(2L);
-        reportController.submitReport(reportRequestDTO, principal2, redirectAttributes);
+        reportController.submitReport(reportRequestDTO, principal2, redirectAttributes, null);
 
         // 3회 신고 (user3)
         Principal principal3 = () -> "user3";
         when(reportRepository.findByBoardIdAndReporter(1L, "user3")).thenReturn(Optional.empty());
         when(reportRepository.countReportsByBoardId(1L)).thenReturn(3L);
-        reportController.submitReport(reportRequestDTO, principal3, redirectAttributes);
+        reportController.submitReport(reportRequestDTO, principal3, redirectAttributes, null);
 
         // then
         // reportRepository.save가 3번 호출되었는지 확인

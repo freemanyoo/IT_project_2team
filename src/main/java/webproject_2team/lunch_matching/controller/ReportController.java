@@ -42,15 +42,16 @@ public class ReportController {
      * 중복 신고를 방지하고, 신고 사유에 비속어 필터링을 적용합니다.
      * 신고 횟수가 3회 이상이면 게시글을 블라인드 처리하고,
      * 신고 횟수가 15회 이상이면 해당 게시글 작성자를 12시간 동안 정지시킵니다.
+     *
      * @param reportRequestDTO 신고 요청 데이터 (게시글 ID, 신고 사유)
-     * @param principal 현재 로그인한 사용자 정보
-     * @param rttr 리다이렉트 시 사용할 속성
+     * @param principal        현재 로그인한 사용자 정보
+     * @param rttr             리다이렉트 시 사용할 속성
      * @return 게시글 목록 페이지로 리다이렉트
      */
     @PostMapping("/report/submit")
     @Transactional
     public String submitReport(@ModelAttribute ReportRequestDTO reportRequestDTO, Principal principal, RedirectAttributes rttr,
-                                 @RequestParam(required = false) String simulatedReporter) {
+                               @RequestParam(value = "simulatedReporter", required = false) String simulatedReporter) {
 
         String reporter = (simulatedReporter != null && !simulatedReporter.isEmpty()) ? simulatedReporter : ((principal != null) ? principal.getName() : "anonymous");
 
@@ -135,16 +136,24 @@ public class ReportController {
 
         // Report를 ReportDisplayDTO로 변환
         List<ReportDisplayDTO> pendingReportsDTO = pendingReports.stream().map(report -> {
-            // 임시로 Board 및 User 관련 로직 제거
-            String reportedUsername = "임시 사용자"; // 기본값
-            LocalDateTime suspendedUntil = null; // 기본값
+            String reportedUsername = "알 수 없음";
+            LocalDateTime suspendedUntil = null;
+            Board board = boardRepository.findById(report.getBoardId()).orElse(null);
+            if (board != null && board.getUser() != null) {
+                reportedUsername = board.getUser().getUsername();
+                suspendedUntil = board.getUser().getSuspendedUntil();
+            }
             return new ReportDisplayDTO(report, reportedUsername, suspendedUntil);
         }).collect(Collectors.toList());
 
         List<ReportDisplayDTO> allReportsDTO = allReports.stream().map(report -> {
-            // 임시로 Board 및 User 관련 로직 제거
-            String reportedUsername = "임시 사용자"; // 기본값
-            LocalDateTime suspendedUntil = null; // 기본값
+            String reportedUsername = "알 수 없음";
+            LocalDateTime suspendedUntil = null;
+            Board board = boardRepository.findById(report.getBoardId()).orElse(null);
+            if (board != null && board.getUser() != null) {
+                reportedUsername = board.getUser().getUsername();
+                suspendedUntil = board.getUser().getSuspendedUntil();
+            }
             return new ReportDisplayDTO(report, reportedUsername, suspendedUntil);
         }).collect(Collectors.toList());
 
