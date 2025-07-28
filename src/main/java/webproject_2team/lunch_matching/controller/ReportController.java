@@ -101,21 +101,28 @@ public class ReportController {
         if (reportedBoard != null) {
             User reportedUser = reportedBoard.getUser();
             if (reportedUser != null) {
-                if (reportedUser.getSuspendedUntil() != null && reportedUser.getSuspendedUntil().isAfter(LocalDateTime.now())) {
-                    // 이미 정지된 사용자
-                } else {
-                    if (reportedUser.getSuspendedUntil() != null) {
-                        // 정지 기간이 만료된 경우
-                        reportedUser.setReportCount(0);
-                        reportedUser.setSuspendedUntil(null);
-                    }
+                // 사용자 ID를 사용하여 User 엔티티를 다시 조회하여 영속성 컨텍스트에 의해 관리되는 엔티티를 사용
+                User managedUser = userRepository.findById(reportedUser.getId()).orElse(null);
+                if (managedUser != null) {
+                    if (managedUser.getSuspendedUntil() != null && managedUser.getSuspendedUntil().isAfter(LocalDateTime.now())) {
+                        // 이미 정지된 사용자
+                    } else {
+                        if (managedUser.getSuspendedUntil() != null) {
+                            // 정지 기간이 만료된 경우
+                            managedUser.setReportCount(0);
+                            managedUser.setSuspendedUntil(null);
+                        }
 
-                    reportedUser.setReportCount(reportedUser.getReportCount() + 1);
-                    if (reportedUser.getReportCount() >= 15) {
-                        reportedUser.setSuspendedUntil(LocalDateTime.now().plusHours(12));
-                        reportedUser.setReportCount(0); // 정지 후 신고 횟수 초기화
+                        System.out.println("Before update: User " + managedUser.getUsername() + ", Report Count: " + managedUser.getReportCount());
+                        managedUser.setReportCount(managedUser.getReportCount() + 1);
+                        System.out.println("After increment: User " + managedUser.getUsername() + ", Report Count: " + managedUser.getReportCount());
+                        if (managedUser.getReportCount() >= 15) {
+                            managedUser.setSuspendedUntil(LocalDateTime.now().plusHours(12));
+                            managedUser.setReportCount(0); // 정지 후 신고 횟수 초기화
+                        }
+                        userRepository.save(managedUser);
+                        System.out.println("After save: User " + managedUser.getUsername() + ", Report Count: " + managedUser.getReportCount());
                     }
-                    userRepository.save(reportedUser);
                 }
             }
         }

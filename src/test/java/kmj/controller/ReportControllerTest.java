@@ -69,6 +69,7 @@ public class ReportControllerTest {
     void whenReportedOnce_thenReportCountIncrements() {
         // given
         User user = new User();
+        user.setId(1L); // User ID 설정
         user.setUsername("testuser");
         user.setReportCount(0); // 초기 신고 횟수 0
 
@@ -82,6 +83,7 @@ public class ReportControllerTest {
         RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
 
         when(boardRepository.findById(1L)).thenReturn(Optional.of(board));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user)); // userRepository.findById Mocking
 
         // userRepository.save가 호출될 때마다 user 객체의 reportCount를 업데이트하도록 설정
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
