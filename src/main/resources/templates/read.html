@@ -110,7 +110,10 @@
 
     <div class="btn-area">
         <a href="/board/list" class="btn btn-primary">목록으로</a>
-        <button type="button" class="btn btn-secondary" onclick="history.back()">뒤로가기</button>
+        <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-info">수정하기</a>
+        <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제하기</button>
+        </form>
     </div>
 </div>
 

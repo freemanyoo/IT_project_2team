@@ -10,6 +10,7 @@ import webproject_2team.lunch_matching.dto.PageResponseDTO;
 import webproject_2team.lunch_matching.repository.BoardRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,5 +61,18 @@ public class BoardService {
                 .dtoList(dtoList)
                 .totalCount(totalCount)
                 .build();
+    }
+
+    public Board read(Long id) {
+        Optional<Board> result = boardRepository.findById(id);
+        return result.orElse(null);
+    }
+
+    public void delete(Long id) {
+        boardRepository.deleteById(id);
+    }
+
+    public void modify(Board board) {
+        boardRepository.save(board);
     }
 }
