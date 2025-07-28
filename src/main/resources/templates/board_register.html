@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>모집글쓰기</title>
+</head>
+<body>
+<h2>모집글쓰기</h2>
+
+<form method="post" action="/board/register" enctype="multipart/form-data">
+    제목: <input type="text" name="title"><br><br>
+    내용: <textarea name="content" rows="5" cols="40"></textarea><br><br>
+    글쓴이: <input type="text" name="writer"><br><br>
+    지역: <input type="text" name="region"><br><br>
+
+    성별 보기 제한:
+    <select name="genderLimit">
+        <option>성별상관무</option>
+        <option>남</option>
+        <option>여</option>
+    </select><br><br>
+
+    음식 카테고리:
+    <select name="foodCategory">
+        <option>종류 안가림</option>
+        <option>한식</option>
+        <option>중식</option>
+        <option>일식</option>
+        <option>분식</option>
+        <option>디저트</option>
+    </select><br><br>
+
+    이미지 업로드:
+    <input type="file" name="uploadImage"><br><br>
+
+    <button type="submit">게시 완료</button>
+</form>
+
+<br>
+<a href="/board/list"><button>목록가기</button></a>
+</body>
+</html>

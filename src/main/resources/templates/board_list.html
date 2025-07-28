@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>맛슐랭 원정대</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fafafa;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .nav-top {
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .nav-top a {
+            margin: 0 10px;
+            color: #555;
+            text-decoration: none;
+        }
+
+        .nav-top a:hover {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .board-title-box {
+            background-color: #ff7f50; /* 당근 주황색 */
+            padding: 12px 24px;
+            color: white;
+            border-radius: 8px;
+            font-size: 1.8rem;
+            display: inline-block;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        td, th {
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        td.title-cell {
+            text-align: left;
+        }
+
+        .search-write {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .search-write form {
+            display: flex;
+            width: 50%;
+        }
+
+        .search-write input {
+            width: 60%;
+            font-size: 0.9rem;
+        }
+
+        .search-write button {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="container">
+
+<!-- 상단 메뉴 -->
+<div class="nav-top text-center mt-3">
+    <a href="#">오점머</a>
+    <a href="#">맛잘알모집소</a>
+    <a href="#">오점완</a>
+    <a href="#">맛집정보</a>
+    <a href="#">신고센터</a>
+    <a href="#">MyPage</a>
+    <a href="#">맛지도</a>
+</div>
+
+<!-- 주황 박스 제목 -->
+<div class="text-center">
+    <div class="board-title-box">맛슐랭 원정대</div>
+</div>
+
+<!-- 게시글 목록 -->
+<table>
+    <thead>
+    <tr>
+        <th style="width: 10%;">No</th>
+        <th style="width: 60%;">제목</th>
+        <th style="width: 10%;">글쓴이</th>
+        <th style="width: 10%;">지역</th>
+        <th style="width: 10%;">작성시간</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="b, i : ${boardList}">
+        <td th:text="${i.index + 1}">1</td>
+        <td th:text="${b.title}" class="title-cell">제목</td>
+        <td th:text="${b.writer}">글쓴이</td>
+        <td th:text="${b.region}">지역</td>
+        <td th:text="${#temporals.format(b.createdAt, 'yyyy-MM-dd HH:mm')}">작성시간</td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 검색 & 글쓰기 -->
+<div class="search-write">
+    <form method="get" action="/board/list">
+        <input class="form-control me-2" type="search" name="keyword" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-secondary" type="submit">검색</button>
+    </form>
+    <a href="/board/register">
+        <button class="btn btn-dark">글쓰기</button>
+    </a>
+</div>
+
+</body>
+</html>
