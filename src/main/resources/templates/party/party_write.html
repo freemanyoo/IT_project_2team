@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>파티 작성</title>
+</head>
+<body>
+<h1>📝 파티 작성</h1>
+
+<form th:action="@{/party/write}" method="post">
+    <p>
+        <label>제목:</label><br>
+        <input type="text" name="title" required />
+    </p>
+
+    <p>
+        <label>내용:</label><br>
+        <textarea name="content" rows="5" cols="40" required></textarea>
+    </p>
+
+    <p>
+        <label>장소:</label><br>
+        <input type="text" name="locationName" />
+    </p>
+
+    <p>
+        <label>음식 카테고리:</label><br>
+        <select name="foodCategory" required>
+            <option value="">선택하세요</option>
+            <option value="한식">한식</option>
+            <option value="양식">양식</option>
+            <option value="일식">일식</option>
+            <option value="중식">중식</option>
+        </select>
+    </p>
+
+    <p>
+        <label>성별 제한:</label><br>
+        <select name="genderLimit">
+            <option value="ALL">상관없음</option>
+            <option value="MALE">남성만</option>
+            <option value="FEMALE">여성만</option>
+        </select>
+    </p>
+
+    <p>
+        <label>식사 시간:</label><br>
+        <input type="datetime-local" name="partyTime" required />
+    </p>
+
+    <p>
+        <label>파티 모집 마감 시간:</label><br>
+        <input type="datetime-local" name="deadline" required />
+    </p>
+
+    <p>
+        <button type="submit">등록</button>
+        <a th:href="@{/party/list}">목록으로</a>
+    </p>
+</form>
+</body>
+</html>
