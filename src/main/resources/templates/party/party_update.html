@@ -10,6 +10,8 @@
 <form th:action="@{/party/update}" method="post">
     <!-- 글 ID는 숨겨서 전달 -->
     <input type="hidden" name="id" th:value="${party.id}" />
+    <!-- ✅ writerId도 숨겨서 전달 -->
+    <input type="hidden" name="writerId" th:value="${party.writerId}" />
 
     <p>
         <label>제목:</label><br>

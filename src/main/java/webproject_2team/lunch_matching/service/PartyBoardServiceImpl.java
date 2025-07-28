@@ -1,11 +1,15 @@
 package webproject_2team.lunch_matching.service;
 
-import webproject_2team.lunch_matching.domain.PartyBoardVO;
-import webproject_2team.lunch_matching.dto.PageRequestDTO;
-import webproject_2team.lunch_matching.dto.PageResponseDTO;
-import webproject_2team.lunch_matching.mapper.PartyBoardMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import webproject_2team.lunch_matching.domain.PartyBoardEntity;
+import webproject_2team.lunch_matching.dto.PartyPageRequestDTO;
+import webproject_2team.lunch_matching.dto.PartyPageResponseDTO;
+import webproject_2team.lunch_matching.repository.PartyBoardRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -15,54 +19,68 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PartyBoardServiceImpl implements PartyBoardService {
 
-    private final PartyBoardMapper mapper;
+    private final PartyBoardRepository partyBoardRepository;
 
     @Override
-    public void register(PartyBoardVO vo) {
-        mapper.insert(vo);
+    public void register(PartyBoardEntity vo) {
+        vo.setCreatedAt(LocalDateTime.now()); // 작성 시 createdAt 자동 설정
+        partyBoardRepository.save(vo);
     }
 
     @Override
-    public List<PartyBoardVO> getList() {
-        return mapper.selectAll();
+    public List<PartyBoardEntity> getList() {
+        List<PartyBoardEntity> list = partyBoardRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        list.forEach(this::calculateRemainingTime);
+        return list;
     }
 
     @Override
-    public PartyBoardVO get(Long id) {
-        return mapper.selectOne(id);
+    public PartyBoardEntity get(Long id) {
+        PartyBoardEntity entity = partyBoardRepository.findById(id).orElse(null);
+        if (entity != null) {
+            calculateRemainingTime(entity);
+        }
+        return entity;
     }
 
     @Override
     public void delete(Long id) {
-        mapper.delete(id);
+        partyBoardRepository.deleteById(id);
     }
 
     @Override
-    public void update(PartyBoardVO vo) {
-        mapper.update(vo);
+    public void update(PartyBoardEntity vo) {
+        partyBoardRepository.save(vo); // id가 있으면 수정됨
     }
 
     @Override
-    public PageResponseDTO<PartyBoardVO> getList(PageRequestDTO requestDTO) {
-        List<PartyBoardVO> list = mapper.selectList(requestDTO);
-        int total = mapper.getCountWithFilter(requestDTO);
-        int totalPage = (int) Math.ceil((double) total / requestDTO.getSize());
+    public PartyPageResponseDTO<PartyBoardEntity> getList(PartyPageRequestDTO requestDTO) {
+        Pageable pageable = PageRequest.of(
+                requestDTO.getPage() - 1,
+                requestDTO.getSize(),
+                Sort.by(Sort.Direction.DESC, "id") // 최신순
+        );
 
-        for (PartyBoardVO vo : list) {
-            calculateRemainingTime(vo);
+        Page<PartyBoardEntity> result = partyBoardRepository
+                .findByTitleContainingAndFoodCategoryContainingAndGenderLimitContaining(
+                        requestDTO.getKeyword(),
+                        requestDTO.getFoodCategory(),
+                        requestDTO.getGenderLimit(),
+                        pageable
+                );
 
-        }
-        return PageResponseDTO.<PartyBoardVO>builder()
-                .dtoList(list)
-                .total(total)
+        result.getContent().forEach(this::calculateRemainingTime);
+
+        return PartyPageResponseDTO.<PartyBoardEntity>builder()
+                .dtoList(result.getContent())
+                .total((int) result.getTotalElements())
                 .page(requestDTO.getPage())
                 .size(requestDTO.getSize())
-                .totalPage(totalPage)
+                .totalPage(result.getTotalPages())
                 .build();
-
     }
 
-    private void calculateRemainingTime(PartyBoardVO vo) {
+    private void calculateRemainingTime(PartyBoardEntity vo) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime deadline = vo.getDeadline();
 
@@ -83,13 +101,4 @@ public class PartyBoardServiceImpl implements PartyBoardService {
             vo.setRemainingTime(sb.toString());
         }
     }
-
-
-
-
-
-
-
-
-
 }

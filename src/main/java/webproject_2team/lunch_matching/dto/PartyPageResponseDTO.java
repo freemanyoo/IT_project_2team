@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class PageResponseDTO<T> {
+public class PartyPageResponseDTO<T> {
     private List<T> dtoList;
     private int total;
     private int page;

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageRequestDTO {
+public class PartyPageRequestDTO {
     @Builder.Default
     private int page = 1;
     @Builder.Default
