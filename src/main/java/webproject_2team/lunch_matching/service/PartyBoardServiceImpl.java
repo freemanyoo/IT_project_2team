@@ -14,6 +14,7 @@ import webproject_2team.lunch_matching.repository.PartyBoardRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,19 +56,23 @@ public class PartyBoardServiceImpl implements PartyBoardService {
 
     @Override
     public PartyPageResponseDTO<PartyBoardEntity> getList(PartyPageRequestDTO requestDTO) {
+        int page = Math.max(0, requestDTO.getPage() - 1);
         Pageable pageable = PageRequest.of(
                 requestDTO.getPage() - 1,
                 requestDTO.getSize(),
                 Sort.by(Sort.Direction.DESC, "id") // 최신순
         );
+        // null일 경우 빈 문자열 ""로 대체하여 NullPointerException 방지
+        String keyword = Optional.ofNullable(requestDTO.getKeyword()).orElse("");
+        String foodCategory = Optional.ofNullable(requestDTO.getFoodCategory()).orElse("");
+        String genderLimit = Optional.ofNullable(requestDTO.getGenderLimit()).orElse("");
 
-        Page<PartyBoardEntity> result = partyBoardRepository
-                .findByTitleContainingAndFoodCategoryContainingAndGenderLimitContaining(
-                        requestDTO.getKeyword(),
-                        requestDTO.getFoodCategory(),
-                        requestDTO.getGenderLimit(),
-                        pageable
-                );
+        Page<PartyBoardEntity> result = partyBoardRepository.findPartyBoards(
+                requestDTO.getKeyword(),
+                requestDTO.getFoodCategory(),
+                requestDTO.getGenderLimit(),
+                pageable
+        );
 
         result.getContent().forEach(this::calculateRemainingTime);
 
