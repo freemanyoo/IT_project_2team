@@ -99,4 +99,5 @@ public class CommentController {
         return "redirect:/party/read?id=" + partyId;
     }
 
+
 }
