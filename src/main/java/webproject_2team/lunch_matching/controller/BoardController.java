@@ -6,16 +6,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import webproject_2team.lunch_matching.domain.Board;
+import webproject_2team.lunch_matching.domain.Comment;
 import webproject_2team.lunch_matching.dto.PageRequestDTO;
 import webproject_2team.lunch_matching.dto.PageResponseDTO;
 import webproject_2team.lunch_matching.repository.BoardRepository;
 import webproject_2team.lunch_matching.service.BoardService;
+import webproject_2team.lunch_matching.service.CommentService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,23 +26,85 @@ public class BoardController {
 
     private final BoardRepository boardRepository;
     private final BoardService boardService;
+    private final CommentService commentService;
 
     @GetMapping("/board/list")
     public String list(PageRequestDTO pageRequestDTO, Model model) {
         PageResponseDTO<Board> responseDTO = boardService.getBoardList(pageRequestDTO);
         model.addAttribute("responseDTO", responseDTO);
+        model.addAttribute("pageRequestDTO", pageRequestDTO);
         return "board_list";
     }
 
     @GetMapping("/board/read")
-    public String read(@RequestParam("id") Long id, Model model) {
+    public String read(@RequestParam("id") Long id,
+                       @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender,
+                       Model model) {
         Board board = boardService.read(id);
         if (board != null) {
+            // 성별 접근 권한 확인
+            if (!boardService.canAccessBoard(board, userGender)) {
+                model.addAttribute("error", "접근 권한이 없습니다. (" + board.getGenderLimit() + " 전용)");
+                return "access_denied";
+            }
+
+            // 댓글 목록 조회
+            List<Comment> comments = commentService.getCommentsByBoardId(id);
+
             model.addAttribute("board", board);
+            model.addAttribute("comments", comments);
+            model.addAttribute("userGender", userGender);
             return "read";
         } else {
             return "redirect:/board/list";
         }
+    }
+
+    @PostMapping("/board/comment")
+    public String addComment(@RequestParam("boardId") Long boardId,
+                             @RequestParam("content") String content,
+                             @RequestParam("writer") String writer,
+                             @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender,
+                             Model model) {
+        try {
+            // 댓글 내용 바이트 수 검증 (100바이트)
+            if (content != null && content.getBytes("UTF-8").length > 100) {
+                model.addAttribute("commentError", "댓글은 100바이트를 초과할 수 없습니다.");
+                return read(boardId, userGender, model);
+            }
+
+            // 필수 필드 검증
+            if (content == null || content.trim().isEmpty()) {
+                model.addAttribute("commentError", "댓글 내용을 입력해주세요.");
+                return read(boardId, userGender, model);
+            }
+
+            if (writer == null || writer.trim().isEmpty()) {
+                model.addAttribute("commentError", "작성자를 입력해주세요.");
+                return read(boardId, userGender, model);
+            }
+
+            // 댓글 저장
+            commentService.saveComment(boardId, content, writer);
+
+            // 성공적으로 저장된 후 리다이렉트
+            return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender;
+
+        } catch (IllegalStateException e) {
+            model.addAttribute("commentError", e.getMessage());
+            return read(boardId, userGender, model);
+        } catch (UnsupportedEncodingException e) {
+            model.addAttribute("commentError", "댓글 처리 중 오류가 발생했습니다.");
+            return read(boardId, userGender, model);
+        }
+    }
+
+    @PostMapping("/board/comment/delete/{id}")
+    public String deleteComment(@PathVariable("id") Long commentId,
+                                @RequestParam("boardId") Long boardId,
+                                @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender) {
+        commentService.deleteComment(commentId);
+        return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender;
     }
 
     @GetMapping("/board/register")
@@ -48,9 +113,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/register")
-    public String register(Board board,
-                           @RequestParam("uploadImage") MultipartFile file,
-                           Model model) throws IOException {
+    public String register(Board board, Model model) throws IOException {
 
         // 제목 글자수 검증 (100바이트)
         if (board.getTitle() != null && board.getTitle().getBytes("UTF-8").length > 100) {
@@ -85,23 +148,8 @@ public class BoardController {
             return "board_register";
         }
 
-        // 이미지 처리
-        if (!file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            String uploadPath = "src/main/resources/static/uploads/";
-
-            // 디렉토리가 없으면 생성
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            file.transferTo(new File(uploadPath + fileName));
-            board.setImagePath("/uploads/" + fileName);
-        }
-
         board.setCreatedAt(LocalDateTime.now());
-        boardRepository.save(board);
+        boardService.save(board);
         return "redirect:/board/list";
     }
 
@@ -119,10 +167,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/modify")
-    public String modify(Board board,
-                         @RequestParam("uploadImage") MultipartFile file,
-                         @RequestParam("existingImagePath") String existingImagePath,
-                         Model model) throws IOException {
+    public String modify(Board board, Model model) throws IOException {
 
         // 제목 글자수 검증 (100바이트)
         if (board.getTitle() != null && board.getTitle().getBytes("UTF-8").length > 100) {
@@ -150,23 +195,6 @@ public class BoardController {
         if (board.getRegion() == null || board.getRegion().trim().isEmpty()) {
             model.addAttribute("regionError", "지역을 입력해주세요.");
             return "board_modify";
-        }
-
-        // 이미지 처리
-        if (!file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            String uploadPath = "src/main/resources/static/uploads/";
-
-            // 디렉토리가 없으면 생성
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            file.transferTo(new File(uploadPath + fileName));
-            board.setImagePath("/uploads/" + fileName);
-        } else {
-            board.setImagePath(existingImagePath);
         }
 
         boardService.modify(board);

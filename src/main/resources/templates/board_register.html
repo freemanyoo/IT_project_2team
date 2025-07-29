@@ -63,7 +63,7 @@
 
         .form-select {
             font-size: 0.9rem;
-            width: 38%;
+            width: 32%;
             display: inline-block;
             margin-right: 10px;
         }
@@ -147,6 +147,7 @@
             const content = document.getElementById('content');
             const writer = document.getElementById('writer');
             const region = document.getElementById('region');
+            const deadlineHours = document.getElementById('deadlineHours');
 
             let isValid = true;
 
@@ -177,6 +178,12 @@
             // 지역 검증
             if (region.value.trim() === '') {
                 alert('지역을 입력해주세요.');
+                isValid = false;
+            }
+
+            // 마감시간 검증
+            if (deadlineHours.value === '') {
+                alert('마감시간을 선택해주세요.');
                 isValid = false;
             }
 
@@ -258,7 +265,7 @@
             <div th:if="${regionError}" class="error-message" th:text="${regionError}"></div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label>성별 제한</label>
                     <select name="genderLimit" class="form-select">
                         <option>성별상관무</option>
@@ -266,7 +273,7 @@
                         <option>여</option>
                     </select>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label>음식 카테고리</label>
                     <select name="foodCategory" class="form-select">
                         <option>종류 안가림</option>
@@ -275,6 +282,16 @@
                         <option>일식</option>
                         <option>분식</option>
                         <option>디저트</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>마감시간</label>
+                    <select id="deadlineHours" name="deadlineHours" class="form-select" required>
+                        <option value="">선택하세요</option>
+                        <option value="1">1시간 후</option>
+                        <option value="2">2시간 후</option>
+                        <option value="3">3시간 후</option>
+                        <option value="24">24시간 후</option>
                     </select>
                 </div>
             </div>

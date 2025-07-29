@@ -24,6 +24,10 @@ public class PageRequestDTO {
 
     private String keyword; // 검색 키워드
 
+    private String genderFilter; // 성별 필터
+
+    private String foodFilter; // 음식 필터
+
     public Pageable getPageable(String...props) {
         return PageRequest.of(this.page -1, this.size, Sort.by(props).descending());
     }
@@ -33,5 +37,13 @@ public class PageRequestDTO {
             return null;
         }
         return type.split("");
+    }
+
+    public String getGenderFilter() {
+        return genderFilter;
+    }
+
+    public String getFoodFilter() {
+        return foodFilter;
     }
 }

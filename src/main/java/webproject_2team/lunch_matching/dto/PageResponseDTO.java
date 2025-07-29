@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 @Data
 public class PageResponseDTO<E> {
 
+
     private List<E> dtoList;
 
     private List<Integer> pageNumList;

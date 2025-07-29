@@ -9,6 +9,7 @@ import webproject_2team.lunch_matching.dto.PageRequestDTO;
 import webproject_2team.lunch_matching.dto.PageResponseDTO;
 import webproject_2team.lunch_matching.repository.BoardRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +26,11 @@ public class BoardService {
         Page<Board> result;
         String keyword = pageRequestDTO.getKeyword();
         String[] types = pageRequestDTO.getTypes();
+        String genderFilter = pageRequestDTO.getGenderFilter();
+        String foodFilter = pageRequestDTO.getFoodFilter();
 
-        // 검색 조건이 없는 경우
-        if (keyword == null || keyword.trim().isEmpty() || types == null) {
-            result = boardRepository.findAll(pageable);
-        } else {
-            // 검색 타입에 따른 검색
+        // 검색 조건이 있는 경우
+        if (keyword != null && !keyword.trim().isEmpty() && types != null) {
             boolean searchTitle = false;
             boolean searchContent = false;
             boolean searchWriter = false;
@@ -49,8 +49,18 @@ public class BoardService {
                 }
             }
 
-            result = boardRepository.findByKeywordAndType(
-                    keyword, searchTitle, searchContent, searchWriter, pageable);
+            result = boardRepository.findByKeywordAndTypeAndFilters(
+                    keyword, searchTitle, searchContent, searchWriter,
+                    genderFilter, foodFilter, pageable);
+        }
+        // 필터만 있는 경우
+        else if ((genderFilter != null && !genderFilter.trim().isEmpty()) ||
+                (foodFilter != null && !foodFilter.trim().isEmpty())) {
+            result = boardRepository.findByFilters(genderFilter, foodFilter, pageable);
+        }
+        // 조건이 없는 경우
+        else {
+            result = boardRepository.findAll(pageable);
         }
 
         List<Board> dtoList = result.getContent().stream().collect(Collectors.toList());
@@ -73,6 +83,26 @@ public class BoardService {
     }
 
     public void modify(Board board) {
+        // 마감시간 재계산
+        if (board.getDeadlineHours() != null) {
+            board.setDeadlineAt(board.getCreatedAt().plusHours(board.getDeadlineHours()));
+        }
         boardRepository.save(board);
+    }
+
+    public Board save(Board board) {
+        // 마감시간 설정
+        if (board.getDeadlineHours() != null) {
+            board.setDeadlineAt(board.getCreatedAt().plusHours(board.getDeadlineHours()));
+        }
+        return boardRepository.save(board);
+    }
+
+    // 성별 접근 권한 체크
+    public boolean canAccessBoard(Board board, String userGender) {
+        if (board.getGenderLimit() == null || board.getGenderLimit().equals("성별상관무")) {
+            return true;
+        }
+        return board.getGenderLimit().equals(userGender);
     }
 }
