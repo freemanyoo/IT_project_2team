@@ -88,7 +88,12 @@ public class BoardController {
             commentService.saveComment(boardId, content, writer);
 
             // 성공적으로 저장된 후 리다이렉트
-            return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender;
+            try {
+                String encodedUserGender = URLEncoder.encode(userGender, "UTF-8");
+                return "redirect:/board/read?id=" + boardId + "&userGender=" + encodedUserGender;
+            } catch (Exception e) {
+                return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender;
+            }
 
         } catch (IllegalStateException e) {
             model.addAttribute("commentError", e.getMessage());
@@ -104,7 +109,12 @@ public class BoardController {
                                 @RequestParam("boardId") Long boardId,
                                 @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender) {
         commentService.deleteComment(commentId);
-        return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender;
+        try {
+            String encodedUserGender = URLEncoder.encode(userGender, "UTF-8");
+            return "redirect:/board/read?id=" + boardId + "&userGender=" + encodedUserGender;
+        } catch (Exception e) {
+            return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender;
+        }
     }
 
     @GetMapping("/board/register")

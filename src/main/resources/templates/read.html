@@ -357,7 +357,7 @@
         <!-- 댓글 작성 폼 -->
         <div th:if="${!board.isExpired()}" id="commentForm" class="comment-form">
             <h5>댓글 작성</h5>
-            <form method="post" th:action="@{/board/comment}" onsubmit="return validateCommentForm()">>
+            <form method="post" th:action="@{/board/comment}" onsubmit="return validateCommentForm()">
                 <input type="hidden" name="boardId" th:value="${board.id}">
                 <input type="hidden" name="userGender" th:value="${userGender}">
 
