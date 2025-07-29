@@ -83,7 +83,7 @@
         </div>
 
         <div class="button-area">
-            <a th:href="@{/review/modify(review_id=${reviewDTO.review_id}, page=${pageRequestDTO.page}, size=${pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">
+            <a th:href="@{/review/modify(review_id=${reviewDTO.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">
                 <button type="button">수정</button>
             </a>
             <button type="button" id="toListBtn">목록으로</button>
@@ -110,10 +110,10 @@
         const initialLikeStatus = [[${reviewDTO.likedByCurrentUser}]]; // 초기 좋아요 상태 추가
 
         document.getElementById('toListBtn').addEventListener('click', function() {
-            const page = [[${pageRequestDTO.page}]];
-            const size = [[${pageRequestDTO.size}]];
-            const type = [[${pageRequestDTO.type}]] || '';
-            const keyword = [[${pageRequestDTO.keyword}]] || '';
+            const page = [[${reviewPageRequestDTO.page}]];
+            const size = [[${reviewPageRequestDTO.size}]];
+            const type = [[${reviewPageRequestDTO.type}]] || '';
+            const keyword = [[${reviewPageRequestDTO.keyword}]] || '';
 
             let url = `/review/list?page=${page}&size=${size}`;
             if (type && keyword) {

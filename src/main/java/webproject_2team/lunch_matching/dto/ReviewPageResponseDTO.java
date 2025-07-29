@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor // 기본 생성자 추가
-public class PageResponseDTO<E> {
+public class ReviewPageResponseDTO<E> {
 
     private List<E> dtoList;
     private int totalCount;
@@ -25,7 +25,7 @@ public class PageResponseDTO<E> {
     // @Builder 어노테이션을 이 생성자에 붙여서 빌더가 이 생성자를 사용하도록 합니다.
     // toBuilder = true는 기존 객체를 기반으로 새로운 빌더를 만들 수 있게 합니다.
     @Builder(toBuilder = true)
-    public PageResponseDTO(List<E> dtoList, int totalCount, int page, int size) {
+    public ReviewPageResponseDTO(List<E> dtoList, int totalCount, int page, int size) {
         this.dtoList = dtoList;
         this.totalCount = totalCount;
         this.page = page;

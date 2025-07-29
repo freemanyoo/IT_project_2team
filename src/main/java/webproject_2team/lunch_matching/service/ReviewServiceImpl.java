@@ -10,14 +10,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import webproject_2team.lunch_matching.domain.Review;
-import webproject_2team.lunch_matching.dto.PageRequestDTO;
-import webproject_2team.lunch_matching.dto.PageResponseDTO;
+import webproject_2team.lunch_matching.dto.ReviewPageRequestDTO;
+import webproject_2team.lunch_matching.dto.ReviewPageResponseDTO;
 import webproject_2team.lunch_matching.dto.ReviewDTO;
 import webproject_2team.lunch_matching.repository.ReviewRepository;
 import webproject_2team.lunch_matching.util.UploadUtil;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
@@ -178,8 +177,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public PageResponseDTO<ReviewDTO> getList(PageRequestDTO pageRequestDTO) {
-        Page<Review> result = reviewRepository.searchAll(pageRequestDTO, pageRequestDTO.getPageable(Sort.by("review_id").descending()));
+    public ReviewPageResponseDTO<ReviewDTO> getList(ReviewPageRequestDTO reviewPageRequestDTO) {
+        Page<Review> result = reviewRepository.searchAll(reviewPageRequestDTO, reviewPageRequestDTO.getPageable(Sort.by("review_id").descending()));
 
         List<ReviewDTO> dtoList = result.getContent().stream()
                 .map(review -> {
@@ -206,14 +205,14 @@ public class ReviewServiceImpl implements ReviewService {
                 })
                 .collect(Collectors.toList());
 
-        log.info("PageRequestDTO size: " + pageRequestDTO.getSize());
+        log.info("PageRequestDTO size: " + reviewPageRequestDTO.getSize());
         log.info("Total elements from result: " + result.getTotalElements());
 
-        return PageResponseDTO.<ReviewDTO>builder()
+        return ReviewPageResponseDTO.<ReviewDTO>builder()
                 .dtoList(dtoList)
                 .totalCount((int)result.getTotalElements())
-                .page(pageRequestDTO.getPage()) // pageRequestDTO에서 page 가져오기
-                .size(pageRequestDTO.getSize()) // pageRequestDTO에서 size 가져오기
+                .page(reviewPageRequestDTO.getPage()) // pageRequestDTO에서 page 가져오기
+                .size(reviewPageRequestDTO.getSize()) // pageRequestDTO에서 size 가져오기
                 .build();
     }
 

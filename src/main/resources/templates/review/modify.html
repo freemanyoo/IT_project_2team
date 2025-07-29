@@ -12,10 +12,10 @@
 
     <form th:action="@{/review/modify}" method="post">
         <input type="hidden" name="review_id" th:value="${reviewDTO.review_id}">
-        <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
-        <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
-        <input type="hidden" name="type" th:value="${pageRequestDTO.type}">
-        <input type="hidden" name="keyword" th:value="${pageRequestDTO.keyword}">
+        <input type="hidden" name="page" th:value="${reviewPageRequestDTO.page}">
+        <input type="hidden" name="size" th:value="${reviewPageRequestDTO.size}">
+        <input type="hidden" name="type" th:value="${reviewPageRequestDTO.type}">
+        <input type="hidden" name="keyword" th:value="${reviewPageRequestDTO.keyword}">
 
         <label>리뷰 ID</label>
         <p class="form-control-static" th:text="${reviewDTO.review_id}"></p>
@@ -75,10 +75,10 @@
 
     <form id="deleteForm" th:action="@{/review/remove}" method="post" style="display: none;">
         <input type="hidden" name="review_id" th:value="${reviewDTO.review_id}">
-        <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
-        <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
-        <input type="hidden" name="type" th:value="${pageRequestDTO.type}">
-        <input type="hidden" name="keyword" th:value="${pageRequestDTO.keyword}">
+        <input type="hidden" name="page" th:value="${reviewPageRequestDTO.page}">
+        <input type="hidden" name="size" th:value="${reviewPageRequestDTO.size}">
+        <input type="hidden" name="type" th:value="${reviewPageRequestDTO.type}">
+        <input type="hidden" name="keyword" th:value="${reviewPageRequestDTO.keyword}">
     </form>
 
 </div>
@@ -100,10 +100,10 @@
         // Cancel button
         document.getElementById('cancelBtn').addEventListener('click', function() {
             const reviewId = [[${reviewDTO.review_id}]];
-            const page = [[${pageRequestDTO.page}]];
-            const size = [[${pageRequestDTO.size}]];
-            const type = [[${pageRequestDTO.type}]] || '';
-            const keyword = [[${pageRequestDTO.keyword}]] || '';
+            const page = [[${reviewPageRequestDTO.page}]];
+            const size = [[${reviewPageRequestDTO.size}]];
+            const type = [[${reviewPageRequestDTO.type}]] || '';
+            const keyword = [[${reviewPageRequestDTO.keyword}]] || '';
 
             let url = `/review/read?review_id=${reviewId}&page=${page}&size=${size}`;
             if (type && keyword) {

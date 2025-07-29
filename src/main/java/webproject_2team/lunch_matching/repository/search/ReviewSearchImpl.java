@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import webproject_2team.lunch_matching.domain.QReview;
 import webproject_2team.lunch_matching.domain.Review;
-import webproject_2team.lunch_matching.dto.PageRequestDTO;
+import webproject_2team.lunch_matching.dto.ReviewPageRequestDTO;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
     }
 
     @Override
-    public Page<Review> searchAll(PageRequestDTO pageRequestDTO, Pageable pageable) {
+    public Page<Review> searchAll(ReviewPageRequestDTO reviewPageRequestDTO, Pageable pageable) {
         QReview review = QReview.review;
         JPQLQuery<Review> query = from(review);
 
@@ -32,20 +32,20 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
         BooleanBuilder booleanBuilder = new BooleanBuilder(); // 검색 조건 빌더
 
         // 검색 조건 추가
-        if (pageRequestDTO.getType() != null && !pageRequestDTO.getType().isEmpty() && pageRequestDTO.getKeyword() != null) {
-            String type = pageRequestDTO.getType();
+        if (reviewPageRequestDTO.getType() != null && !reviewPageRequestDTO.getType().isEmpty() && reviewPageRequestDTO.getKeyword() != null) {
+            String type = reviewPageRequestDTO.getType();
             switch (type) {
                 case "c": // content
-                    booleanBuilder.or(review.content.contains(pageRequestDTO.getKeyword()));
+                    booleanBuilder.or(review.content.contains(reviewPageRequestDTO.getKeyword()));
                     break;
                 case "m": // menu
-                    booleanBuilder.or(review.menu.contains(pageRequestDTO.getKeyword()));
+                    booleanBuilder.or(review.menu.contains(reviewPageRequestDTO.getKeyword()));
                     break;
                 case "p": // place
-                    booleanBuilder.or(review.place.contains(pageRequestDTO.getKeyword()));
+                    booleanBuilder.or(review.place.contains(reviewPageRequestDTO.getKeyword()));
                     break;
                 case "w": // member_id (writer)
-                    booleanBuilder.or(review.member_id.contains(pageRequestDTO.getKeyword()));
+                    booleanBuilder.or(review.member_id.contains(reviewPageRequestDTO.getKeyword()));
                     break;
             }
         }

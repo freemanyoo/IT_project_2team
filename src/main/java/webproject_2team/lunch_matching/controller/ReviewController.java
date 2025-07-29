@@ -2,8 +2,8 @@ package webproject_2team.lunch_matching.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import webproject_2team.lunch_matching.dto.PageRequestDTO;
-import webproject_2team.lunch_matching.dto.PageResponseDTO;
+import webproject_2team.lunch_matching.dto.ReviewPageRequestDTO;
+import webproject_2team.lunch_matching.dto.ReviewPageResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.http.ResponseEntity;
 import webproject_2team.lunch_matching.dto.ReviewDTO;
 import webproject_2team.lunch_matching.dto.UploadResultDTO;
 import webproject_2team.lunch_matching.service.ReviewService;
@@ -106,7 +105,7 @@ public class ReviewController {
     }
 
     @GetMapping({"/read", "/modify"})
-    public void read(Long review_id, PageRequestDTO pageRequestDTO, Model model) {
+    public void read(Long review_id, ReviewPageRequestDTO reviewPageRequestDTO, Model model) {
         log.info("read or modify GET...");
         ReviewDTO reviewDTO = reviewService.readOne(review_id);
         model.addAttribute("reviewDTO", reviewDTO);
@@ -115,38 +114,38 @@ public class ReviewController {
     }
 
     @PostMapping("/modify")
-    public String modify(PageRequestDTO pageRequestDTO, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
+    public String modify(ReviewPageRequestDTO reviewPageRequestDTO, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
         log.info("modify POST...");
         reviewService.modify(reviewDTO);
         redirectAttributes.addFlashAttribute("result", "modified");
         redirectAttributes.addAttribute("review_id", reviewDTO.getReview_id());
-        redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
-        redirectAttributes.addAttribute("size", pageRequestDTO.getSize());
-        if (pageRequestDTO.getType() != null) {
-            redirectAttributes.addAttribute("type", pageRequestDTO.getType());
-            redirectAttributes.addAttribute("keyword", pageRequestDTO.getKeyword());
+        redirectAttributes.addAttribute("page", reviewPageRequestDTO.getPage());
+        redirectAttributes.addAttribute("size", reviewPageRequestDTO.getSize());
+        if (reviewPageRequestDTO.getType() != null) {
+            redirectAttributes.addAttribute("type", reviewPageRequestDTO.getType());
+            redirectAttributes.addAttribute("keyword", reviewPageRequestDTO.getKeyword());
         }
         return "redirect:/review/read";
     }
 
     @PostMapping("/remove")
-    public String remove(Long review_id, PageRequestDTO pageRequestDTO, RedirectAttributes redirectAttributes) {
+    public String remove(Long review_id, ReviewPageRequestDTO reviewPageRequestDTO, RedirectAttributes redirectAttributes) {
         log.info("remove POST...");
         reviewService.remove(review_id);
         redirectAttributes.addFlashAttribute("result", "removed");
-        redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
-        redirectAttributes.addAttribute("size", pageRequestDTO.getSize());
-        if (pageRequestDTO.getType() != null) {
-            redirectAttributes.addAttribute("type", pageRequestDTO.getType());
-            redirectAttributes.addAttribute("keyword", pageRequestDTO.getKeyword());
+        redirectAttributes.addAttribute("page", reviewPageRequestDTO.getPage());
+        redirectAttributes.addAttribute("size", reviewPageRequestDTO.getSize());
+        if (reviewPageRequestDTO.getType() != null) {
+            redirectAttributes.addAttribute("type", reviewPageRequestDTO.getType());
+            redirectAttributes.addAttribute("keyword", reviewPageRequestDTO.getKeyword());
         }
         return "redirect:/review/list";
     }
 
     @GetMapping("/list")
-    public void list(PageRequestDTO pageRequestDTO, Model model) {
+    public void list(ReviewPageRequestDTO reviewPageRequestDTO, Model model) {
         log.info("list...");
-        PageResponseDTO<ReviewDTO> responseDTO = reviewService.getList(pageRequestDTO);
+        ReviewPageResponseDTO<ReviewDTO> responseDTO = reviewService.getList(reviewPageRequestDTO);
         model.addAttribute("responseDTO", responseDTO);
         model.addAttribute("emoticonMap", emoticonMap);
 

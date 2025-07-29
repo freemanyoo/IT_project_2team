@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PageRequestDTO extends SearchRequestDTO {
+public class ReviewPageRequestDTO extends SearchRequestDTO {
 
     @Builder.Default
     private int page = 1;

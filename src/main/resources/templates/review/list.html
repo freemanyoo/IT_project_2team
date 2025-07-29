@@ -13,12 +13,12 @@
             <form th:action="@{/review/list}" method="get">
                 <select name="type">
                     <option value="">--- 검색 타입 ---</option>
-                    <option value="w" th:selected="${pageRequestDTO.type == 'w'}">작성자</option>
-                    <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
-                    <option value="m" th:selected="${pageRequestDTO.type == 'm'}">메뉴</option>
-                    <option value="p" th:selected="${pageRequestDTO.type == 'p'}">장소</option>
+                    <option value="w" th:selected="${reviewPageRequestDTO.type == 'w'}">작성자</option>
+                    <option value="c" th:selected="${reviewPageRequestDTO.type == 'c'}">내용</option>
+                    <option value="m" th:selected="${reviewPageRequestDTO.type == 'm'}">메뉴</option>
+                    <option value="p" th:selected="${reviewPageRequestDTO.type == 'p'}">장소</option>
                 </select>
-                <input type="text" name="keyword" th:value="${pageRequestDTO.keyword}">
+                <input type="text" name="keyword" th:value="${reviewPageRequestDTO.keyword}">
                 <button type="submit">검색</button>
                 <button type="button" onclick="location.href='/review/list'">초기화</button>
             </form>
@@ -44,7 +44,7 @@
             </thead>
             <tbody>
                 <tr th:each="review : ${responseDTO.dtoList}">
-                    <td><a th:href="@{/review/read(review_id=${review.review_id}, page=${pageRequestDTO.page}, size=${pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}" th:text="${review.review_id}"></a></td>
+                    <td><a th:href="@{/review/read(review_id=${review.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}" th:text="${review.review_id}"></a></td>
                     <td th:text="${review.member_id}"></td>
                     <td th:text="${review.content}"></td>
                     <td th:text="${review.menu}"></td>
@@ -76,13 +76,13 @@
 
         <div class="pagination">
             <a th:if="${responseDTO.prev}"
-               th:href="@{/review/list(page=${responseDTO.start - 1}, size=${responseDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">이전</a>
+               th:href="@{/review/list(page=${responseDTO.start - 1}, size=${responseDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">이전</a>
             <a th:each="page : ${#numbers.sequence(responseDTO.start, responseDTO.end)}"
                th:classappend="${page == responseDTO.page ? 'active' : ''}"
-               th:href="@{/review/list(page=${page}, size=${responseDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+               th:href="@{/review/list(page=${page}, size=${responseDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}"
                th:text="${page}"></a>
             <a th:if="${responseDTO.next}"
-               th:href="@{/review/list(page=${responseDTO.end + 1}, size=${responseDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">다음</a>
+               th:href="@{/review/list(page=${responseDTO.end + 1}, size=${responseDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">다음</a>
         </div>
     </div>
 </body>
