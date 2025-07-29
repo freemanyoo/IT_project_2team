@@ -16,14 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 입력 필드와 에러/성공 메시지 매핑
     const fields = {
+        name: { input: document.getElementById('name'), error: document.getElementById('nameError'), success: document.getElementById('nameSuccess') },
         email: { input: emailInput, error: document.getElementById('emailError'), success: document.getElementById('emailSendSuccess') },
         emailAuthCode: { input: emailAuthCodeInput, error: document.getElementById('emailAuthCodeError'), success: document.getElementById('emailVerifySuccess') },
-        username: { input: document.getElementById('username'), error: document.getElementById('usernameError') },
-        password: { input: document.getElementById('password'), error: document.getElementById('passwordError') },
-        confirmPassword: { input: document.getElementById('confirmPassword'), error: document.getElementById('confirmPasswordError') },
-        nickname: { input: document.getElementById('nickname'), error: document.getElementById('nicknameError') },
-        birthDate: { input: document.getElementById('birthDate'), error: document.getElementById('birthDateError') },
-        phoneNumber: { input: document.getElementById('phoneNumber'), error: document.getElementById('phoneNumberError') }
+        username: { input: document.getElementById('username'), error: document.getElementById('usernameError'), success: document.getElementById('usernameSuccess')  },
+        password: { input: document.getElementById('password'), error: document.getElementById('passwordError'), success: document.getElementById('passwordSuccess')  },
+        confirmPassword: { input: document.getElementById('confirmPassword'), error: document.getElementById('confirmPasswordError'), success: document.getElementById('confirmPasswordSuccess')  },
+        nickname: { input: document.getElementById('nickname'), error: document.getElementById('nicknameError'), success: document.getElementById('nicknameSuccess')  },
+        birthDate: { input: document.getElementById('birthDate'), error: document.getElementById('birthDateError'), success: document.getElementById('birthDateSuccess')  },
+        phoneNumber: { input: document.getElementById('phoneNumber'), error: document.getElementById('phoneNumberError'), success: document.getElementById('phoneNumberSuccess')  }
     };
 
     let isEmailVerified = false; // 이메일 인증 상태 플래그
@@ -53,8 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function hideMessage(element) {
-        element.textContent = '';
-        element.style.display = 'none';
+        // element가 null 또는 undefined가 아닌 경우에만 속성을 조작
+        if (element) { // 이 조건문이 signup.js:56 이전에 위치해야 함
+            element.textContent = '';
+            element.style.display = 'none';
+        } else {
+            // 어떤 요소가 undefined로 넘어왔는지 콘솔에 경고를 출력하여 디버깅에 도움을 줍니다.
+            console.warn("Warning: Attempted to hide a non-existent element (element was null or undefined).");
+        }
     }
 
     function clearAllErrors() {
