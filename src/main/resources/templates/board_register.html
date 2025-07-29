@@ -300,14 +300,7 @@
             <div id="contentCounter" class="char-counter">0/2000 bytes</div>
             <div th:if="${contentError}" class="error-message" th:text="${contentError}"></div>
 
-            <label class="mt-3">이미지 업로드</label>
-            <input type="file" id="uploadImage" name="uploadImage" class="form-control" accept="image/*">
 
-            <!-- 이미지 미리보기 -->
-            <div id="imagePreviewContainer" class="image-preview-container">
-                <img id="imagePreview" class="image-preview" alt="이미지 미리보기">
-                <p class="mt-2 text-muted">업로드된 이미지가 게시글에 표시됩니다</p>
-            </div>
 
             <div class="btn-area">
                 <button type="submit" class="btn btn-success">게시 완료</button>
