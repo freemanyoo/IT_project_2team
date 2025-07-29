@@ -228,9 +228,6 @@
     <div class="form-area">
         <h2>게시글 수정</h2>
 
-        <div class="warning-message">
-            <strong>참고:</strong> 이미지 업로드 기능은 수정 시 사용할 수 없습니다. 기존 이미지가 유지됩니다.
-        </div>
 
         <form method="post" th:action="@{/board/modify}" onsubmit="return validateForm()">
             <input type="hidden" name="id" th:value="${board.id}">
