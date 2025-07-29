@@ -50,9 +50,9 @@
                 <img th:src="@{/view/{fileName}(fileName=${fileInfo.thumbnailLink})}" th:alt="${fileInfo.fileName}" style="max-width: 100px; max-height: 100px; margin: 5px;">
                 <span th:text="${fileInfo.fileName}"></span>
                 <button type="button" class="delete-button" th:data-uuid="${fileInfo.uuid}" th:data-file-name="${fileInfo.fileName}">X</button>
-                <input type="hidden" th:name="|uploadFileNames[${stat.index}].uuid|" th:value="${fileInfo.uuid}">
-                <input type="hidden" th:name="|uploadFileNames[${stat.index}].fileName|" th:value="${fileInfo.fileName}">
-                <input type="hidden" th:name="|uploadFileNames[${stat.index}].img|" th:value="${fileInfo.img}">
+                <input type="hidden" name="uploadFileNames[__${stat.index}__].uuid" th:value="${fileInfo.uuid}">
+                <input type="hidden" name="uploadFileNames[__${stat.index}__].fileName" th:value="${fileInfo.fileName}">
+                <input type="hidden" name="uploadFileNames[__${stat.index}__].img" th:value="${fileInfo.img}">
             </div>
         </div>
         <div id="uploadLoading" class="upload-loading-area" style="display: none;">
@@ -84,11 +84,17 @@
 </div>
 </body>
 <th:block layout:fragment="script">
-    <script th:src="@{/js/review/register.js}"></script>
+    <script th:src="@{/js/register.js}"></script>
     <script th:inline="javascript">
         const uploadFileNames = [[${reviewDTO.uploadFileNames}]];
         // Set initial rating value for stars
-        // This logic is now handled by register.js
+        const initialRating = document.getElementById('rating').value;
+        const stars = document.querySelectorAll('#star-rating .star');
+        stars.forEach(star => {
+            if (star.dataset.value <= initialRating) {
+                star.classList.add('filled');
+            }
+        });
 
         // Delete confirmation
         document.getElementById('deleteBtn').addEventListener('click', function() {
@@ -112,6 +118,6 @@
             window.location.href = url;
         });
     </script>
-    <script th:src="@{/js/review/review-detail.js}"></script>
+    <script th:src="@{/js/review-detail.js}"></script>
 </th:block>
 </html>

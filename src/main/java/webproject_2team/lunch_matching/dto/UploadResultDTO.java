@@ -15,19 +15,15 @@ public class UploadResultDTO {
     private boolean img;
 
     public String getLink() {
-        if (img) {
-            return uuid + "_" + fileName;
-        } else {
-            return "default.png";
-        }
+        return uuid + "_" + fileName;
     }
 
     public String getThumbnailLink() {
-        if (img) {
+        if(img){
             return "s_" + uuid + "_" + fileName;
         } else {
             // 이미지가 아닐 경우 기본 이미지 또는 다른 처리를 할 수 있습니다.
-            return "default.png"; // 기본 이미지 경로 반환
+            return null; // 혹은 기본 이미지 경로
         }
     }
 }

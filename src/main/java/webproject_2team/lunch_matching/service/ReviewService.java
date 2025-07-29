@@ -11,5 +11,4 @@ public interface ReviewService {
     void modify(ReviewDTO reviewDTO);
     void remove(Long review_id);
     PageResponseDTO<ReviewDTO> getList(PageRequestDTO pageRequestDTO);
-    void updateLikeCount(Long reviewId, int likeCount);
 }

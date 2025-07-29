@@ -1,7 +1,5 @@
 package webproject_2team.lunch_matching.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import webproject_2team.lunch_matching.dto.PageRequestDTO;
 import webproject_2team.lunch_matching.dto.PageResponseDTO;
 
@@ -15,12 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.http.ResponseEntity;
 import webproject_2team.lunch_matching.dto.ReviewDTO;
 import webproject_2team.lunch_matching.dto.UploadResultDTO;
 import webproject_2team.lunch_matching.service.ReviewService;
-import webproject_2team.lunch_matching.service.ReviewLikeService;
-import webproject_2team.lunch_matching.service.ReviewCommentService;
 import webproject_2team.lunch_matching.util.UploadUtil;
 
 import java.util.LinkedHashMap;
@@ -36,8 +31,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final UploadUtil uploadUtil;
-    private final ReviewLikeService reviewLikeService;
-    private final ReviewCommentService reviewCommentService;
 
     // 감정 목록 정의
     private final Map<String, String> emotionMap = new LinkedHashMap<>();
@@ -75,15 +68,6 @@ public class ReviewController {
     @PostMapping("/register")
     public String registerPOST(ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
         log.info("register POST...");
-        if (reviewDTO.getUploadFileNames() != null) {
-            log.info("ReviewDTO uploadFileNames size: " + reviewDTO.getUploadFileNames().size());
-            reviewDTO.getUploadFileNames().forEach(fileDto ->
-                log.info("  ReviewDTO File: uuid=" + fileDto.getUuid() + ", fileName=" + fileDto.getFileName() + ", img=" + fileDto.isImg())
-            );
-        } else {
-            log.info("ReviewDTO uploadFileNames is null.");
-        }
-
         Long review_id = reviewService.register(reviewDTO);
         redirectAttributes.addFlashAttribute("result", review_id);
         return "redirect:/review/list";
@@ -94,15 +78,7 @@ public class ReviewController {
     @ResponseBody
     public List<UploadResultDTO> upload(List<MultipartFile> files) {
         log.info("upload POST...");
-        log.info("Received files count: " + files.size());
-        files.forEach(file -> log.info("  MultipartFile: " + file.getOriginalFilename() + ", size: " + file.getSize()));
-
-        List<UploadResultDTO> resultList = uploadUtil.uploadFiles(files).join();
-
-        log.info("UploadUtil returned resultList count: " + resultList.size());
-        resultList.forEach(dto -> log.info("  UploadResultDTO: uuid=" + dto.getUuid() + ", fileName=" + dto.getFileName() + ", img=" + dto.isImg()));
-
-        return resultList;
+        return uploadUtil.uploadFiles(files).join();
     }
 
     @GetMapping({"/read", "/modify"})
@@ -148,69 +124,17 @@ public class ReviewController {
         log.info("list...");
         PageResponseDTO<ReviewDTO> responseDTO = reviewService.getList(pageRequestDTO);
         model.addAttribute("responseDTO", responseDTO);
-        model.addAttribute("emoticonMap", emoticonMap);
+        model.addAttribute("emotionMap", emotionMap);
+        model.addAttribute("emoticonMap", emoticonMap); // 이모티콘 맵 추가 // 감정 맵 추가
 
-        log.info("--- Debug: responseDTO.dtoList ---");
-        responseDTO.getDtoList().forEach(dto -> {
-            log.info("Review ID: " + dto.getReview_id() + ", UploadFileNames: " + dto.getUploadFileNames());
-            if (dto.getUploadFileNames() != null && !dto.getUploadFileNames().isEmpty()) {
-                dto.getUploadFileNames().forEach(fileDto -> {
-                    log.info("  File DTO: uuid=" + fileDto.getUuid() + ", fileName=" + fileDto.getFileName() + ", img=" + fileDto.isImg() + ", thumbnailLink=" + fileDto.getThumbnailLink());
-                });
+        // 각 ReviewDTO의 uploadFileNames 확인 로그 추가
+        responseDTO.getDtoList().forEach(reviewDTO -> {
+            if (reviewDTO.getUploadFileNames() != null && !reviewDTO.getUploadFileNames().isEmpty()) {
+                log.info("Review ID: " + reviewDTO.getReview_id() + ", Files: " + reviewDTO.getUploadFileNames().size());
+                reviewDTO.getUploadFileNames().forEach(file -> log.info("  File: " + file.getFileName() + ", Link: " + file.getLink()));
+            } else {
+                log.info("Review ID: " + reviewDTO.getReview_id() + ", No files.");
             }
         });
-    }
-
-    // 좋아요 추가/취소
-    @PostMapping("/{reviewId}/like")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable Long reviewId) {
-        // TODO: 실제 사용자 ID는 Spring Security 등 인증 시스템에서 가져와야 합니다.
-        String memberId = "testuser"; // 임시 사용자 ID
-
-        boolean liked = reviewLikeService.toggleLike(reviewId, memberId);
-        int likeCount = reviewLikeService.getLikeCount(reviewId);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("liked", liked);
-        response.put("likeCount", likeCount);
-        return ResponseEntity.ok(response);
-    }
-
-    // 댓글 목록 조회
-    @GetMapping("/{reviewId}/comments")
-    @ResponseBody
-    public ResponseEntity<List<webproject_2team.lunch_matching.dto.ReviewCommentDTO>> getComments(@PathVariable Long reviewId) {
-        List<webproject_2team.lunch_matching.dto.ReviewCommentDTO> comments = reviewCommentService.getCommentsOfReview(reviewId);
-        return ResponseEntity.ok(comments);
-    }
-
-    // 댓글 등록
-    @PostMapping("/{reviewId}/comments")
-    @ResponseBody
-    public ResponseEntity<Long> addComment(@PathVariable Long reviewId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
-        // TODO: 실제 사용자 ID는 Spring Security 등 인증 시스템에서 가져와야 합니다.
-        String memberId = "testuser"; // 임시 사용자 ID
-        reviewCommentDTO.setReview_id(reviewId);
-        reviewCommentDTO.setMember_id(memberId);
-        Long commentId = reviewCommentService.register(reviewCommentDTO);
-        return ResponseEntity.ok(commentId);
-    }
-
-    // 댓글 수정
-    @PutMapping("/comments/{commentId}")
-    @ResponseBody
-    public ResponseEntity<String> modifyComment(@PathVariable Long commentId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
-        reviewCommentDTO.setId(commentId);
-        reviewCommentService.modify(reviewCommentDTO);
-        return ResponseEntity.ok("Comment modified successfully");
-    }
-
-    // 댓글 삭제
-    @DeleteMapping("/comments/{commentId}")
-    @ResponseBody
-    public ResponseEntity<String> removeComment(@PathVariable Long commentId) {
-        reviewCommentService.remove(commentId);
-        return ResponseEntity.ok("Comment removed successfully");
     }
 }

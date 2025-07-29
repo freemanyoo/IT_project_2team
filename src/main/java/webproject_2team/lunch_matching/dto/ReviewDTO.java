@@ -23,7 +23,4 @@ public class ReviewDTO {
     private LocalDateTime regDate;
     private LocalDateTime modDate;
     private List<UploadResultDTO> uploadFileNames; // 파일 업로드 결과 DTO 리스트
-    private int likeCount; // 좋아요 수
-    private List<ReviewCommentDTO> comments; // 댓글 목록
-    private boolean likedByCurrentUser; // 현재 사용자가 좋아요를 눌렀는지 여부
 }

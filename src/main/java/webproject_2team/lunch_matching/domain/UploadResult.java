@@ -20,4 +20,12 @@ public class UploadResult {
     public void setIsImage(boolean isImage) {
         this.isImage = isImage;
     }
+
+    public String getLink() {
+        if(isImage){
+            return "s_" + uuid + "_" + fileName; // 썸네일 경로
+        } else {
+            return uuid + "_" + fileName;
+        }
+    }
 }

@@ -26,37 +26,34 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
         QReview review = QReview.review;
         JPQLQuery<Review> query = from(review);
 
-        // Fetch Join은 실제 데이터를 가져올 때만 사용하고, count 쿼리에는 영향을 주지 않도록 합니다.
-        query.leftJoin(review.fileList).fetchJoin();
-
-        BooleanBuilder booleanBuilder = new BooleanBuilder(); // 검색 조건 빌더
+        query.leftJoin(review.fileList).fetchJoin(); // fileList를 Fetch Join
 
         // 검색 조건 추가
         if (pageRequestDTO.getType() != null && !pageRequestDTO.getType().isEmpty() && pageRequestDTO.getKeyword() != null) {
+            BooleanBuilder builder = new BooleanBuilder();
             String type = pageRequestDTO.getType();
             switch (type) {
                 case "c": // content
-                    booleanBuilder.or(review.content.contains(pageRequestDTO.getKeyword()));
+                    builder.or(review.content.contains(pageRequestDTO.getKeyword()));
                     break;
                 case "m": // menu
-                    booleanBuilder.or(review.menu.contains(pageRequestDTO.getKeyword()));
+                    builder.or(review.menu.contains(pageRequestDTO.getKeyword()));
                     break;
                 case "p": // place
-                    booleanBuilder.or(review.place.contains(pageRequestDTO.getKeyword()));
+                    builder.or(review.place.contains(pageRequestDTO.getKeyword()));
                     break;
                 case "w": // member_id (writer)
-                    booleanBuilder.or(review.member_id.contains(pageRequestDTO.getKeyword()));
+                    builder.or(review.member_id.contains(pageRequestDTO.getKeyword()));
                     break;
             }
+            query.where(builder);
         }
 
         // review_id > 0 조건 추가 (기본 조건)
-        booleanBuilder.and(review.review_id.gt(0L));
+        query.where(review.review_id.gt(0L));
 
-        query.where(booleanBuilder); // 모든 조건을 query에 적용
-
-        // 중복된 Review 엔티티 제거 (fetchJoin으로 인한 중복 방지)
-        query.distinct();
+        // 전체 개수를 가져오기 위한 쿼리 (페이징 적용 전)
+        JPQLQuery<Review> countQuery = query; // 기존 쿼리 복사
 
         // 정렬 적용
         pageable.getSort().forEach(sort -> {
@@ -73,14 +70,7 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
         query.limit(pageable.getPageSize());
 
         List<Review> list = query.fetch(); // 페이징된 결과
-
-        // 정확한 전체 개수를 가져오기 위한 별도의 쿼리
-        // fileList와의 join 없이 Review 엔티티만 대상으로 distinct count
-        JPQLQuery<Long> countQuery = from(review)
-                .where(booleanBuilder) // 동일한 검색 조건 적용
-                .select(review.countDistinct()); // distinct count
-
-        long totalCount = countQuery.fetchOne(); // 전체 개수
+        long totalCount = countQuery.fetchCount(); // 전체 개수
 
         return new PageImpl<>(list, pageable, totalCount);
     }

@@ -33,9 +33,6 @@ public class PageResponseDTO<E> {
 
         // 페이지네이션 계산
         int lastPage = (int)(Math.ceil(totalCount / (double)size));
-        if (totalCount == 0) {
-            lastPage = 1;
-        }
         this.end = (int)(Math.ceil(this.page / 10.0)) * 10;
         this.start = this.end - 9;
 

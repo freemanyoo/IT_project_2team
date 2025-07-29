@@ -44,17 +44,6 @@ public class Review extends BaseEntity {
     @Builder.Default
     private List<UploadResult> fileList = new ArrayList<>();
 
-    @Builder.Default
-    private int likeCount = 0; // 좋아요 수
-
-    @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<ReviewLike> likes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<ReviewComment> comments = new ArrayList<>();
-
     public void change(String content, String menu, String place, int rating, String emotion) {
         this.content = content;
         this.menu = menu;
