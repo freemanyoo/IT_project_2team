@@ -46,13 +46,13 @@
 
 <!-- 상단 메뉴 -->
 <div class="nav-top text-center mt-3">
-    <a href="#">오점머</a>
-    <a href="#">맛잘알모집소</a>
-    <a href="#">오점완</a>
-    <a href="#">맛집정보</a>
-    <a href="#">신고센터</a>
-    <a href="#">MyPage</a>
-    <a href="#">맛지도</a>
+    <a th:href="@{/test}">오점머</a>
+    <a th:href="@{/board/list}">맛슐랭원정대</a>
+    <a th:href="@{/review/list}">식후감</a>
+    <a th:href="@{/lunchmatch/list}">맛집저장</a>
+    <a th:href="@{/lunchmatch/map}">맛지도</a>
+    <a th:href="@{/mypage}">MY PAGE</a>
+    <a th:href="@{/help}">고객센터</a>
 </div>
 
 <div layout:fragment="content">
