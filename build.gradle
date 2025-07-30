@@ -83,7 +83,7 @@ dependencies {
     implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.20'
 
     // 9 시큐리티 설정
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.5.3'
+//    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.5.3'
 
     // 10 타임리프, 시큐리티 연동설정
     // https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity6
@@ -97,8 +97,7 @@ dependencies {
 //CKM
 
 //YYJ
-    // MinIO (AWS S3 호환) 연동을 위한 AWS SDK S3
-    implementation 'software.amazon.awssdk:s3:2.26.18'
+
 //YYJ
 
 //LSY
