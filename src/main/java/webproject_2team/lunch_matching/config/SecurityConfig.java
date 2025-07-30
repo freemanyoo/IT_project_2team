@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/", // 루트 경로도 포함 (혹시 모를 경우)
                         "/signup.html", // 회원가입 HTML 파일 자체
+                        "/test",
                         "/static/js/**",       // 모든 JavaScript 파일
                         "/css/**",      // 모든 CSS 파일
                         "/images/**",   // 모든 이미지 파일
@@ -56,7 +57,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
 
                 // 루트 경로 및 메인 페이지 (컨트롤러에서 "/" 또는 "/main"을 처리할 경우)
-                .requestMatchers("/", "/main").permitAll()
+                .requestMatchers("/", "/main", "/test").permitAll()
 
                  // 회원가입, 이메일 인증, 로그인 등 API는 인증 없이 접근 허용
                 .requestMatchers("/signup.html", "/login","/api/members/**", "/api/auth/**").permitAll()
