@@ -1,2 +1,9 @@
-**리플 좋아요 작업 남았음**1
-접속주소 : http://localhost:8080/review/list
+접속주소 :
+리스트
+http://localhost:8080/review/list
+작성
+http://localhost:8080/review/register
+수정
+http://localhost:8080/review/modify
+상세보기
+http://localhost:8080/review/read
