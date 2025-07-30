@@ -37,7 +37,8 @@ public class SecurityConfig {
                         "/signup.html", // 회원가입 HTML 파일 자체
                         "/test",
                         "/static/js/**",       // 모든 JavaScript 파일
-                        "/css/**",      // 모든 CSS 파일
+                        "/css/**",
+                        "/static/*",
                         "/images/**",   // 모든 이미지 파일
                         "/favicon.ico", // 파비콘
                         "/error/**",     // 에러 페이지도 무시 (선택 사항)
