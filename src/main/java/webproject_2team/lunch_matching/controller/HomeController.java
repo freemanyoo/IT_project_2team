@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Controller
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(Model model) {
         model.addAttribute("appName", "Lunch Match Application");
         model.addAttribute("pageLocation", "src/main/resources/templates/index.html");
