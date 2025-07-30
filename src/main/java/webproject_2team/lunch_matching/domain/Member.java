@@ -38,7 +38,7 @@ public class Member {
     @Column(nullable = false, length = 10) // 이름 필드 추가 (필수, 길이 제한)
     private String name;
 
-    @Column(nullable = false, length = 5)
+    @Column(nullable = false, length = 10)
     private String gender;
 
 //    @Setter
