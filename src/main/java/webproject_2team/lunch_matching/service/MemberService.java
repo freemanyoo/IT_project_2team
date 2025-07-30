@@ -1,5 +1,6 @@
 package webproject_2team.lunch_matching.service;
 
+import webproject_2team.lunch_matching.domain.Member;
 import webproject_2team.lunch_matching.dto.MemberSignupDTO;
 import webproject_2team.lunch_matching.dto.ProfileDTO;
 
@@ -21,6 +22,8 @@ public interface MemberService {
     // 전화번호 중복 확인
     boolean isPhoneNumberExists(String phoneNumber);
 
+    // username(사용자 아이디)를 가지고 정보 조회하기.
+    Member getMemberByUsername(String username);
     // TODO: 로그인 메서드, 회원 정보 조회/수정/삭제 메서드 등을 추가예정임.
 }
 

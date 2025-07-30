@@ -16,15 +16,15 @@ public class LoginController {
 
     // 로그인 성공 시 이동할 메인 페이지 또는 루트 페이지 핸들러
     // SecurityConfig.defaultSuccessUrl("/") 와 일치해야 합니다.
-    @GetMapping("/")
-    public String rootPage() {
-        log.info("GET / - Redirecting to main page (or showing index).");
-        // 실제 메인 페이지가 있다면 해당 경로로 리다이렉트하거나 해당 템플릿을 반환
-        // 예시: Thymeleaf로 만든 메인 페이지가 "main.html"이라면
-        return "main"; // 또는 "redirect:/main"
-    }
+//    @GetMapping("/")
+//    public String rootPage() {
+//        log.info("GET / - Redirecting to main page (or showing index).");
+//        // 실제 메인 페이지가 있다면 해당 경로로 리다이렉트하거나 해당 템플릿을 반환
+//        // 예시: Thymeleaf로 만든 메인 페이지가 "main.html"이라면
+//        return "main"; // 또는 "redirect:/main"
+//    }
 
-    // 만약 메인 페이지의 실제 URL이 /main 이라면 다음 핸들러도 추가
+    // 로그인 안한 사용자도 /main 을 GET방식으로 들어갈수있게
     @GetMapping("/main")
     public String mainPage() {
         log.info("GET /main - Displaying main page.");
