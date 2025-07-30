@@ -42,7 +42,7 @@ public class BoardController {
 
     @GetMapping("/board/read")
     public String read(@RequestParam("id") Long id,
-                       @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender,
+                       @RequestParam(value = "gender", required = false, defaultValue = "성별상관무") String gender,
                        @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(value = "type", required = false) String type,
                        @RequestParam(value = "keyword", required = false) String keyword,
@@ -52,7 +52,7 @@ public class BoardController {
         Board board = boardService.read(id);
         if (board != null) {
             // 성별 접근 권한 확인
-            if (!boardService.canAccessBoard(board, userGender)) {
+            if (!boardService.canAccessBoard(board, gender)) {
                 model.addAttribute("error", "접근 권한이 없습니다. (" + board.getGenderLimit() + " 전용)");
                 return "access_denied";
             }
@@ -62,7 +62,7 @@ public class BoardController {
 
             model.addAttribute("board", board);
             model.addAttribute("comments", comments);
-            model.addAttribute("userGender", userGender);
+            model.addAttribute("gender", gender);
 
             // 페이지 정보 추가
             model.addAttribute("page", page);
@@ -156,7 +156,7 @@ public class BoardController {
     public String addComment(@RequestParam("boardId") Long boardId,
                              @RequestParam("content") String content,
                              @RequestParam("writer") String writer,
-                             @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender,
+                             @RequestParam(value = "gender", required = false, defaultValue = "성별상관무") String gender,
                              @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(value = "type", required = false) String type,
                              @RequestParam(value = "keyword", required = false) String keyword,
@@ -167,18 +167,18 @@ public class BoardController {
             // 댓글 내용 바이트 수 검증 (100바이트)
             if (content != null && content.getBytes("UTF-8").length > 100) {
                 model.addAttribute("commentError", "댓글은 100바이트를 초과할 수 없습니다.");
-                return read(boardId, userGender, page, type, keyword, genderFilter, foodFilter, model);
+                return read(boardId, gender, page, type, keyword, genderFilter, foodFilter, model);
             }
 
             // 필수 필드 검증
             if (content == null || content.trim().isEmpty()) {
                 model.addAttribute("commentError", "댓글 내용을 입력해주세요.");
-                return read(boardId, userGender, page, type, keyword, genderFilter, foodFilter, model);
+                return read(boardId, gender, page, type, keyword, genderFilter, foodFilter, model);
             }
 
             if (writer == null || writer.trim().isEmpty()) {
                 model.addAttribute("commentError", "작성자를 입력해주세요.");
-                return read(boardId, userGender, page, type, keyword, genderFilter, foodFilter, model);
+                return read(boardId, gender, page, type, keyword, genderFilter, foodFilter, model);
             }
 
             // 댓글 저장
@@ -186,7 +186,7 @@ public class BoardController {
 
             // 성공적으로 저장된 후 리다이렉트 (페이지 정보 포함)
             StringBuilder redirectUrl = new StringBuilder("/board/read?id=" + boardId);
-            redirectUrl.append("&userGender=").append(URLEncoder.encode(userGender, "UTF-8"));
+            redirectUrl.append("&gender=").append(URLEncoder.encode(gender, "UTF-8"));
             redirectUrl.append("&page=").append(page);
 
             if (type != null && !type.trim().isEmpty()) {
@@ -206,17 +206,17 @@ public class BoardController {
 
         } catch (IllegalStateException e) {
             model.addAttribute("commentError", e.getMessage());
-            return read(boardId, userGender, page, type, keyword, genderFilter, foodFilter, model);
+            return read(boardId, gender, page, type, keyword, genderFilter, foodFilter, model);
         } catch (UnsupportedEncodingException e) {
             model.addAttribute("commentError", "댓글 처리 중 오류가 발생했습니다.");
-            return read(boardId, userGender, page, type, keyword, genderFilter, foodFilter, model);
+            return read(boardId, gender, page, type, keyword, genderFilter, foodFilter, model);
         }
     }
 
     @PostMapping("/board/comment/delete/{id}")
     public String deleteComment(@PathVariable("id") Long commentId,
                                 @RequestParam("boardId") Long boardId,
-                                @RequestParam(value = "userGender", required = false, defaultValue = "성별상관무") String userGender,
+                                @RequestParam(value = "gender", required = false, defaultValue = "성별상관무") String gender,
                                 @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                 @RequestParam(value = "type", required = false) String type,
                                 @RequestParam(value = "keyword", required = false) String keyword,
@@ -226,7 +226,7 @@ public class BoardController {
 
         try {
             StringBuilder redirectUrl = new StringBuilder("/board/read?id=" + boardId);
-            redirectUrl.append("&userGender=").append(URLEncoder.encode(userGender, "UTF-8"));
+            redirectUrl.append("&gender=").append(URLEncoder.encode(gender, "UTF-8"));
             redirectUrl.append("&page=").append(page);
 
             if (type != null && !type.trim().isEmpty()) {
@@ -244,7 +244,7 @@ public class BoardController {
 
             return "redirect:" + redirectUrl.toString();
         } catch (Exception e) {
-            return "redirect:/board/read?id=" + boardId + "&userGender=" + userGender + "&page=" + page;
+            return "redirect:/board/read?id=" + boardId + "&gender=" + gender + "&page=" + page;
         }
     }
 

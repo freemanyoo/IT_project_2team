@@ -216,16 +216,16 @@
         }
 
         // 사용자 성별을 링크에 추가하는 함수
-        function addUserGender(link) {
-            const userGenderSelect = document.getElementById('userGenderSelect');
-            if (userGenderSelect) {
-                const userGender = userGenderSelect.value;
+        function addgender(link) {
+            const genderSelect = document.getElementById('genderSelect');
+            if (genderSelect) {
+                const gender = genderSelect.value;
                 const href = link.getAttribute('href');
-                if (href.includes('userGender=')) {
-                    link.setAttribute('href', href.replace(/userGender=[^&]*/, 'userGender=' + encodeURIComponent(userGender)));
+                if (href.includes('gender=')) {
+                    link.setAttribute('href', href.replace(/gender=[^&]*/, 'gender=' + encodeURIComponent(gender)));
                 } else {
                     const separator = href.includes('?') ? '&' : '?';
-                    link.setAttribute('href', href + separator + 'userGender=' + encodeURIComponent(userGender));
+                    link.setAttribute('href', href + separator + 'gender=' + encodeURIComponent(gender));
                 }
             }
         }
@@ -309,8 +309,8 @@
         </td>
         <td th:text="${responseDTO.totalCount - (responseDTO.pageRequestDTO.page - 1) * responseDTO.pageRequestDTO.size - i.index}">1</td>
         <td class="title-cell">
-            <a th:href="@{/board/read(id=${b.id}, userGender='성별상관무', page=${responseDTO.current}, type=${param.type}, keyword=${param.keyword}, genderFilter=${param.genderFilter}, foodFilter=${param.foodFilter})}"
-               th:text="${b.title}" onclick="addUserGender(this)">제목</a>
+            <a th:href="@{/board/read(id=${b.id}, gender='성별상관무', page=${responseDTO.current}, type=${param.type}, keyword=${param.keyword}, genderFilter=${param.genderFilter}, foodFilter=${param.foodFilter})}"
+               th:text="${b.title}" onclick="addgender(this)">제목</a>
         </td>
         <td th:text="${b.writer}">글쓴이</td>
         <td th:text="${b.region}">지역</td>

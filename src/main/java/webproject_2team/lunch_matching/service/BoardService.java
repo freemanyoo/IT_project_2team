@@ -99,10 +99,10 @@ public class BoardService {
     }
 
     // 성별 접근 권한 체크
-    public boolean canAccessBoard(Board board, String userGender) {
+    public boolean canAccessBoard(Board board, String gender) {
         if (board.getGenderLimit() == null || board.getGenderLimit().equals("성별상관무")) {
             return true;
         }
-        return board.getGenderLimit().equals(userGender);
+        return board.getGenderLimit().equals(gender);
     }
 }
