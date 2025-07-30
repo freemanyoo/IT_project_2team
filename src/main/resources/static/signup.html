@@ -24,6 +24,7 @@
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: #fefefe; padding: 20px; border: 1px solid #888; border-radius: 8px; width: 80%; max-width: 400px; text-align: center; }
         .modal-content button { margin-top: 15px; }
+
     </style>
 </head>
 <body>
@@ -36,6 +37,17 @@
             <input type="text" id="name" name="name" required disabled>
             <div class="error-message" id="nameError"></div>
             <div class="success-message" id="nameSuccess"></div>
+        </div>
+
+        <div class="form-group">
+            <div>
+            <input type="radio" id="male" name="gender" value="male">
+             <label for="male">남자</label>
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">여자</label>
+            </div>
+            <div class="error-message" id="genderError"></div>
+           <div class="success-message" id="genderSuccess"></div>
         </div>
 
         <div class="form-group">

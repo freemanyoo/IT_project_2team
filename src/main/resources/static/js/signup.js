@@ -24,8 +24,17 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmPassword: { input: document.getElementById('confirmPassword'), error: document.getElementById('confirmPasswordError'), success: document.getElementById('confirmPasswordSuccess')  },
         nickname: { input: document.getElementById('nickname'), error: document.getElementById('nicknameError'), success: document.getElementById('nicknameSuccess')  },
         birthDate: { input: document.getElementById('birthDate'), error: document.getElementById('birthDateError'), success: document.getElementById('birthDateSuccess')  },
-        phoneNumber: { input: document.getElementById('phoneNumber'), error: document.getElementById('phoneNumberError'), success: document.getElementById('phoneNumberSuccess')  }
+        phoneNumber: { input: document.getElementById('phoneNumber'), error: document.getElementById('phoneNumberError'), success: document.getElementById('phoneNumberSuccess')  },
+
+        gender: {
+            input: () => document.querySelector('input[name="gender"]:checked'),
+            error: document.getElementById('genderError'),
+            success: document.getElementById('genderSuccess')
+        }
     };
+
+    // gender 라디오 버튼들을 직접 선택하여 별도의 변수로 관리
+    const genderRadios = document.querySelectorAll('input[name="gender"]');
 
     let isEmailVerified = false; // 이메일 인증 상태 플래그
 
@@ -36,6 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
             fields[key].input.disabled = true;
         }
     });
+
+    // gender 라디오 버튼들도 초기 비활성화
+    genderRadios.forEach(radio => {
+        radio.disabled = true;
+    });
+
     profileImageInput.disabled = true;
     signupBtn.disabled = true;
     imagePreview.style.display = 'none'; // 초기에는 이미지 미리보기 숨김
@@ -156,6 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 Object.keys(fields).forEach(key => {
                     fields[key].input.disabled = false;
                 });
+
+                // gender 라디오 버튼들도 활성화
+                genderRadios.forEach(radio => {
+                    radio.disabled = false;
+                });
+
                 profileImageInput.disabled = false;
                 signupBtn.disabled = false; // 회원가입 버튼 활성화
             } else {
@@ -186,6 +207,16 @@ document.addEventListener('DOMContentLoaded', () => {
             showModal("입력 내용을 다시 확인해주세요.");
             return;
         }
+
+        // --- gender 필드 유효성 검사 추가 ---
+        const selectedGender = document.querySelector('input[name="gender"]:checked');
+        if (!selectedGender) {
+            showMessage(fields.gender.error, "성별을 선택해주세요.");
+            showModal("성별을 선택해주세요.");
+            return;
+        }
+        // --- gender 필드 유효성 검사 끝 ---
+
         // 추가적인 클라이언트 측 유효성 검사 (예: 빈 필드, 형식 등)
         let allFieldsValid = true;
         for (const key in fields) {
@@ -212,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
             nickname: fields.nickname.input.value,
             birthDate: fields.birthDate.input.value,
             phoneNumber: fields.phoneNumber.input.value,
-            name: document.getElementById('name').value // name 필드 추가
+            name: document.getElementById('name').value, // name 필드 추가
+            gender: selectedGender.value
         };
 
         // memberSignupDTO를 JSON 문자열로 변환하여 FormData에 Blob으로 추가

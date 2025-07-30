@@ -35,6 +35,7 @@ public class MemberServiceImpl implements  MemberService {
     private final PasswordEncoder passwordEncoder;
     private final EmailAuthService emailAuthService;
 
+
     @Value("${com.busanit501.upload.path}") // application.properties에서 파일 업로드 경로 주입
     private String uploadPath;
 
@@ -49,13 +50,13 @@ public class MemberServiceImpl implements  MemberService {
         // 중복 확인
         if (isUsernameExists(memberSignupDTO.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        }
+        } // 로그인아이디중복
         if (isEmailExists(memberSignupDTO.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        }
+        } // 이메일중복
         if (isPhoneNumberExists(memberSignupDTO.getPhoneNumber())) {
             throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
-        }
+        } // 전화번호중복
 
         // 닉네임 중복 처리 (랜덤 숫자 추가)
         String finalNickname = memberSignupDTO.getNickname();
@@ -135,7 +136,10 @@ public class MemberServiceImpl implements  MemberService {
         try {
             Member savedMember = memberRepository.save(member);
             log.info("회원 가입 성공: {}", savedMember.getUsername());
+            emailAuthService.removeAuthInfo(memberSignupDTO.getEmail()); // <-- DB에 저장한 후 인증삭제.
+            log.info("회원가입 성공 및 이메일 인증 정보 삭제 완료: {}", memberSignupDTO.getEmail());
             return savedMember.getId(); // 저장된 회원의 ID 반환
+
         } catch (DataIntegrityViolationException e) {
             log.error("회원 가입 중 데이터 무결성 위반 오류: {}", e.getMessage());
             // 여기서는 이미 isUsernameExists 등으로 중복을 체크했으므로,

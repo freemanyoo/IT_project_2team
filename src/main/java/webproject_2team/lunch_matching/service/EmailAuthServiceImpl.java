@@ -49,10 +49,15 @@ public class EmailAuthServiceImpl implements EmailAuthService{
 
         // 3. 인증 코드 일치 여부 확인
         boolean isMatched = authInfo.code.equals(inputCode);
-        if (isMatched) {
-            authStorage.remove(email); // 인증 성공 시 정보 삭제 (일회용)
-        }
+//        if (isMatched) {
+//            authStorage.remove(email); // 인증 성공 시 정보 삭제 (일회용)
+//        }
         return isMatched;
+    }
+
+    @Override
+    public void removeAuthInfo(String email) {
+        authStorage.remove(email); // 인증 성공 시 정보 삭제 (일회용)
     }
 
     // 6자리 인증코드 생성
