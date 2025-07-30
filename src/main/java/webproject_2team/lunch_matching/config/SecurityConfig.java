@@ -73,7 +73,7 @@ public class SecurityConfig {
                 // 2. 폼 로그인 설정
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login") // 사용자 정의 로그인 페이지 URL (GET 요청)
-                        .defaultSuccessUrl("/", true) // 로그인 성공 시 이동할 기본 페이지 (항상 이 URL로 이동)
+                        .defaultSuccessUrl("/myPage", true) // 로그인 성공 시 이동할 기본 페이지 (항상 이 URL로 이동)
                         .failureUrl("/login?error") // 로그인 실패 시 이동할 URL (error 파라미터 추가)
                         .usernameParameter("username") // 로그인 폼의 사용자명 필드 이름 (기본값)
                         .passwordParameter("password") // 로그인 폼의 비밀번호 필드 이름 (기본값)

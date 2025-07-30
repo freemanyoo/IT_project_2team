@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style.css"> <style>
+    <style>
     body {
         display: flex;
         justify-content: center;
@@ -103,6 +103,16 @@
 
     <div class="text-center mt-3">
         <a href="/signup.html">회원가입</a> | <a href="#">아이디/비밀번호 찾기</a>
+    </div>
+</div>
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeLoginModalBtn">&times;</span>
+        <p id="loginModalMessage"></p>
+        <div class="modal-footer">
+            <button id="loginModalConfirmBtn" class="btn btn-primary">확인</button>
+        </div>
     </div>
 </div>
 

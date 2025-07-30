@@ -64,4 +64,6 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "회원가입 중 서버 오류가 발생했습니다."));
         }
     }
+
+
 }

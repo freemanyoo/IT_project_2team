@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) { // HTTP 상태 코드가 200번대인 경우
                 showModal("회원가입이 성공적으로 완료되었습니다.", () => {
-                    window.location.href = '/main'; // 메인 페이지로 리다이렉트 (예시)
+                    window.location.href = '/login'; // 로그인 페이지로 리다이렉트
                 });
             } else {
                 let errorMessage = "회원가입 중 오류가 발생했습니다.";
