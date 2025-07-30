@@ -1,0 +1,2 @@
+회원가입 : http://localhost:8080/signup.html
+로그인 : http://localhost:8080/login
