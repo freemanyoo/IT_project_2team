@@ -11,6 +11,7 @@ public class CustomUserDetails extends User {
     // 추가적으로 저장하고 싶은 사용자 정보
     private final String nickname;
     private final String email;
+    private final String gender;
 
     public CustomUserDetails(
             String username,
@@ -18,13 +19,15 @@ public class CustomUserDetails extends User {
             Collection<? extends GrantedAuthority> authorities,
             // 추가 정보들을 생성자 파라미터로 받습니다.
             String nickname,
-            String email
+            String email,
+            String gender
     ) {
         // 부모 클래스인 User의 생성자를 호출합니다.
         super(username, password, authorities);
         // 추가 정보를 초기화합니다.
         this.nickname = nickname;
         this.email = email;
+        this.gender = gender;
     }
 
 }

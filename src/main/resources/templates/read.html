@@ -88,7 +88,7 @@
     </div>
 
     <div class="btn-area">
-        <a th:href="@{/board/list(page=${page}, type=${type}, keyword=${keyword}, genderFilter=${genderFilter}, foodFilter=${foodFilter})}" class="btn btn-primary">목록으로</a>
+        <a th:href="@{/board/list} + ${pageRequestDTO.getLink()}" class="btn btn-primary">목록으로</a>
         <div th:if="${board.writerEmail != null and loggedInUserEmail != null and board.writerEmail == loggedInUserEmail}" style="display: inline;">
             <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-info">수정하기</a>
             <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display: inline;">

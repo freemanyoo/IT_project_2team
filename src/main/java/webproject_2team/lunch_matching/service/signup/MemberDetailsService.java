@@ -52,7 +52,8 @@ public class MemberDetailsService implements UserDetailsService {
                 member.getPassword(),   // 암호화된 비밀번호 (Spring Security가 매칭해줌)
                 authorities,             // 사용자에게 부여된 권한 목록
                 member.getNickname(),
-                member.getEmail()
+                member.getEmail(),
+                member.getGender()
         );
     }
 }
