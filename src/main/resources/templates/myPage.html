@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,30 @@
             display: flex;
             flex-direction: column; /* 세로 방향으로 섹션 배치 */
             min-height: 100vh; /* 뷰포트 전체 높이 사용 */
-            background-color: #f8f9fa;
+            background-color: #f8f9fa; /* 페이지 전체 배경색 */
+        }
+
+        /* 새로 추가된 헤더 스타일 */
+        .fixed-header {
+            position: fixed; /* 화면에 고정 */
+            top: 0;
+            right: 0;
+            /* padding과 background-color를 제거하여 투명하게 만듦 */
+            padding: 0; /* 마진 배경을 없애기 위해 padding 제거 */
+            background-color: transparent; /* 배경색을 투명하게 설정 */
+            border-bottom-left-radius: 0; /* 둥근 모서리 제거 (선택 사항) */
+            box-shadow: none; /* 그림자 효과 제거 (선택 사항) */
+            z-index: 1000; /* 다른 요소 위에 오도록 */
+            display: flex; /* 내부 요소 정렬을 위해 flex 사용 */
+            align-items: center; /* 세로 중앙 정렬 */
+            /* gap: 15px; */ /* 요소가 하나뿐이므로 필요 없음 */
+        }
+
+        .fixed-header p {
+            margin: 0;
+            color: #343a40;
+            font-size: 0.95em;
+            font-weight: bold;
         }
 
         .my-page-section {
@@ -23,6 +46,7 @@
             align-items: center; /* 내부 요소 가로 중앙 정렬 */
             text-align: center;
             box-sizing: border-box; /* 패딩이 높이에 포함되도록 */
+            padding-top: 80px; /* 고정 헤더 높이만큼 여백 추가 (필요시 조정) */
         }
 
         /* 각 섹션의 높이를 뷰포트 높이의 1/3로 설정 */
@@ -133,7 +157,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            margin: 10px;
+            margin: 0; /* 모든 .btn에 대한 기본 마진 제거 */
             transition: background-color 0.3s, opacity 0.3s;
         }
 
@@ -147,21 +171,37 @@
             color: white;
         }
 
+        .btn-secondary { /* 로그아웃 버튼 색상 및 스타일 */
+            background-color: black; /* 배경색 검은색 */
+            color: white; /* 글씨색 흰색 */
+            margin: 0; /* 마진 없음 */
+            /* padding과 font-size가 버튼 크기를 결정하므로 별도의 width: auto;는 필요 없음 */
+        }
+
         .btn:hover {
             opacity: 0.9;
         }
     </style>
 </head>
 <body>
+<!-- 새로 추가된 고정 헤더 -->
+<div class="fixed-header">
+    <a th:href="@{/logout}" class="btn btn-secondary">로그아웃</a>
+</div>
+
 <div class="my-page-section top-section">
     <div class="profile-image-container">
-        <!-- 프로필 이미지 경로를 MemberResponseDTO의 profileThumbnailUrl 또는 profileImageUrl을 사용하도록 수정 -->
         <img th:if="${member?.profileThumbnailUrl}"
              th:src="${member.profileThumbnailUrl}"
              alt="프로필 이미지" class="profile-image"/>
         <img th:unless="${member?.profileThumbnailUrl}" src="/images/default-profile.png" alt="기본 프로필" class="profile-image"/>
     </div>
     <h2 class="welcome-message" th:text="${member?.nickname} ? ${member.nickname} + '님 환영합니다.' : '환영합니다.'">더미닉네임님 환영합니다.</h2>
+
+    <!-- 역할 정보 표시 (환영 메시지 아래로 이동) -->
+    <div sec:authorize="isAuthenticated()" class="mt-3">
+        <p>당신의 역할: <span sec:authentication="principal.authorities"></span></p>
+    </div>
 </div>
 
 <div class="my-page-section middle-section">

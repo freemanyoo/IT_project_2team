@@ -13,8 +13,26 @@
         input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"] {
             width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
         }
+        /* 버튼 그룹을 위한 스타일 */
+        .button-group {
+            display: flex;
+            justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+            gap: 10px; /* 버튼 간 간격 */
+            margin-top: 20px;
+        }
         button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
         button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .btn-back { /* 뒤로가기 버튼을 위한 새로운 스타일 */
+            background-color: #6c757d; /* 회색 계열 */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+        .btn-back:hover {
+            opacity: 0.9;
+        }
         .error-message { color: red; font-size: 0.9em; margin-top: 5px; display: none; }
         .success-message { color: green; font-size: 0.9em; margin-top: 5px; display: none; }
         #profileImagePreview { width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 50%; overflow: hidden; margin: 10px auto; display: block; }
@@ -104,8 +122,10 @@
                 <label for="deleteProfileImage">현재 프로필 사진 삭제</label>
             </div>
         </div>
-
-        <button type="submit" id="updateBtn">정보 수정</button>
+        <div class="button-group">
+            <button type="button" id="backBtn" class="btn btn-back">뒤로가기</button>
+            <button type="submit" id="updateBtn" class="btn btn-primary">정보 수정</button>
+        </div>
     </form>
 </div>
 
@@ -249,7 +269,8 @@
         const newPassword = document.getElementById('newPassword').value;
         const confirmNewPassword = document.getElementById('confirmNewPassword').value;
 
-        if (newPassword && newPassword !== confirmNewPassword) {
+        // 새 비밀번호 필드가 입력되었을 때만 비밀번호 일치 여부 검증
+        if ((newPassword || confirmNewPassword) && newPassword !== confirmNewPassword) {
             showModal('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
             return;
         }
@@ -259,8 +280,9 @@
             nickname: document.getElementById('nickname').value,
             phoneNumber: document.getElementById('phoneNumber').value,
             currentPassword: document.getElementById('currentPassword').value,
-            newPassword: newPassword,
-            confirmNewPassword: confirmNewPassword,
+            // 새 비밀번호가 입력되지 않았다면 DTO에 포함하지 않음
+            newPassword: newPassword || null, // 빈 문자열 대신 null로 보내서 백엔드에서 처리하기 쉽게
+            confirmNewPassword: confirmNewPassword || null, // 빈 문자열 대신 null로 보내서 백엔드에서 처리하기 쉽게
             deleteProfileImage: document.getElementById('deleteProfileImage').checked
         };
 
@@ -299,6 +321,11 @@
                 showModal('회원 정보 수정 실패: ' + error.message);
             });
     });
+    // 뒤로가기 버튼 이벤트 리스너
+    document.getElementById('backBtn').addEventListener('click', () => {
+        window.location.href = '/myPage';
+    });
+
 </script>
 </body>
 </html>
