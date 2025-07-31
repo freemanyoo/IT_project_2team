@@ -1,28 +1,11 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>오늘 뭐 먹지? - 메인페이지</title>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="css">
     <link rel="stylesheet" href="/css/test.css" />
-</head>
-<body>
-<header>
-    <h1>🍱 오늘 뭐 먹지?</h1>
-    <nav>
-        <ul>
-            <li><a href="/member/signup">회원가입</a></li>
-            <li><a href="/member/login">로그인</a></li>
-            <li><a href="/party/list">파티원 모집</a></li>
-            <li><a href="/diary/list">오점완</a></li>
-            <li><a href="/restaurant/recommend">맛집정보</a></li>
-            <li><a href="/review/list">식사 후기</a></li>
-            <li><a href="/safety/report">신고센터</a></li>
-            <li><a href="/map">내 위치 지도보기</a></li>
-        </ul>
-    </nav>
-</header>
+</th:block>
 
+<div layout:fragment="content">
 <main>
     <section>
         <h2>🙋‍♀️ 동네에서 함께 먹어요</h2>
@@ -42,9 +25,4 @@
         <a href="/diary/list"><button>오점완 하러가기</button></a>
     </section>
 </main>
-
-<footer>
-    <p>&copy; 2025 오늘 점심 먹지? All rights reserved.</p>
-</footer>
-</body>
-</html>
+</div>

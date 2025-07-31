@@ -1,15 +1,11 @@
-<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
-<head>
-    <title>리뷰 목록</title>
-    <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/review/review.css}" />
-    </th:block>
-</head>
-<body>
-    <div layout:fragment="content">
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/review/review.css}" />
+</th:block>
+
+<div layout:fragment="content">
     <h1>리뷰 목록</h1>
 
     <div class="search-area mb-4">
@@ -45,7 +41,7 @@
                  alt="No Image" class="img-fluid rounded-start review-thumbnail">
             <span th:if="${review.uploadFileNames != null and review.uploadFileNames.size() > 1}"
                   class="image-count-badge"
-                  th:text="'+' + ${review.uploadFileNames.size() - 1}"></span>
+                  th:text="'+ ' + ${review.uploadFileNames.size() - 1}"></span>
         </a>
     </div>
 </div>
@@ -91,5 +87,3 @@
         </ul>
     </div>
 </div>
-</body>
-</html>

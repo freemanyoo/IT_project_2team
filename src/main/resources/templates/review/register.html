@@ -1,12 +1,10 @@
-<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
-<head>
-    <title>리뷰 등록</title>
+<th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/review/register.css}">
-</head>
-<body>
+</th:block>
+
 <div layout:fragment="content">
     <h1>새 리뷰 등록</h1>
 
@@ -54,8 +52,7 @@
 
     <a href="/review/list" class="back-link">리뷰 목록으로 돌아가기</a>
 </div>
-</body>
+
 <th:block layout:fragment="script">
     <script th:src="@{/js/review/register.js}"></script>
 </th:block>
-</html>

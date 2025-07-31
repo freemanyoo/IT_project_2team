@@ -1,12 +1,10 @@
-<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
-<head>
-    <title>리뷰 수정</title>
+<th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/review/register.css}">
-</head>
-<body>
+</th:block>
+
 <div layout:fragment="content">
     <h1>리뷰 수정</h1>
 
@@ -82,7 +80,7 @@
     </form>
 
 </div>
-</body>
+
 <th:block layout:fragment="script">
     <script th:src="@{/js/review/register.js}"></script>
     <script th:inline="javascript">
@@ -114,4 +112,3 @@
     </script>
     <script th:src="@{/js/review/review-detail.js}"></script>
 </th:block>
-</html>
