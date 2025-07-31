@@ -88,11 +88,14 @@
     </div>
 
     <div class="btn-area">
-        <a th:href="@{/board/list(page=${page}, type=${type}, keyword=${keyword}, genderFilter=${genderFilter}, foodFilter=${foodFilter})}" class="btn btn-primary">목록으로</a>
-        <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-info">수정하기</a>
-        <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display: inline;">
-            <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제하기</button>
-        </form>
+        <a th:href="@{/board/list} + ${pageRequestDTO.getLink()}" class="btn btn-primary">목록으로</a>
+        <div th:if="${board.writerEmail != null and loggedInUserEmail != null and board.writerEmail == loggedInUserEmail}" style="display: inline;">
+            <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-info">수정하기</a>
+            <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display: inline;">
+<!--                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
+                <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제하기</button>
+            </form>
+        </div>
     </div>
 
     <div class="comment-section">
@@ -103,7 +106,7 @@
                 <div id="commentCounter" class="char-counter">0/100 bytes</div>
             </div>
             <div class="mb-3">
-                <input type="text" id="commentWriter" class="form-control" placeholder="작성자">
+                <input type="text" id="commentWriter" class="form-control" th:value="${loggedInNickname}" readonly>
             </div>
             <button type="button" id="commentSubmitBtn" class="btn btn-primary" onclick="submitComment()">댓글 작성</button>
             <div id="commentMessage" style="display: none;"></div>
@@ -117,8 +120,10 @@
                     <div>
                         <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성시간</span>
                         <!-- 버튼에 클래스 추가 -->
-                        <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-edit">수정</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete">삭제</button>
+                        <th:block th:if="${comment.writerEmail != null and loggedInUserEmail != null and comment.writerEmail == loggedInUserEmail}">
+                            <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-edit">수정</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete">삭제</button>
+                        </th:block>
                     </div>
                 </div>
                 <!-- 댓글 내용과 수정 폼을 위한 컨테이너 추가 -->
@@ -359,28 +364,49 @@
         }
 
         window.submitComment = async function() {
-            const content = document.getElementById('commentContent');
-            const writer = document.getElementById('commentWriter');
-            if (!content.value.trim()) { alert('댓글 내용을 입력해주세요.'); return; }
-            if (getByteLength(content.value) > 100) { alert('댓글은 100바이트를 초과할 수 없습니다.'); return; }
-            if (!writer.value.trim()) { alert('작성자를 입력해주세요.'); return; }
+            const contentInput = document.getElementById('commentContent');
+            const writerInput = document.getElementById('commentWriter');
 
+            // --- 유효성 검사 ---
+            if (!contentInput.value.trim()) {
+                alert('댓글 내용을 입력해주세요.');
+                return;
+            }
+            if (getByteLength(contentInput.value) > 100) {
+                alert('댓글은 100바이트를 초과할 수 없습니다.');
+                return;
+            }
+            if (!writerInput || !writerInput.value.trim()) {
+                showMessage('로그인이 필요합니다.', 'error');
+                return;
+            }
+
+            // --- 서버에 보낼 데이터 준비 ---
             const formData = new FormData();
             formData.append('boardId', boardData.id);
-            formData.append('content', content.value);
-            formData.append('writer', writer.value);
+            formData.append('content', contentInput.value);
 
+            // --- 서버 통신 ---
             try {
-                const response = await fetch('/api/board/comment', { method: 'POST', body: formData });
+                const response = await fetch('/api/board/comment', {
+                    method: 'POST',
+                    // CSRF가 비활성화 상태이므로 headers 객체가 필요 없습니다.
+                    body: formData
+                });
+
                 const result = await response.json();
+
                 if (result.success) {
                     addCommentToList(result.comment);
-                    content.value = ''; writer.value = ''; checkCommentLength(); updateCommentCount();
+                    contentInput.value = '';
+                    checkCommentLength();
+                    updateCommentCount();
                     showMessage('댓글이 성공적으로 작성되었습니다.', 'success');
                 } else {
                     showMessage(result.message, 'error');
                 }
             } catch (error) {
+                console.error('댓글 작성 중 잡힌 실제 오류:', error);
                 showMessage('댓글 작성 중 오류가 발생했습니다.', 'error');
             }
         }

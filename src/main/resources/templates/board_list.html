@@ -256,6 +256,8 @@
             <th style="width: 4%;">마감</th>
         </tr>
         </thead>
+        <div th:if="${error_message}" class="alert alert-danger" role="alert" th:text="${error_message}">
+            에러 메시지가 여기에 표시됩니다. </div>
         <tbody>
         <tr th:each="b, i : ${responseDTO.dtoList}">
             <td>
