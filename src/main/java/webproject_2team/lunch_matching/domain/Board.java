@@ -51,6 +51,9 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments; // 이 게시글에 달린 댓글 목록
 
+    @Column(name = "writer_email")
+    private String writerEmail;
+
     /**
      * 게시글이 마감되었는지 확인하는 메서드
      * @return 마감 시간이 현재 시간보다 이전이면 true, 아니면 false

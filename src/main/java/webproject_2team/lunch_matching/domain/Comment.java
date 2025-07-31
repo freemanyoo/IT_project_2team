@@ -25,4 +25,7 @@ public class Comment {
     private String writer;
 
     private LocalDateTime createdAt;
+
+    @Column(name = "writer_email")
+    private String writerEmail; // 이메일 저장용
 }
