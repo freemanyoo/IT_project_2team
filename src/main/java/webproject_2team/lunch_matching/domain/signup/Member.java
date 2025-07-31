@@ -80,7 +80,7 @@ public class Member {
         this.password = password;
     }
 
-    // 이메일 변경 메서드 (필요하다면)
+    // 이메일 변경 메서드 (변경안되게할거라 사용X)
     public void changeEmail(String email) {
         this.email = email;
     }
@@ -91,15 +91,20 @@ public class Member {
     }
 
     // 닉네임 설정 메서드 (Service에서 최종 닉네임을 설정할 때 사용)
-    public void addNickname(String nickname) { // addNickname으로 변경
+    public void changeNickname(String nickname) { // addNickname으로 변경
         this.nickname = nickname;
+    }
+
+    // 전화번호 변경 메서드 (새로 추가)
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     // 프로필 이미지 정보 업데이트 메서드 (편의를 위해)
     public void updateProfileImage(String uuid, String fileName, String savePath) {
         this.profileImageUuid = uuid;
         this.profileImageName = fileName;
-        this.profileImagePath = savePath + "/" + uuid + "_" + fileName;
+        this.profileImagePath = savePath;
         this.hasProfileImage = true;
     }
 
