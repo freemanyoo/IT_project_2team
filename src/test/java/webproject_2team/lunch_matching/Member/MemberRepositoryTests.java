@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
-import org.springframework.boot.test.mock.mockito.MockBean; // MockBean 임포트
+//import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ public class MemberRepositoryTests {
     @Autowired
     private MemberService memberService;
 
-    @MockBean // EmailAuthService를 Mock 객체로 대체
+//    @MockBean // EmailAuthService를 Mock 객체로 대체
     private EmailAuthService emailAuthService;
 
     @Test

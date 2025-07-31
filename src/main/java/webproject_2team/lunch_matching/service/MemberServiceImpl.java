@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -200,5 +201,12 @@ public class MemberServiceImpl implements  MemberService {
     @Override
     public boolean isPhoneNumberExists(String phoneNumber) {
         return memberRepository.existsByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public Member getMemberByUsername(String username) {
+        // username으로 Member를 찾아 반환합니다. 없으면 예외를 발생시키거나 Optional.empty()를 반환합니다.
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 회원을 찾을 수 없습니다."));
     }
 }
