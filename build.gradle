@@ -59,8 +59,8 @@ dependencies {
     implementation 'net.coobird:thumbnailator:0.4.20'
 
     // Spring Security 관련 의존성은 주석 처리된 상태를 유지합니다.
-    // implementation 'org.springframework.boot:spring-boot-starter-security:3.5.3'
-    // implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
+     implementation 'org.springframework.boot:spring-boot-starter-security:3.5.3'
+     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
 
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'software.amazon.awssdk:s3:2.26.18'
