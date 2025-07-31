@@ -171,7 +171,7 @@ public class BoardController {
     // REST API 방식으로 댓글 수정
     @PutMapping("/api/board/comment/{id}")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> updateCommentApi(@PathVariable("id") Long commentId,
+    public ResponseEntity<Map<String, Object>> updateComment(@PathVariable("id") Long commentId,
                                                                 @RequestBody Map<String, String> payload) {
         Map<String, Object> response = new HashMap<>();
         try {
