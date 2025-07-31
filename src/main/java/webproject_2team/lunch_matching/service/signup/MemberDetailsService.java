@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import webproject_2team.lunch_matching.domain.signup.Member;
 import webproject_2team.lunch_matching.repository.MemberRepository;
+import webproject_2team.lunch_matching.security.dto.CustomUserDetails;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -46,10 +47,13 @@ public class MemberDetailsService implements UserDetailsService {
         log.info("User roles: {}", authorities);
 
         // 3. Spring Security의 UserDetails 구현체인 User 객체 생성 및 반환
-        return new User(
+        return new CustomUserDetails(
                 member.getUsername(),   // 인증에 사용될 사용자명 (아이디)
                 member.getPassword(),   // 암호화된 비밀번호 (Spring Security가 매칭해줌)
-                authorities             // 사용자에게 부여된 권한 목록
+                authorities,             // 사용자에게 부여된 권한 목록
+                member.getNickname(),
+                member.getEmail(),
+                member.getGender()
         );
     }
 }

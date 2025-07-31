@@ -1,0 +1,73 @@
+/* Review List Specific Styles */
+.review-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.review-image-container {
+    position: relative;
+    /* height: 200px; */ /* Fixed height for images */
+    overflow: hidden;
+    display: flex; /* Use flexbox to center the image-wrapper */
+    justify-content: center;
+    align-items: center;
+}
+
+.image-wrapper {
+    width: 150px; /* Desired fixed width for the image */
+    height: 150px; /* Desired fixed height for the image */
+    position: relative; /* For absolute positioning of thumbnail */
+    overflow: hidden;
+    border-radius: 8px; /* Optional: rounded corners for the image */
+}
+
+.review-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image covers the area without distortion */
+}
+
+.image-count-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+}
+
+.review-details {
+    padding: 1rem;
+}
+
+.review-details .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.review-details .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.review-details .text-warning i {
+    color: #ffc107; /* Bootstrap yellow for stars */
+}
+
+.review-details .text-info {
+    font-weight: bold;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #ffa726;
+    border-color: #ffa726;
+    color: white;
+}
+
+.pagination .page-link {
+    color: #ffa726;
+}

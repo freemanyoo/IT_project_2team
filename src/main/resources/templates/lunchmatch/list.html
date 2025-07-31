@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"> <head>
+  <title>내가 저장한 맛집</title>
+  <th:block layout:fragment="css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      /* 레이아웃의 Bootstrap 스타일이 이 페이지의 디자인을 방해하지 않도록 설정 */
+      main.flex-grow-1 > .container {
+        max-width: 100%;
+        padding: 0;
+      }
+      /* 기존 스타일은 변경 없이 그대로 유지 */
+      .card-fade-in { animation: fadeIn 0.5s ease-in-out; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      #fullscreen-map-modal { transition: opacity 0.3s ease-in-out; }
+      #map {
+        width: 100%;
+        height: 600px;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+      .info {
+        padding: 5px;
+        border-radius: 5px;
+        background: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+        white-space: nowrap;
+      }
+      .info .title { font-weight: bold; font-size: 14px; color: #333; }
+      .highlighted { background-color: #e0f2fe !important; }
+    </style>
+  </th:block>
+</head>
+
+<div layout:fragment="content">
+  <div class="bg-gray-50">
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl flex flex-col flex-grow">
+      <header class="text-center my-8 flex-shrink-0">
+        <div class="flex justify-between items-center mb-8">
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-800">
+            내가 저장한 맛집 🍱
+          </h1>
+          <a href="/lunchmatch/map" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300">
+            지도에서 맛집 찾기
+          </a>
+        </div>
+        <p class="text-gray-500 mt-2">저장한 맛집들을 지도와 함께 만나보세요!</p>
+      </header>
+
+      <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-grow min-h-0">
+        <div class="flex flex-col h-full overflow-hidden">
+          <div class="bg-white p-4 rounded-lg shadow-md mb-6 flex-shrink-0">
+            <form id="searchForm" onsubmit="event.preventDefault(); fetchRestaurantsAndDisplay();" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+              <div class="md:col-span-2">
+                <label for="keyword" class="block text-sm font-medium text-gray-700">검색어 (이름 또는 주소)</label>
+                <input type="text" id="keyword" name="keyword" th:value="${keyword}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="검색어를 입력하세요">
+              </div>
+              <div>
+                <label for="category" class="block text-sm font-medium text-gray-700">음식 종류</label>
+                <select id="category" name="category" onchange="fetchRestaurantsAndDisplay()" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                  <option value="">전체</option>
+                  <option value="한식" th:selected="${category == '한식'}">한식</option>
+                  <option value="중식" th:selected="${category == '중식'}">중식</option>
+                  <option value="일식" th:selected="${category == '일식'}">일식</option>
+                  <option value="양식" th:selected="${category == '양식'}">양식</option>
+                  <option value="카페" th:selected="${category == '카페'}">카페</option>
+                  <option value="분식" th:selected="${category == '분식'}">분식</option>
+                </select>
+              </div>
+              <div>
+                <label for="orderBy" class="block text-sm font-medium text-gray-700">정렬 기준</label>
+                <select id="orderBy" name="orderBy" onchange="applySortingAndDisplay()" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                  <option value="latest" th:selected="${orderBy == 'latest'}">최신순</option>
+                  <option value="name" th:selected="${orderBy == 'name'}">이름순</option>
+                  <option value="rating_desc" th:selected="${orderBy == 'rating_desc'}">평점 높은 순</option>
+                  <option value="distance" th:selected="${orderBy == 'distance'}">거리순</option>
+                </select>
+              </div>
+              <div>
+                <button type="submit" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition duration-300">
+                  검색하기
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="border-t border-gray-200 pt-8 flex-grow overflow-y-auto">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6">✨ 맛집 목록</h2>
+            <div id="restaurant-list" class="space-y-4"></div>
+          </div>
+        </div>
+        <div class="relative rounded-lg shadow-md overflow-hidden" id="map-container">
+          <div id="map"></div>
+          <button onclick="openFullScreenMap()" class="absolute top-2 right-2 bg-white text-gray-700 font-semibold py-2 px-4 rounded-full shadow-lg z-10 hover:bg-gray-200 transition">
+            전체 지도 보기
+          </button>
+          <button onclick="displayMyLocation()" class="absolute top-14 right-2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          </button>
+          <div class="absolute top-2 left-2 z-10">
+            <select id="radiusSelect" onchange="changeSearchRadius()" class="bg-white text-gray-700 text-sm py-2 px-3 rounded-md shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="500">500m</option>
+              <option value="1000">1km</option>
+              <option value="2000">2km</option>
+              <option value="5000">5km</option>
+              <option value="10000">10km</option>
+            </select>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="fullscreen-map-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center opacity-0 pointer-events-none">
+      <div class="relative w-11/12 h-5/6 bg-white rounded-lg shadow-2xl p-4">
+        <div id="fullscreen-map" class="w-full h-full rounded-lg"></div>
+        <button onclick="closeFullScreenMap()" class="absolute top-4 right-4 bg-white text-gray-800 font-bold py-2 px-4 rounded-full shadow-xl hover:bg-gray-200 transition z-10">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block layout:fragment="script">
+  <script th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsApiKey}&libraries=services,drawing|"></script>
+  <script>
+    // ======== 기존의 모든 JavaScript 함수 (변경 없음) ========
+    let map; let modalMap; let markers = []; let infowindow = new kakao.maps.InfoWindow({zIndex:1});
+    let userLocation = null; let myLocationMarker = null; let myLocationCircle = null;
+    let currentSearchRadius = 500; let currentActiveMarker = null; let restaurantsFromServer = [];
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOMContentLoaded 이벤트 발생.');
+      const mapContainer = document.getElementById('map');
+      const mapOption = { center: new kakao.maps.LatLng(35.1795543, 129.0756416), level: 5 };
+      map = new kakao.maps.Map(mapContainer, mapOption);
+      fetchRestaurantsAndDisplay();
+    });
+    async function fetchRestaurantsAndDisplay() {
+      const keyword = document.getElementById('keyword').value;
+      const category = document.getElementById('category').value;
+      const orderBy = document.getElementById('orderBy').value;
+      const queryParams = new URLSearchParams({ keyword: keyword, category: category, orderBy: orderBy === 'distance' ? 'latest' : orderBy }).toString();
+      try {
+        const response = await fetch(`/lunchmatch/api/list?${queryParams}`);
+        if (!response.ok) { throw new Error(`API 서버 호출 실패: ${response.status}`); }
+        restaurantsFromServer = await response.json();
+        applySortingAndDisplay();
+      } catch (error) { console.error("맛집 로드 실패", error); }
+    }
+    function applySortingAndDisplay() {
+      let restaurants = [...restaurantsFromServer];
+      const sort = document.getElementById('orderBy').value;
+      if (sort === 'distance') {
+        getUserLocation(err => {
+          if (err) { alert("위치 정보를 가져올 수 없습니다."); return; }
+          updateRestaurantDistances(restaurants);
+          restaurants.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+          displayAll(restaurants);
+        });
+      } else {
+        if (sort === 'name') restaurants.sort((a, b) => a.name.localeCompare(b.name));
+        else if (sort === 'rating_desc') restaurants.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        displayAll(restaurants);
+      }
+    }
+    function displayAll(restaurants) {
+      displayRestaurantListHtml(restaurants);
+      setMarkersOnMap(restaurants, map);
+      if (restaurants.length > 0) {
+        const b = new kakao.maps.LatLngBounds();
+        restaurants.forEach(r => { if (r.latitude && r.longitude) b.extend(new kakao.maps.LatLng(r.latitude, r.longitude)); });
+        if (!b.isEmpty()) map.setBounds(b);
+      }
+    }
+    function displayRestaurantListHtml(restaurants) {
+      const listEl = document.getElementById('restaurant-list');
+      listEl.innerHTML = '';
+      if (!restaurants || restaurants.length === 0) { listEl.innerHTML = '<div class="text-center py-12"><p>맛집이 없습니다.</p></div>'; return; }
+      restaurants.forEach((match, index) => {
+        const el = document.createElement('div');
+        el.className = `bg-white rounded-lg shadow-md overflow-hidden transform hover:shadow-xl card-fade-in flex`;
+        el.style.animationDelay = `${index * 50}ms`;
+        el.dataset.rno = match.rno;
+        const imageText = match.category ? match.category.split('>').pop().trim() : '맛집';
+        const dist = (match.distance != null) ? `<span class="text-xs font-semibold ${match.distance * 1000 <= currentSearchRadius ? 'text-red-500' : 'text-blue-500'}">거리: ${match.distance.toFixed(2)}km</span>` : '';
+        el.innerHTML = `<div class="w-32 h-32 bg-gray-200 flex-shrink-0 flex items-center justify-center"><span class="text-gray-500">${imageText}</span></div><div class="p-4 flex flex-col justify-between flex-grow"><div><div class="flex justify-between items-start"><h3 class="text-lg font-semibold">${match.name}</h3>${match.rating != null ? `<span class="text-sm font-bold text-yellow-500 ml-2">⭐ ${match.rating}</span>` : ''}</div><p class="text-sm text-gray-600 mt-1">${match.address}</p>${dist}</div><div class="mt-2 text-right"><a href="/lunchmatch/read/${match.rno}" class="text-sm bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600">상세보기</a></div></div>`;
+        listEl.appendChild(el);
+        el.onmouseover = () => highlightMarker(match.rno, true);
+        el.onmouseout = () => highlightMarker(match.rno, false);
+        el.onclick = e => { if (!e.target.closest('a')) selectListItem(match.rno); };
+      });
+    }
+    function setMarkersOnMap(restaurants, targetMap) {
+      markers.forEach(m => m.setMap(null)); markers = [];
+      restaurants.forEach((resto, index) => {
+        if (resto.latitude && resto.longitude) {
+          const coords = new kakao.maps.LatLng(resto.latitude, resto.longitude);
+          const nSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', iSize = new kakao.maps.Size(36, 37);
+          const nOpt = { spriteSize: new kakao.maps.Size(36, 691), spriteOrigin: new kakao.maps.Point(0, (index % 15 * 46) + 10), offset: new kakao.maps.Point(13, 37) };
+          const marker = new kakao.maps.Marker({ position: coords, image: new kakao.maps.MarkerImage(nSrc, iSize, nOpt) });
+          marker.normalImage = marker.getImage();
+          marker.hoverImage = new kakao.maps.MarkerImage('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', new kakao.maps.Size(31, 35));
+          marker.placeRno = resto.rno;
+          marker.setMap(targetMap); markers.push(marker);
+        }
+      });
+    }
+    function highlightMarker(rno, isHover) {
+      const marker = markers.find(m => m.placeRno === rno);
+      if (marker && marker !== currentActiveMarker) marker.setImage(isHover ? marker.hoverImage : marker.normalImage);
+    }
+    function selectListItem(rno) {
+      const marker = markers.find(m => m.placeRno === rno);
+      if (!marker) return;
+      if (currentActiveMarker) currentActiveMarker.setImage(currentActiveMarker.normalImage);
+      currentActiveMarker = marker;
+      marker.setImage(marker.hoverImage);
+      map.panTo(marker.getPosition());
+      document.querySelectorAll('#restaurant-list .highlighted').forEach(el => el.classList.remove('highlighted'));
+      const itemEl = document.querySelector(`#restaurant-list div[data-rno="${rno}"]`);
+      if (itemEl) { itemEl.classList.add('highlighted'); itemEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    }
+    function getUserLocation(callback) { if (userLocation) return callback(null); navigator.geolocation.getCurrentPosition(p => { userLocation = { lat: p.coords.latitude, lng: p.coords.longitude }; callback(null); }, () => callback(new Error())); }
+    function displayMyLocation() {
+      getUserLocation(err => {
+        if (err) { alert("위치 정보를 가져올 수 없습니다."); return; }
+        const locPos = new kakao.maps.LatLng(userLocation.lat, userLocation.lng);
+        if (!myLocationMarker) {
+          myLocationMarker = new kakao.maps.Marker({ map, position: locPos, image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35)) });
+          myLocationCircle = new kakao.maps.Circle({ map, center: locPos, radius: currentSearchRadius, strokeWeight: 2, strokeColor: '#004CFF', fillOpacity: 0.5 });
+        } else {
+          myLocationMarker.setPosition(locPos);
+          myLocationCircle.setPosition(locPos);
+        }
+        myLocationCircle.setRadius(currentSearchRadius);
+        map.setCenter(locPos);
+        map.setLevel(calculateLevelForRadius(currentSearchRadius));
+        updateRestaurantDistances(restaurantsFromServer);
+        displayRestaurantListHtml(restaurantsFromServer);
+      });
+    }
+    function changeSearchRadius() { currentSearchRadius = parseInt(document.getElementById('radiusSelect').value); if (userLocation) displayMyLocation(); }
+    function calculateLevelForRadius(r) { if (r <= 500) return 4; if (r <= 1000) return 5; if (r <= 2000) return 6; if (r <= 5000) return 7; return 8; }
+    function getDistance(lat1, lon1, lat2, lon2) { const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180,a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2); return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+    function updateRestaurantDistances(restaurants) { if (!userLocation) return; restaurants.forEach(r => r.distance = getDistance(userLocation.lat, userLocation.lng, r.latitude, r.longitude)); }
+    function openFullScreenMap() {
+      const modal = document.getElementById('fullscreen-map-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      const mapContainer = document.getElementById('fullscreen-map');
+      if (!modalMap) modalMap = new kakao.maps.Map(mapContainer, { center: map.getCenter(), level: map.getLevel() });
+      setTimeout(() => {
+        modalMap.relayout();
+        setMarkersOnMap(restaurantsFromServer, modalMap);
+        if (userLocation) new kakao.maps.Marker({ map: modalMap, position: new kakao.maps.LatLng(userLocation.lat, userLocation.lng) });
+      }, 100);
+    }
+    function closeFullScreenMap() { document.getElementById('fullscreen-map-modal').classList.add('opacity-0', 'pointer-events-none'); }
+  </script>
+</th:block>
+
+</html>

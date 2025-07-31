@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.board-title-box {
+    background-color: rgb(255, 111, 15);
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 10px 30px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 20px auto;
+}
+
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fafafa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 헤더 영역 */
+header {
+    background-color: #fafafa;
+    border-bottom: 2px solid #ddd;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1.8rem;
+}
+
+/* 로그인/회원가입 버튼 오른쪽 상단 */
+.auth-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.auth-buttons a {
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    background-color: #ffa726;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.auth-buttons a:hover {
+    background-color: #fb8c00;
+}
+
+/* 내비게이션 메뉴 */
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #444;
+    font-weight: bold;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+nav ul li a:hover {
+    background-color: #ffecb3;
+}
+
+/* 메인 영역 - 세로 정렬 + 작게 */
+main {
+    flex-grow: 1;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 중앙 정렬 */
+}
+
+main section {
+    width: 100%;
+    max-width: 450px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem; /* 섹션 간의 간격을 넉넉하게 조정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 내부 요소 수평 중앙 정렬 */
+    text-align: center;  /* 텍스트 중앙 정렬 */
+}
+
+/* 마지막 섹션의 하단 마진 제거 */
+main section:last-child {
+    margin-bottom: 0;
+}
+
+main h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+}
+
+main button {
+    background-color: #ffa726;
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s;
+}
+
+main button:hover {
+    background-color: #fb8c00;
+}
+
+
+/* 푸터 */
+footer {
+    text-align: center;
+    /* padding: 1.5rem; -- 이 패딩은 이제 내부 container가 담당 */
+    background-color: #fafafa; /* body 배경색과 동일하게 변경 */
+    font-size: 0.9rem;
+    color: #777;
+}
+
+footer hr {
+    border: none;
+    border-top: 2px solid #ddd; /* 헤더와 동일한 색상 및 굵기 */
+    margin: 0; /* 기본 마진 제거 */
+    width: 100%; /* 전체 너비 */
+}
+
+
