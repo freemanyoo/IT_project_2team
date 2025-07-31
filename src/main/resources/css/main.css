@@ -69,21 +69,32 @@ nav ul li a:hover {
 
 /* 메인 영역 - 세로 정렬 + 작게 */
 main {
+    flex-grow: 1;
     padding: 2rem 1rem;
+}
+
+.main-content-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
 main section {
     width: 90%;
-    max-width: 400px;
+    max-width: 450px;
     background-color: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    text-align: center;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem; /* 섹션 간의 간격을 넉넉하게 조정 */
+    text-align: center;  /* 내부의 모든 텍스트와 인라인 요소를 가운데 정렬 */
+}
+
+/* 마지막 섹션의 하단 마진 제거 */
+main section:last-child {
+    margin-bottom: 0;
 }
 
 main h2 {
@@ -114,5 +125,4 @@ footer {
     background-color: #eeeeee;
     font-size: 0.9rem;
     color: #777;
-    margin-top: 2rem;
 }

@@ -1,70 +1,57 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="h-100">
 <head>
     <meta charset="UTF-8">
     <title>맛슐랭 원정대</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #fafafa;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        .nav-top {
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-        }
-
-        .nav-top a {
-            margin: 0 10px;
-            color: #555;
-            text-decoration: none;
-        }
-
-        .nav-top a:hover {
-            font-weight: bold;
-            color: #222;
-        }
-
-        .board-title-box {
-            background-color: #ff7f50;
-            padding: 12px 24px;
-            color: white;
-            border-radius: 8px;
-            font-size: 1.8rem;
-            display: inline-block;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-    </style>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+    <!-- Removed inline style block, moved relevant styles to main.css -->
     <th:block layout:fragment="css"></th:block>
-    <th:block layout:fragment="script"></th:block>
 </head>
-<body class="container">
+<body class="d-flex flex-column h-100"> <!-- Removed container from body -->
 
-<!-- 상단 메뉴 -->
-<div class="nav-top text-center mt-3">
-    <a th:href="@{/test}">오점머</a>
-    <a th:href="@{/board/list}">맛슐랭원정대</a>
-    <a th:href="@{/review/list}">식후감</a>
-    <a th:href="@{/lunchmatch/list}">맛집저장</a>
-    <a th:href="@{/lunchmatch/map}">맛지도</a>
-    <a th:href="@{/mypage}">MY PAGE</a>
-    <a th:href="@{/help}">고객센터</a>
-</div>
+<!-- Header -->
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container"> <!-- Content inside header is container-fixed -->
+        <a class="navbar-brand" th:href="@{/}">로고</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/test}">오점머</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/board/list}">맛슐랭원정대</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/review/list}">식후감</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/lunchmatch/list}">맛집저장</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/lunchmatch/map}">맛지도</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/mypage}">MY PAGE</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/help}">고객센터</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
 
-<div layout:fragment="content">
-    <!-- 여기에 각 페이지의 컨텐츠가 들어갑니다. -->
-</div>
+<!-- Main Content Area -->
+<main class="flex-grow-1">
+    <div class="container"> <!-- Main content is container-fixed -->
+        <div layout:fragment="content">
+            <!-- Page specific content goes here -->
+        </div>
+    </div>
+</main>
 
-<footer>
+<!-- Footer -->
+<footer class="mt-auto bg-light">
     <hr/>
-    <p>&copy; 2025 오늘 점심 뭐 먹지? All rights reserved.</p>
-    <!-- 공통 푸터 내용 -->
+    <div class="container text-center py-3"> <!-- Added py-3 here -->
+        <p>&copy; 2025 오늘 점심 뭐 먹지? All rights reserved.</p>
+        <!-- Common footer content -->
+    </div>
 </footer>
 
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <th:block layout:fragment="script"></th:block>
 </body>
 </html>
