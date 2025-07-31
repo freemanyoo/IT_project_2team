@@ -219,13 +219,13 @@
         <form method="get" action="/board/list" class="filter-form">
             <label><strong>필터:</strong></label>
             <select name="genderFilter" class="form-select">
-                <option value="">성별 전체</option>
+                <option value="">성별</option>
                 <option value="남" th:selected="${param.genderFilter == '남'}">남성 전용</option>
                 <option value="여" th:selected="${param.genderFilter == '여'}">여성 전용</option>
                 <option value="성별상관무" th:selected="${param.genderFilter == '성별상관무'}">성별무관</option>
             </select>
             <select name="foodFilter" class="form-select">
-                <option value="">음식 전체</option>
+                <option value="">음식 종류</option>
                 <option value="한식" th:selected="${param.foodFilter == '한식'}">한식</option>
                 <option value="중식" th:selected="${param.foodFilter == '중식'}">중식</option>
                 <option value="일식" th:selected="${param.foodFilter == '일식'}">일식</option>
@@ -233,7 +233,7 @@
                 <option value="디저트" th:selected="${param.foodFilter == '디저트'}">디저트</option>
                 <option value="종류 안가림" th:selected="${param.foodFilter == '종류 안가림'}">종류 안가림</option>
             </select>
-            <button class="btn btn-outline-primary btn-sm" type="submit">필터 적용</button>
+            <button class="btn btn-outline-primary btn-sm" type="submit" style="margin-top: 0px;">필터 적용</button>
             <a href="/board/list" class="btn btn-outline-secondary btn-sm">필터 초기화</a>
 
             <!-- 기존 검색 조건 유지 -->
