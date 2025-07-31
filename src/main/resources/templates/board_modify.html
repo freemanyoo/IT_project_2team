@@ -55,6 +55,7 @@
     <div class="form-area">
         <h2>게시글 수정</h2>
         <form method="post" th:action="@{/board/modify}" th:object="${board}" onsubmit="return validateForm()">
+<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
             <input type="hidden" name="id" th:field="*{id}">
             <input type="text" id="title" name="title" class="form-control" placeholder="제목을 입력하세요" maxlength="100" th:field="*{title}">
             <div id="titleCounter" class="char-counter">0/100 bytes</div>

@@ -58,9 +58,10 @@
         <h2>모집 게시판</h2>
 
         <form method="post" th:action="@{/board/register}" th:object="${board}" onsubmit="return validateForm()">
+<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
             <input type="text" id="title" name="title" class="form-control" placeholder="제목을 입력하세요" maxlength="100" th:field="*{title}">
             <div id="titleCounter" class="char-counter">0/100 bytes</div>
-            <input type="text" id="writer" name="writer" class="form-control" placeholder="작성자를 입력하세요" th:field="*{writer}">
+            <input type="text" id="writer" name="writer" class="form-control" th:value="${loggedInNickname}" readonly>
             <hr class="my-4">
 
             <h5 class="mb-3">📍 모집 장소 선택</h5>
@@ -418,7 +419,7 @@
         const fields = [
             { id: 'title', name: '제목', limit: 100 },
             { id: 'content', name: '본문', limit: 2000 },
-            { id: 'writer', name: '작성자' },
+            // { id: 'writer', name: '작성자' },
             { id: 'region', name: '지역' },
             { id: 'deadlineHours', name: '마감시간' }
         ];

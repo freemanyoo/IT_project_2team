@@ -3,7 +3,9 @@ package webproject_2team.lunch_matching.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import webproject_2team.lunch_matching.domain.Board;
 import webproject_2team.lunch_matching.dto.PageRequestDTO;
 import webproject_2team.lunch_matching.dto.PageResponseDTO;
@@ -73,22 +75,46 @@ public class BoardService {
                 .build();
     }
 
+    /**
+     * 게시글 ID로 하나의 게시글을 조회합니다.
+     * @param id 조회할 게시글의 ID
+     * @return 조회된 Board 객체, 없으면 null
+     */
     public Board read(Long id) {
         Optional<Board> result = boardRepository.findById(id);
         return result.orElse(null);
     }
 
-    public void delete(Long id) {
+    /**
+     * 게시글을 삭제합니다. (권한 확인 기능 추가)
+     * @param id 삭제할 게시글의 ID
+     * @param userEmail 현재 로그인한 사용자의 이메일
+     */
+    @Transactional
+    public void delete(Long id, String userEmail) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 게시글을 찾을 수 없습니다."));
+
+        // ===== 권한 확인 로직 시작 =====
+        // Board 엔티티에 getWriterEmail() 메소드가 있어야 합니다.
+        if (board.getWriterEmail() != null && !board.getWriterEmail().equals(userEmail)) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
+        }
+        // ===== 권한 확인 로직 끝 =====
         boardRepository.deleteById(id);
     }
 
     // 게시글 수정 메서드
-    public void modify(Board board) {
-        Optional<Board> existingBoardOpt = boardRepository.findById(board.getId());
-        if (existingBoardOpt.isEmpty()) {
-            throw new IllegalArgumentException("수정할 게시글을 찾을 수 없습니다.");
+    @Transactional
+    public void modify(Board board, String userEmail) {
+        Board existingBoard = boardRepository.findById(board.getId())
+                .orElseThrow(() -> new IllegalArgumentException("수정할 게시글을 찾을 수 없습니다."));
+
+        // ===== 권한 확인 로직 시작 =====
+        if (existingBoard.getWriterEmail() != null && !existingBoard.getWriterEmail().equals(userEmail)) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
         }
-        Board existingBoard = existingBoardOpt.get();
+        // ===== 권한 확인 로직 끝 =====
 
         // 기존 게시글의 생성 시간 유지 (수정 시에는 변경되지 않음)
         LocalDateTime originalCreatedAt = existingBoard.getCreatedAt();
