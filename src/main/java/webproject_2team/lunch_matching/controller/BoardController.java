@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webproject_2team.lunch_matching.domain.Board;
 import webproject_2team.lunch_matching.domain.Comment;
 import webproject_2team.lunch_matching.dto.PageRequestDTO;
@@ -54,30 +55,44 @@ public class BoardController {
      */
     @GetMapping("/board/read")
     public String read(@RequestParam("id") Long id,
-                       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                       // ... 기타 파라미터들 ...
+                       PageRequestDTO pageRequestDTO, // page, type, keyword 등을 이 객체로 한번에 받습니다.
                        Model model,
-                       @AuthenticationPrincipal CustomUserDetails userDetails) { // <-- 1. 로그인 정보 받기
+                       @AuthenticationPrincipal CustomUserDetails userDetails,
+                       RedirectAttributes redirectAttributes) {
 
         Board board = boardService.read(id);
         if (board == null) {
             return "redirect:/board/list";
         }
 
+        // --- 접근 권한 검사 로직 (이전과 동일) ---
+        boolean canAccess = false;
+        if (userDetails != null && userDetails.getEmail().equals(board.getWriterEmail())) {
+            canAccess = true;
+        }
+        if (!canAccess && "성별상관무".equals(board.getGenderLimit())) {
+            canAccess = true;
+        }
+        if (!canAccess && userDetails != null && userDetails.getGender().equals(board.getGenderLimit())) {
+            canAccess = true;
+        }
+        if (!canAccess) {
+            redirectAttributes.addFlashAttribute("error_message", "이 게시글에 접근할 권한이 없습니다.");
+            return "redirect:/board/list" + pageRequestDTO.getLink();
+        }
+        // --- 접근 권한 검사 끝 ---
+
+        // --- 모델에 데이터 추가 ---
         model.addAttribute("board", board);
         model.addAttribute("comments", commentService.getCommentsByBoardId(id));
         model.addAttribute("kakaoJsApiKey", kakaoJavascriptApiKey);
-        model.addAttribute("page", page);
-        // ... 기타 페이지 정보 ...
+        // DTO 객체 전체를 모델에 추가합니다.
+        model.addAttribute("pageRequestDTO", pageRequestDTO);
 
-        // ===== 로그인 사용자 정보 처리 시작 =====
-        // 2. 로그인한 사용자의 닉네임과 이메일을 모델에 담아 HTML로 전달
-        //    (HTML에서 수정/삭제 버튼을 보여줄지 결정하는 데 사용)
         if (userDetails != null) {
             model.addAttribute("loggedInNickname", userDetails.getNickname());
             model.addAttribute("loggedInUserEmail", userDetails.getEmail());
         }
-        // ===== 로그인 사용자 정보 처리 끝 =====
 
         return "read";
     }

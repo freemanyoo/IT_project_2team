@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Builder
 @Data
@@ -39,11 +40,27 @@ public class PageRequestDTO {
         return type.split("");
     }
 
-    public String getGenderFilter() {
-        return genderFilter;
-    }
+    public String getLink() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
+                .queryParam("page", this.page)
+                .queryParam("size", this.size);
 
-    public String getFoodFilter() {
-        return foodFilter;
+        if (type != null && !type.isEmpty()) {
+            builder.queryParam("type", this.type);
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            builder.queryParam("keyword", this.keyword);
+        }
+
+        if (genderFilter != null && !genderFilter.isEmpty()) {
+            builder.queryParam("genderFilter", this.genderFilter);
+        }
+
+        if (foodFilter != null && !foodFilter.isEmpty()) {
+            builder.queryParam("foodFilter", this.foodFilter);
+        }
+
+        return builder.toUriString();
     }
 }
