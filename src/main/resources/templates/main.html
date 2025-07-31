@@ -4,34 +4,40 @@
 <head>
     <title>메인 페이지</title>
     <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/main.css}" />
+        <link rel="stylesheet" th:href="@{/css/main.css}"/>
     </th:block>
 </head>
 
-    <!-- layout.html의 layout:fragment="content" 부분에 삽입될 내용 -->
-    <div layout:fragment="content">
-        <section>
-            <h2>🙋‍♀️ 동네에서 함께 먹어요</h2>
-            <p>GPS 인증으로 가까운 이웃과 점심을 나눠보세요!</p>
-            <a href="/party/list"><button>파티원 모집 보러가기</button></a>
-        </section>
+<!-- layout.html의 layout:fragment="content" 부분에 삽입될 내용 -->
+<div layout:fragment="content" class="d-flex flex-column align-items-center h-100">
+    <section>
+        <h2>🙋‍♀️ 동네에서 함께 먹어요</h2>
+        <p>GPS 인증으로 가까운 이웃과 점심을 나눠보세요!</p>
+        <a href="/party/list">
+            <button>파티원 모집 보러가기</button>
+        </a>
+    </section>
 
-        <section>
-            <h2>📍 내 주변 맛집 추천</h2>
-            <p>카카오 API를 이용해 현재 위치 주변의 인기 식당을 보여드려요.</p>
-            <a href="/restaurant/recommend"><button>맛집 확인하기</button></a>
-        </section>
+    <section>
+        <h2>📍 내 주변 맛집 추천</h2>
+        <p>카카오 API를 이용해 현재 위치 주변의 인기 식당을 보여드려요.</p>
+        <a href="/restaurant/recommend">
+            <button>맛집 확인하기</button>
+        </a>
+    </section>
 
-        <section>
-            <h2>🥗 오늘 점심 완료</h2>
-            <p>감정과 함께 식사 기록을 남겨보세요!</p>
-            <a href="/diary/list"><button>오점완 하러가기</button></a>
-        </section>
-    </div>
+    <section>
+        <h2>🥗 오늘 점심 완료</h2>
+        <p>감정과 함께 식사 기록을 남겨보세요!</p>
+        <a href="/diary/list">
+            <button>오점완 하러가기</button>
+        </a>
+    </section>
+</div>
 
-    <!-- 이 페이지에만 적용되는 JavaScript가 있다면 아래 th:block 안에 추가 -->
-    <th:block layout:fragment="script">
-        <script src="/js/jquery-3.5.1.min.js"></script>
-        <script src="/js/bootstrap.bundle.min.js"></script>
-    </th:block>
+<!-- 이 페이지에만 적용되는 JavaScript가 있다면 아래 th:block 안에 추가 -->
+<th:block layout:fragment="script">
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</th:block>
 </html>
