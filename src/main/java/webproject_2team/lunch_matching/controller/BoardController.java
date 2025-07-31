@@ -65,22 +65,44 @@ public class BoardController {
             return "redirect:/board/list";
         }
 
-        // --- 접근 권한 검사 로직 (이전과 동일) ---
+        // --- 접근 권한 검사 시작 ---
         boolean canAccess = false;
+
+// 1. 본인 글인지 확인
         if (userDetails != null && userDetails.getEmail().equals(board.getWriterEmail())) {
             canAccess = true;
         }
+
+// 2. 성별 제한이 없는 글인지 확인
         if (!canAccess && "성별상관무".equals(board.getGenderLimit())) {
             canAccess = true;
         }
-        if (!canAccess && userDetails != null && userDetails.getGender().equals(board.getGenderLimit())) {
-            canAccess = true;
+
+// 3. 성별 제한이 있는 글일 경우 (수정된 로직)
+        if (!canAccess && userDetails != null) {
+            String userGender = userDetails.getGender(); // 예: "female"
+            String boardLimit = board.getGenderLimit();  // 예: "여"
+
+            // <<--- 값 변환 로직 추가 ---
+            if ("female".equalsIgnoreCase(userGender)) {
+                userGender = "여";
+            } else if ("male".equalsIgnoreCase(userGender)) {
+                userGender = "남";
+            }
+            // --- 값 변환 로직 끝 --- >>
+
+            // 변환된 값으로 비교
+            if (userGender != null && userGender.equals(boardLimit)) {
+                canAccess = true;
+            }
         }
+
+// 4. 최종 접근 거부 처리
         if (!canAccess) {
             redirectAttributes.addFlashAttribute("error_message", "이 게시글에 접근할 권한이 없습니다.");
             return "redirect:/board/list" + pageRequestDTO.getLink();
         }
-        // --- 접근 권한 검사 끝 ---
+// --- 접근 권한 검사 끝 ---
 
         // --- 모델에 데이터 추가 ---
         model.addAttribute("board", board);
