@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.service;
+package webproject_2team.lunch_matching.service.signup;
 
 public interface EmailAuthService {
     void sendAuthCode(String email);

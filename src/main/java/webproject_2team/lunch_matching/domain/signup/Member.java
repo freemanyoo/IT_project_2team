@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.domain;
+package webproject_2team.lunch_matching.domain.signup;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.dto;
+package webproject_2team.lunch_matching.dto.signup;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;

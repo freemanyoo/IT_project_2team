@@ -1,9 +1,9 @@
 package webproject_2team.lunch_matching.Member;
 
-import webproject_2team.lunch_matching.dto.MemberSignupDTO;
+import webproject_2team.lunch_matching.dto.signup.MemberSignupDTO;
 
-import webproject_2team.lunch_matching.service.MemberService;
-import webproject_2team.lunch_matching.service.EmailAuthService; // EmailAuthService 임포트
+import webproject_2team.lunch_matching.service.signup.MemberService;
+import webproject_2team.lunch_matching.service.signup.EmailAuthService; // EmailAuthService 임포트
 import jakarta.transaction.Transactional; // jakarta.transaction.Transactional 임포트 확인
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;

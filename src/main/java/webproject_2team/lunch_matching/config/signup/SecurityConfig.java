@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.config;
+package webproject_2team.lunch_matching.config.signup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

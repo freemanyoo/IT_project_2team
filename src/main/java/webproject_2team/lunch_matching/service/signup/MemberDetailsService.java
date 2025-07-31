@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.service;
+package webproject_2team.lunch_matching.service.signup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -10,8 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import webproject_2team.lunch_matching.domain.Member;
-import webproject_2team.lunch_matching.domain.MemberRole; // MemberRole Enum 임포트
+import webproject_2team.lunch_matching.domain.signup.Member;
 import webproject_2team.lunch_matching.repository.MemberRepository;
 
 import java.util.Collection;

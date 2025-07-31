@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.service;
+package webproject_2team.lunch_matching.service.signup;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-public class EmailAuthServiceImpl implements EmailAuthService{
+public class EmailAuthServiceImpl implements EmailAuthService {
     private final JavaMailSender mailSender;
 
     private final Map<String, AuthInfo> authStorage = new ConcurrentHashMap<>();

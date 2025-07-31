@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.controller;
+package webproject_2team.lunch_matching.controller.signup;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;

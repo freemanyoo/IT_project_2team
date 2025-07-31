@@ -1,11 +1,11 @@
-package webproject_2team.lunch_matching.config;
+package webproject_2team.lunch_matching.config.signup;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.beans.factory.annotation.Value;
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfig1 implements WebMvcConfigurer {
     @Value("${com.busanit501.upload.path}") // application.properties에서 경로를 가져옴
     private String uploadPath;
 

@@ -1,8 +1,8 @@
-package webproject_2team.lunch_matching.controller;
+package webproject_2team.lunch_matching.controller.signup;
 
-import webproject_2team.lunch_matching.dto.MemberSignupDTO;
-import webproject_2team.lunch_matching.dto.ProfileDTO;
-import webproject_2team.lunch_matching.service.MemberService;
+import webproject_2team.lunch_matching.dto.signup.MemberSignupDTO;
+import webproject_2team.lunch_matching.dto.signup.ProfileDTO;
+import webproject_2team.lunch_matching.service.signup.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

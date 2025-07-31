@@ -1,9 +1,9 @@
-package webproject_2team.lunch_matching.service;
+package webproject_2team.lunch_matching.service.signup;
 
-import webproject_2team.lunch_matching.domain.Member;
-import webproject_2team.lunch_matching.dto.MemberSignupDTO;
-import webproject_2team.lunch_matching.domain.MemberRole;
-import webproject_2team.lunch_matching.dto.ProfileDTO;
+import webproject_2team.lunch_matching.domain.signup.Member;
+import webproject_2team.lunch_matching.dto.signup.MemberSignupDTO;
+import webproject_2team.lunch_matching.domain.signup.MemberRole;
+import webproject_2team.lunch_matching.dto.signup.ProfileDTO;
 import webproject_2team.lunch_matching.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 @Transactional
-public class MemberServiceImpl implements  MemberService {
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;

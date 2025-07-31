@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.dto;
+package webproject_2team.lunch_matching.dto.signup;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

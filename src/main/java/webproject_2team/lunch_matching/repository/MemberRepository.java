@@ -1,6 +1,6 @@
 package webproject_2team.lunch_matching.repository;
 
-import webproject_2team.lunch_matching.domain.Member;
+import webproject_2team.lunch_matching.domain.signup.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

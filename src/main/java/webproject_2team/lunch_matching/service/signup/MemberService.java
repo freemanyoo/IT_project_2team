@@ -1,8 +1,8 @@
-package webproject_2team.lunch_matching.service;
+package webproject_2team.lunch_matching.service.signup;
 
-import webproject_2team.lunch_matching.domain.Member;
-import webproject_2team.lunch_matching.dto.MemberSignupDTO;
-import webproject_2team.lunch_matching.dto.ProfileDTO;
+import webproject_2team.lunch_matching.domain.signup.Member;
+import webproject_2team.lunch_matching.dto.signup.MemberSignupDTO;
+import webproject_2team.lunch_matching.dto.signup.ProfileDTO;
 
 public interface MemberService {
     Long registerMember(MemberSignupDTO memberSignupDTO, ProfileDTO profileDTO);

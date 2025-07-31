@@ -1,8 +1,8 @@
-package webproject_2team.lunch_matching.controller;
+package webproject_2team.lunch_matching.controller.signup;
 
-import webproject_2team.lunch_matching.dto.EmailAuthRequestDTO;
-import webproject_2team.lunch_matching.dto.EmailAuthVerifyDTO;
-import webproject_2team.lunch_matching.service.EmailAuthService;
+import webproject_2team.lunch_matching.dto.signup.EmailAuthRequestDTO;
+import webproject_2team.lunch_matching.dto.signup.EmailAuthVerifyDTO;
+import webproject_2team.lunch_matching.service.signup.EmailAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

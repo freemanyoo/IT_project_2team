@@ -1,4 +1,4 @@
-package webproject_2team.lunch_matching.controller;
+package webproject_2team.lunch_matching.controller.signup;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

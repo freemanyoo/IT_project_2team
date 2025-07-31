@@ -1,7 +1,7 @@
-package webproject_2team.lunch_matching.controller;
+package webproject_2team.lunch_matching.controller.signup;
 
-import webproject_2team.lunch_matching.domain.Member;
-import webproject_2team.lunch_matching.service.MemberService;
+import webproject_2team.lunch_matching.domain.signup.Member;
+import webproject_2team.lunch_matching.service.signup.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal; // AuthenticationPrincipal 임포트
