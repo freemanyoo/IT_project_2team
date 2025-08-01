@@ -1,4 +1,5 @@
 /* Star Rating */
+
 #star-rating {
     display: flex;
     gap: 5px;
@@ -117,4 +118,141 @@ select#emotion {
     background-color: #e7f3ff;
     margin-top: 10px;
     border-radius: 5px;
+}
+
+/* 전체 컨테이너(폼) 넓게 */
+.review-form {
+    max-width: 700px;
+    margin: 36px auto 0 auto;
+    padding: 40px 38px 32px 38px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(30,35,90,0.09);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+label {
+    margin-bottom: 7px;
+    font-size: 1.09rem;
+    font-weight: 600;
+    color: #333963;
+}
+input[type="text"], input[type="file"], textarea, select {
+    width: 100%;
+    padding: 13px;
+    border: 1.8px solid #c4cad9;
+    border-radius: 8px;
+    font-size: 1.07rem;
+    margin-top: 2px;
+    box-sizing: border-box;
+    transition: border-color .15s;
+}
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #4269d3;
+}
+textarea {
+    min-height: 80px;
+    max-height: 270px;
+    resize: vertical;
+}
+/* 스타 평점 */
+#star-rating {
+    display: flex;
+    gap: 10px;
+    font-size: 1.9rem;
+    margin-bottom: 2px;
+    user-select: none;
+    cursor: pointer;
+}
+.star {
+    color: #d2dde8;
+    transition: color 0.13s;
+}
+.star.selected, .star.hovered {
+    color: #fd8301;
+}
+/* 파일 업로드 및 미리보기 */
+#fileInput {
+    background: #f8fafd;
+    cursor: pointer;
+}
+.upload-result-area {
+    display: flex;
+    gap: 9px;
+    margin: 8px 0 0 0;
+    min-height: 55px;
+    flex-wrap: wrap;
+}
+.upload-result-area img,
+.upload-result-area .preview-item {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1.5px solid #e2e6f0;
+}
+.upload-result-area .remove-btn {
+    display: block;
+    margin: 2px auto 0 auto;
+    font-size: .8rem;
+    color: #ff7f50;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+/* 감정 셀렉트 */
+select[name="emotion"] {
+    background: #fff;
+}
+/* 오직 #submitButton 아이디만 스타일 적용 */
+#submitButton {
+    width: 100%;
+    margin-top: 18px;
+    padding: 15px 0;
+    font-size: 1.18rem;
+    background: #ff7f50;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .13s;
+}
+#submitButton:hover,
+#submitButton:focus {
+    background: #e44e1f;
+}
+#submitButton:disabled {
+    background: #e2e5eb;
+    color: #a1a7b1;
+    cursor: not-allowed;
+}
+/* 뒤로가기 링크 */
+.back-link {
+    display: inline-block;
+    margin: 28px auto 0 0;
+    color: #374151;
+    font-size: 1.07rem;
+    font-weight: 500;
+    text-decoration: underline;
+    padding: 0 5px;
+}
+/* 반응형 대응 */
+@media (max-width: 800px) {
+    form {
+        max-width: 98vw;
+        padding: 12vw 4vw;
+    }
+    #submitButton {
+        font-size: 1.07rem;
+        padding: 13px 0;
+    }
+}
+@media (max-width: 500px) {
+    form {
+        padding: 3vw 2vw;
+    }
 }
