@@ -45,6 +45,14 @@
             color: #fff; background-color: #0d6efd; border: 1px solid #0d6efd;
             transition: all .15s ease-in-out;
         }
+
+        .auth-button:hover {
+            background-color: #0b5ed7; /* 호버 시 색상 */
+            border-color: #0a58ca;
+            color: #fff;
+        }
+
+        /* 폼 버튼 리셋 (기본 폼 버튼 스타일 제거) */
         .auth-button-form button {
             all: unset; cursor: pointer; margin-left: 10px;
             padding: .375rem .75rem; font-size: 1rem; line-height: 1.5;
@@ -55,6 +63,44 @@
         .auth-button:hover, .auth-button-form button:hover {
             background-color: #0b5ed7; border-color: #0a58ca; color: #fff;
         }
+
+        .user-info-display {
+            display: flex; /* 가로 정렬 */
+            flex-direction: column; /* 세로로 나열 */
+            align-items: flex-end; /* 오른쪽 정렬 */
+            margin-right: 15px; /* 로그인/로그아웃 버튼과의 간격 */
+            font-size: 0.85rem; /* 기본 폰트 크기 */
+            color: #555; /* 글자색 */
+            line-height: 1.2; /* 줄 간격 */
+        }
+
+        .user-info-display .user-nickname {
+            font-weight: bold; /* 닉네임은 조금 더 진하게 */
+            color: #333; /* 닉네임 색상 */
+            font-size: 0.9rem; /* 닉네임 크기 */
+        }
+
+        .user-info-display .user-role {
+            font-size: 0.75rem; /* 역할은 더 작게 */
+            color: #888; /* 역할 색상 */
+            text-transform: uppercase; /* 역할을 대문자로 표시 */
+        }
+
+        /* 수정: 비로그인 상태일 때 텍스트 스타일 */
+        .user-info-display .text-muted-smaller {
+            font-size: 0.7rem; /* 로그인 시보다 더 작게 */
+            color: #aaa; /* 더 흐린 색상 */
+        }
+
+        /* 모바일 뷰에서 닉네임/역할과 버튼이 너무 붙지 않도록 조정 (선택 사항) */
+        @media (max-width: 991.98px) {
+            .user-info-display {
+                margin-right: 0;
+                margin-bottom: 10px; /* 메뉴 항목 아래에 약간의 간격 */
+                align-items: flex-start; /* 모바일에서는 왼쪽 정렬 */
+            }
+        }
+
     </style>
     <th:block layout:fragment="css"></th:block>
 </head>
@@ -70,6 +116,14 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- 문구 수정은 CommonControllerAdvice.java 에서 수정하면됨 -->
+        <div class="d-flex align-items-center">
+            <div class="user-info-display me-3">
+                <span class="user-nickname" th:text="${loggedInUserNickname}" th:classappend="${loggedInUserNickname == '비로그인'} ? 'text-muted-smaller' : ''">닉네임</span>
+                <span class="user-role" th:text="${loggedInUserRole}" th:classappend="${loggedInUserNickname == '비로그인'} ? 'text-muted-smaller' : ''">역할</span>
+            </div>
+            <!---->
+
         <div class="navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" th:href="@{/main}">오점머</a></li>
@@ -81,6 +135,7 @@
                 <li class="nav-item"><a class="nav-link" th:href="@{/inquiry/list}">1:1문의</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/notice/list}">공지사항</a></li>
             </ul>
+
             <div class="d-flex align-items-center">
                 <div sec:authorize="!isAuthenticated()"><a th:href="@{/login}" class="auth-button">로그인</a></div>
                 <div sec:authorize="isAuthenticated()" class="auth-button-form">

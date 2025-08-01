@@ -1,6 +1,7 @@
 package webproject_2team.lunch_matching.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Log4j2
 public class BoardController {
 
     private final BoardService boardService;
@@ -62,11 +64,18 @@ public class BoardController {
 
         Board board = boardService.read(id);
         if (board == null) {
+            redirectAttributes.addFlashAttribute("error_message", "존재하지 않는 게시글입니다.");
             return "redirect:/board/list";
         }
 
         // --- 접근 권한 검사 시작 ---
         boolean canAccess = false;
+        boolean isAdmin = userDetails != null && userDetails.isAdmin(); // 관리자 여부 확인
+
+// 추가! 관리자(ROLE_ADMIN)인 경우 모든 게시글에 접근 가능
+        if (isAdmin) {
+            canAccess = true;
+        }
 
 // 1. 본인 글인지 확인
         if (userDetails != null && userDetails.getEmail().equals(board.getWriterEmail())) {
@@ -114,8 +123,9 @@ public class BoardController {
         if (userDetails != null) {
             model.addAttribute("loggedInNickname", userDetails.getNickname());
             model.addAttribute("loggedInUserEmail", userDetails.getEmail());
+// 추가!
+            model.addAttribute("isAdmin", isAdmin); // 관리자 여부를 템플릿으로 전달 (추가)
         }
-
         return "read";
     }
 
@@ -141,9 +151,25 @@ public class BoardController {
      * 게시글 수정 페이지
      */
     @GetMapping("/board/modify/{id}")
-    public String modifyForm(@PathVariable("id") Long id, Model model) {
+    public String modifyForm(@PathVariable("id") Long id, Model model,
+                             @AuthenticationPrincipal CustomUserDetails userDetails, // userDetails 추가
+                             RedirectAttributes redirectAttributes
+                            ) {
         // 수정 페이지는 기존 데이터를 불러오므로, 현재 로그인 정보는 필요하지 않습니다.
         Board board = boardService.read(id);
+// 추가!
+        if (board == null) {
+            redirectAttributes.addFlashAttribute("error_message", "존재하지 않는 게시글입니다.");
+            return "redirect:/board/list";
+        }
+
+        // **수정 권한 확인 로직 추가**
+        boolean isAdmin = userDetails != null && userDetails.isAdmin();
+        if (userDetails == null || !(isAdmin || board.getWriterEmail().equals(userDetails.getEmail()))) {
+            redirectAttributes.addFlashAttribute("error_message", "게시글을 수정할 권한이 없습니다.");
+            return "redirect:/board/read?id=" + id; // 권한 없으면 상세 페이지로 리다이렉트
+        }
+
         model.addAttribute("board", board);
         model.addAttribute("kakaoJsApiKey", kakaoJavascriptApiKey);
         return "board_modify";
@@ -157,7 +183,10 @@ public class BoardController {
      * 게시글 등록 처리
      */
     @PostMapping("/board/register")
-    public String register(@ModelAttribute Board board, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) throws IOException {
+    public String register(@ModelAttribute Board board,
+                           @AuthenticationPrincipal CustomUserDetails userDetails,
+                            RedirectAttributes redirectAttributes)
+                            throws IOException {
         // ===== 로그인 사용자 처리 시작 =====
         if (userDetails == null) {
             return "redirect:/login"; // 1. 비로그인 시 로그인 페이지로
@@ -171,6 +200,7 @@ public class BoardController {
 
         board.setCreatedAt(LocalDateTime.now());
         boardService.save(board);
+        redirectAttributes.addFlashAttribute("success_message", "게시글이 성공적으로 등록되었습니다.");
         return "redirect:/board/list";
     }
 
@@ -178,18 +208,23 @@ public class BoardController {
      * 게시글 수정 처리
      */
     @PostMapping("/board/modify")
-    public String modify(@ModelAttribute Board board, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) throws IOException {
+    public String modify(@ModelAttribute Board board,
+                         @AuthenticationPrincipal CustomUserDetails userDetails,
+                         RedirectAttributes redirectAttributes,
+                         Model model) throws IOException {
         if (userDetails == null) {
             return "redirect:/login";
         }
         try {
             // ... 기존 유효성 검사 ...
-            // 서비스 호출 시, 권한 확인을 위해 현재 로그인한 사용자의 이메일 전달
-            boardService.modify(board, userDetails.getEmail());
+            // 서비스 호출 시, 권한 확인을 위해 현재 로그인한 사용자의 이메일과 isAdmin 여부 전달
+            boardService.modify(board, userDetails.getEmail(), userDetails.isAdmin());
         } catch (AccessDeniedException e) {
+            redirectAttributes.addFlashAttribute("error_message", "게시글 수정 권한이 없습니다.");
             // 서비스에서 권한 없음 예외 발생 시 에러 페이지로 이동
             return "redirect:/error/access-denied"; // (에러 페이지는 별도 구현 필요)
         }
+        redirectAttributes.addFlashAttribute("success_message", "게시글이 성공적으로 수정되었습니다.");
         return "redirect:/board/read?id=" + board.getId();
     }
 
@@ -197,16 +232,20 @@ public class BoardController {
      * 게시글 삭제 처리
      */
     @PostMapping("/board/delete/{id}")
-    public String delete(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String delete(@PathVariable("id") Long id,
+                         @AuthenticationPrincipal CustomUserDetails userDetails,
+                         RedirectAttributes redirectAttributes) {
         if (userDetails == null) {
             return "redirect:/login";
         }
         try {
-            // 서비스 호출 시, 권한 확인을 위해 현재 로그인한 사용자의 이메일 전달
-            boardService.delete(id, userDetails.getEmail());
+            // 서비스 호출 시, 권한 확인을 위해 현재 로그인한 사용자의 이메일과 isAdmin 여부 전달
+            boardService.delete(id, userDetails.getEmail(), userDetails.isAdmin());
         } catch (AccessDeniedException e) {
+            redirectAttributes.addFlashAttribute("error_message", "게시글 삭제 권한이 없습니다.");
             return "redirect:/error/access-denied";
         }
+        redirectAttributes.addFlashAttribute("success_message", "게시글이 성공적으로 삭제되었습니다.");
         return "redirect:/board/list";
     }
 
@@ -240,7 +279,13 @@ public class BoardController {
             response.put("success", true);
             response.put("comment", commentData);
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+        }
+        //이부분 추가해도되고 상관없음!
+//            catch (IllegalStateException e) { // 마감된 게시글 댓글 작성 시 예외 처리
+//            response.put("success", false);
+//            response.put("message", e.getMessage());
+//            return ResponseEntity.status(400).body(response); // 400: Bad Request
+        catch (Exception e) {
             response.put("success", false);
             response.put("message", e.getMessage());
             return ResponseEntity.internalServerError().body(response);
@@ -263,7 +308,10 @@ public class BoardController {
         }
         try {
             String content = payload.get("content");
-            Comment updatedComment = commentService.updateComment(commentId, content, userDetails.getEmail());
+            // 서비스 호출 시, 권한 확인을 위해 현재 로그인한 사용자의 이메일과 isAdmin 여부 전달
+            Comment updatedComment = commentService.updateComment(commentId, content, userDetails.getEmail(), userDetails.isAdmin());
+            // 반환된 updatedComment가 영속성 컨텍스트 외부에서 변경되어 merge가 필요할 수 있습니다.
+            // CommentService에서 save()를 호출하도록 수정했으므로 문제 없을 것입니다.
 
             Map<String, Object> commentData = new HashMap<>();
             commentData.put("id", updatedComment.getId());
@@ -296,7 +344,8 @@ public class BoardController {
             return ResponseEntity.status(401).body(response);
         }
         try {
-            commentService.deleteComment(commentId, userDetails.getEmail());
+            // 서비스 호출 시, 권한 확인을 위해 현재 로그인한 사용자의 이메일과 isAdmin 여부 전달
+            commentService.deleteComment(commentId, userDetails.getEmail(), userDetails.isAdmin());
             response.put("success", true);
             response.put("message", "댓글이 삭제되었습니다.");
             return ResponseEntity.ok(response);
