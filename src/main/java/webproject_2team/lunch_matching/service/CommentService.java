@@ -50,12 +50,13 @@ public class CommentService {
     /**
      * 댓글을 삭제합니다. (권한 확인 기능 추가)
      * @param userEmail 현재 로그인한 사용자의 이메일
+     * @param isAdmin 현재 로그인한 사용자가 관리자(ROLE_ADMIN)인지 여부
      */
-    public void deleteComment(Long id, String userEmail) {
+    public void deleteComment(Long id, String userEmail, boolean isAdmin) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("삭제할 댓글을 찾을 수 없습니다."));
         // ===== 권한 확인 로직 시작 =====
-        if (comment.getWriterEmail() != null && !comment.getWriterEmail().equals(userEmail)) {
+        if (!(isAdmin || (comment.getWriterEmail() != null && comment.getWriterEmail().equals(userEmail)))) {
             throw new AccessDeniedException("삭제 권한이 없습니다.");
         }
         // ===== 권한 확인 로직 끝 =====
@@ -70,12 +71,13 @@ public class CommentService {
     /**
      * 댓글을 수정합니다. (권한 확인 기능 추가)
      * @param userEmail 현재 로그인한 사용자의 이메일
+     * @param isAdmin 현재 로그인한 사용자가 관리자(ROLE_ADMIN)인지 여부
      */
-    public Comment updateComment(Long commentId, String newContent, String userEmail) {
+    public Comment updateComment(Long commentId, String newContent, String userEmail, boolean isAdmin) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("수정할 댓글을 찾을 수 없습니다."));
         // ===== 권한 확인 로직 시작 =====
-        if (comment.getWriterEmail() != null && !comment.getWriterEmail().equals(userEmail)) {
+        if (!(isAdmin || (comment.getWriterEmail() != null && comment.getWriterEmail().equals(userEmail)))) {
             throw new AccessDeniedException("수정 권한이 없습니다.");
         }
         // ===== 권한 확인 로직 끝 =====

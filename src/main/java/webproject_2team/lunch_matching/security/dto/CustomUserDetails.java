@@ -30,4 +30,10 @@ public class CustomUserDetails extends User {
         this.gender = gender;
     }
 
+    // 관리자 권한을 가지고 있는지 확인하는 헬퍼 메서드 추가
+    public boolean isAdmin() {
+        // "ROLE_ADMIN" 권한을 가지고 있는지 확인합니다.
+        return getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+    }
 }
