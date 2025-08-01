@@ -28,7 +28,7 @@ public class LoginController {
     @GetMapping("/main")
     public String mainPage() {
         log.info("GET /main - Displaying main page.");
-        return "main"; // src/main/resources/templates/main.html을 렌더링
+        return "main"; // src/main/resources/templates/main1.html을 렌더링
     }
 }
 

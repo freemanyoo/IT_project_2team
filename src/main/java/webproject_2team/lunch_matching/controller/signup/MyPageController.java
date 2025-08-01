@@ -1,6 +1,7 @@
 package webproject_2team.lunch_matching.controller.signup;
 
 import webproject_2team.lunch_matching.domain.signup.Member;
+import webproject_2team.lunch_matching.dto.signup.MemberResponseDTO;
 import webproject_2team.lunch_matching.service.signup.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,13 +29,14 @@ public class MyPageController {
             log.info("Accessing myPage for user: {}", username);
 
             try {
-                // MemberService를 통해 username으로 Member 엔티티 조회
-                Member member = memberService.getMemberByUsername(username);
+                // MemberService를 통해 username으로 MemberResponseDTO 조회
+                // MemberService의 getMemberByUsername 메서드가 MemberResponseDTO를 반환하도록 수정되었음을 전제로 합니다.
+                MemberResponseDTO memberResponseDTO = memberService.getMemberByUsername(username);
 
-                // 조회된 Member 객체를 모델에 추가하여 HTML로 전달
-                model.addAttribute("member", member);
-                log.info("Member data added to model for myPage: Nickname={}, ProfileImage={}",
-                        member.getNickname(), member.getProfileImageName() != null ? member.isHasProfileImage() : "N/A");
+                // 조회된 MemberResponseDTO 객체를 모델에 추가하여 HTML로 전달
+                model.addAttribute("member", memberResponseDTO);
+                log.info("Member data added to model for myPage: Nickname={}, ProfileThumbnailUrl={}",
+                        memberResponseDTO.getNickname(), memberResponseDTO.getProfileThumbnailUrl() != null ? memberResponseDTO.getProfileThumbnailUrl() : "N/A");
 
             } catch (IllegalArgumentException e) {
                 // 해당 아이디의 회원을 찾을 수 없는 경우 (비정상적인 상황이지만 대비)
@@ -51,6 +53,26 @@ public class MyPageController {
         }
 
         return "myPage"; // src/main/resources/templates/myPage.html 템플릿 렌더링
+    }
 
+    // 내 정보 수정 페이지 렌더링
+    @GetMapping("/myPage/edit")
+    public String editMyPage(@AuthenticationPrincipal User user, Model model) {
+        if (user != null) {
+            String username = user.getUsername();
+            log.info("Accessing editMyPage for user: {}", username);
+            try {
+                // MemberService를 통해 username으로 MemberResponseDTO 조회
+                MemberResponseDTO memberResponseDTO = memberService.getMemberByUsername(username);
+                model.addAttribute("member", memberResponseDTO); // 수정 화면에 기존 정보 전달
+            } catch (IllegalArgumentException e) {
+                log.error("Error finding member for editMyPage: {}", e.getMessage());
+                return "redirect:/errorPage";
+            }
+        } else {
+            log.warn("Unauthorized access to editMyPage. Redirecting to login.");
+            return "redirect:/login";
+        }
+        return "modify"; // modify.html 렌더링
     }
 }
