@@ -10,7 +10,7 @@
 <div layout:fragment="content">
     <h1>리뷰 수정</h1>
 
-    <form th:action="@{/review/modify}" method="post">
+    <form th:action="@{/review/modify}" method="post" class="review-form">
         <input type="hidden" name="review_id" th:value="${reviewDTO.review_id}">
         <input type="hidden" name="page" th:value="${reviewPageRequestDTO.page}">
         <input type="hidden" name="size" th:value="${reviewPageRequestDTO.size}">
