@@ -6,85 +6,60 @@
     <title>리뷰 목록</title>
     <th:block layout:fragment="css">
         <style>
-            /* board_list.html에서 복사한 스타일 */
-            .filter-section {
-                background-color: #f8f9fa;
-                padding: 15px;
-                border-radius: 8px;
+            .shadow-hr {
+                height: 2px;
+                border: none;
+                background: #ccc;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .search-section {
                 margin-bottom: 20px;
-            }
-
-            .filter-form {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                flex-wrap: wrap;
-            }
-
-            .filter-form select {
-                width: 150px;
-                font-size: 0.9rem;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            thead tr {
-                border-bottom: 1px solid #ccc;
-                font-weight: bold;
-            }
-
-            tbody tr {
-                border-bottom: 1px solid #eee;
-            }
-
-            td, th {
-                padding: 12px 8px;
-                text-align: center;
-            }
-
-            td.title-cell {
-                text-align: left;
-            }
-
-            .expired {
-                color: #dc3545;
-                font-weight: bold;
-            }
-
-            .deadline-soon {
-                color: #fd7e14;
-                font-weight: bold;
-            }
-
-            .search-write {
-                display: flex;
-                justify-content: space-between;
-                margin-top: 20px;
-                align-items: center;
             }
 
             .search-form {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                width: 60%;
+                width: 100%;
             }
 
             .search-form select {
                 width: 120px;
                 font-size: 0.9rem;
+                margin-top: 35px;
             }
 
             .search-form input {
-                flex: 1;
+                width: 480px;
                 font-size: 0.9rem;
+                margin-top: 35px;
             }
 
             .search-form button {
                 font-size: 0.9rem;
+                width: 80px;
+                background-color: rgb(55, 103, 218);
+                border-color: rgb(35, 66, 200);
+                color: white;
+                margin-top: 35px;
+            }
+
+            .search-form button:hover {
+                background-color: rgb(230,100,13);
+                border-color: rgb(230,100,13);
+            }
+
+            .write-btn {
+                background-color: rgb(255,111,15);
+                border-color: rgb(255,111,15);
+                color: white;
+            }
+
+            .write-btn:hover {
+                background-color: rgb(230,100,13);
+                border-color: rgb(230,100,13);
+                color: white;
             }
 
             .pagination-container {
@@ -102,46 +77,6 @@
                 background-color: #ff7f50;
                 border-color: #ff7f50;
                 color: white;
-            }
-
-            .gender-badge {
-                padding: 2px 6px;
-                border-radius: 12px;
-                font-size: 0.75rem;
-                color: white;
-            }
-
-            .gender-male {
-                background-color: #007bff;
-            }
-
-            .gender-female {
-                background-color: #e83e8c;
-            }
-
-            .gender-any {
-                background-color: #6c757d;
-            }
-
-            .food-badge {
-                padding: 2px 6px;
-                border-radius: 12px;
-                font-size: 0.75rem;
-                background-color: #28a745;
-                color: white;
-            }
-
-            .countdown-timer {
-                font-size: 0.8rem;
-                color: #fd7e14;
-                font-weight: bold;
-            }
-
-            .user-gender-selector {
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                z-index: 1000;
             }
 
             /* review/list.html 기존 스타일 중 필요한 부분 */
@@ -209,24 +144,25 @@
         <div class="text-center">
             <div class="board-title-box">식후감</div>
         </div>
-        <div class="search-area mb-4">
-            <form th:action="@{/review/list}" method="get" class="d-flex align-items-center">
-                <select name="type" class="form-select me-2" style="width: auto;">
+        <div class="search-section">
+            <form th:action="@{/review/list}" method="get" class="search-form">
+                <select name="type" class="form-select" style="width: auto;">
                     <option value="">--- 검색 타입 ---</option>
                     <option value="w" th:selected="${reviewPageRequestDTO.type == 'w'}">작성자</option>
                     <option value="c" th:selected="${reviewPageRequestDTO.type == 'c'}">내용</option>
                     <option value="m" th:selected="${reviewPageRequestDTO.type == 'm'}">메뉴</option>
                     <option value="p" th:selected="${reviewPageRequestDTO.type == 'p'}">장소</option>
                 </select>
-                <input type="text" name="keyword" th:value="${reviewPageRequestDTO.keyword}" class="form-control me-2" placeholder="검색어를 입력하세요">
-                <button type="submit" class="btn btn-primary me-2">검색</button>
-                <button type="button" onclick="location.href='/review/list'" class="btn btn-secondary">초기화</button>
+                <input type="text" name="keyword" th:value="${reviewPageRequestDTO.keyword}" class="form-control" placeholder="검색어를 입력하세요">
+                <button type="submit" class="btn btn-primary">검색</button>
+                <a href="/review/list" class="btn btn-outline-secondary btn-sm">초기화</a>
+                <div class="mb-4 text-end">
+                    <a href="/review/register" class="btn write-btn">새 리뷰 등록</a>
+                </div>
             </form>
         </div>
 
-        <div class="mb-4 text-end">
-            <a href="/review/register" class="btn btn-success">새 리뷰 등록</a>
-        </div>
+
 
         <div class="review-list">
             <div th:each="review : ${responseDTO.dtoList}" class="card mb-3 review-item">
