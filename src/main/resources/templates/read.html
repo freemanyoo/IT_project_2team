@@ -41,6 +41,13 @@
 </head>
 <body class="container">
 
+<div th:if="${error_message}" class="alert alert-danger" role="alert" style="margin-top: 20px;">
+    [[${error_message}]]
+</div>
+<div th:if="${success_message}" class="alert alert-success" role="alert" style="margin-top: 20px;">
+    [[${success_message}]]
+</div>
+
 <div class="content-area">
     <h1 class="board-title" th:text="${board.title}"></h1>
 
@@ -89,11 +96,14 @@
 
     <div class="btn-area">
         <a th:href="@{/board/list} + ${pageRequestDTO.getLink()}" class="btn btn-primary">목록으로</a>
-        <div th:if="${board.writerEmail != null and loggedInUserEmail != null and board.writerEmail == loggedInUserEmail}" style="display: inline;">
-            <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-info">수정하기</a>
-            <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display: inline;">
-<!--                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-                <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제하기</button>
+        <div class="button-group" th:if="${loggedInUserEmail != null}">
+            <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-warning"
+               th:if="${board.writerEmail eq loggedInUserEmail or isAdmin}">수정</a>
+
+            <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display:inline;"
+                  th:if="${board.writerEmail eq loggedInUserEmail or isAdmin}">
+                <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
             </form>
         </div>
     </div>
@@ -119,20 +129,42 @@
                     <span class="comment-writer" th:text="${comment.writer}">작성자</span>
                     <div>
                         <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성시간</span>
-                        <!-- 버튼에 클래스 추가 -->
-                        <th:block th:if="${comment.writerEmail != null and loggedInUserEmail != null and comment.writerEmail == loggedInUserEmail}">
-                            <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-edit">수정</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete">삭제</button>
-                        </th:block>
+                        <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-edit"
+                                th:data-comment-id="${comment.id}"
+                                th:data-comment-content="${comment.content}"
+                                th:if="${comment.writerEmail eq loggedInUserEmail or isAdmin}">수정</button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete"
+                                th:data-comment-id="${comment.id}"
+                                th:if="${comment.writerEmail eq loggedInUserEmail or isAdmin}">삭제</button>
                     </div>
                 </div>
-                <!-- 댓글 내용과 수정 폼을 위한 컨테이너 추가 -->
                 <div class="comment-content" th:id="'comment-content-' + ${comment.id}" th:text="${comment.content}">댓글 내용</div>
                 <div class="edit-form-container"></div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentModalLabel">댓글 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editCommentId">
+                <textarea class="form-control" id="editCommentContent" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="saveCommentChanges">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsApiKey}&libraries=services|"></script>
 <script th:inline="javascript">
@@ -391,6 +423,10 @@
                 const response = await fetch('/api/board/comment', {
                     method: 'POST',
                     // CSRF가 비활성화 상태이므로 headers 객체가 필요 없습니다.
+                    // 수정: CSRF 토큰을 전송하도록 변경
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken // CSRF 토큰 전송
+                    },
                     body: formData
                 });
 
@@ -416,6 +452,7 @@
             const noCommentsDiv = document.querySelector('.no-comments');
             if (noCommentsDiv) noCommentsDiv.remove();
 
+            // 수정
             // 수정 버튼과 수정 폼 컨테이너를 포함한 완전한 HTML 구조로 변경
             const commentHtml = `
             <div class="comment-item" data-comment-id="${comment.id}">
@@ -423,8 +460,14 @@
                     <span class="comment-writer">${escapeHtml(comment.writer)}</span>
                     <div>
                         <span class="comment-date">${comment.createdAt}</span>
-                        <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-edit">수정</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete">삭제</button>
+                        <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-edit"
+                                data-comment-id="${comment.id}"
+                                data-comment-content="${escapeHtml(comment.content)}"
+                                ${comment.writerEmail === /*[[${loggedInUserEmail}]]*/ null || /*[[${isAdmin}]]*/ false ? '' : 'style="display:none;"'}>수정</button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete"
+                                data-comment-id="${comment.id}"
+                                ${comment.writerEmail === /*[[${loggedInUserEmail}]]*/ null || /*[[${isAdmin}]]*/ false ? '' : 'style="display:none;"'}>삭제</button>
                     </div>
                 </div>
                 <div class="comment-content">${escapeHtml(comment.content)}</div>
@@ -441,7 +484,13 @@
         window.deleteComment = async function(commentId) {
             if (!confirm('댓글을 삭제하시겠습니까?')) return;
             try {
-                const response = await fetch(`/api/board/comment/${commentId}`, { method: 'DELETE' });
+                const response = await fetch(`/api/board/comment/${commentId}`, {
+                    method: 'DELETE',
+                    // 수정: CSRF 토큰을 전송하도록 변경
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken // CSRF 토큰 전송
+                    }
+                });
                 const result = await response.json();
                 if (result.success) {
                     const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
@@ -456,6 +505,7 @@
             }
         }
 
+        // 수정
         // 이벤트 위임 방식으로 수정/삭제 버튼 클릭 처리
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('btn-edit')) {
@@ -468,6 +518,7 @@
             }
         });
 
+        // 수정
         // 수정 폼 보여주기
         function showEditForm(commentItem) {
             const contentDiv = commentItem.querySelector('.comment-content');
@@ -500,12 +551,14 @@
             formContainer.querySelector('.btn-save').onclick = () => submitEdit(commentItem);
         }
 
+        // 수정
         // 수정 폼 숨기기
         function hideEditForm(commentItem) {
             commentItem.querySelector('.comment-content').style.display = 'block';
             commentItem.querySelector('.edit-form-container').innerHTML = '';
         }
 
+        // 수정
         // 수정 내용 서버로 전송
         async function submitEdit(commentItem) {
             const commentId = commentItem.dataset.commentId;
@@ -518,7 +571,11 @@
             try {
                 const response = await fetch(`/api/board/comment/${commentId}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    // 수정: CSRF 토큰을 전송하도록 변경
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken // CSRF 토큰 전송
+                    },
                     body: JSON.stringify({ content: newContent })
                 });
                 const result = await response.json();
@@ -536,6 +593,11 @@
             }
         }
         // =================================================================
+
+        // 수정
+        // CSRF 토큰 설정 (initialize 함수 밖, 다른 JS 함수들이 접근 가능하도록 전역 또는 상위 스코프에 정의)
+        const csrfToken = /*[[${_csrf != null ? _csrf.token : ''}]]*/ '';
+
 
         function updateCommentCount() {
             const count = document.querySelectorAll('#commentsList .comment-item').length;

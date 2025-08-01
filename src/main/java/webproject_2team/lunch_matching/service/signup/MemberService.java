@@ -34,6 +34,5 @@ public interface MemberService {
     void deleteMember(String username);
 
 
-    // TODO: 로그인 메서드, 회원 정보 조회/수정/삭제 메서드 등을 추가예정임.
 }
 

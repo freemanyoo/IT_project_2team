@@ -98,29 +98,37 @@ public class BoardService {
      * 게시글을 삭제합니다. (권한 확인 기능 추가)
      * @param id 삭제할 게시글의 ID
      * @param userEmail 현재 로그인한 사용자의 이메일
+     * @param isAdmin 현재 로그인한 사용자가 관리자(ROLE_ADMIN)인지 여부
      */
     @Transactional
-    public void delete(Long id, String userEmail) {
+    public void delete(Long id, String userEmail, boolean isAdmin) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("삭제할 게시글을 찾을 수 없습니다."));
 
         // ===== 권한 확인 로직 시작 =====
+        // 관리자(isAdmin)이거나, 게시글 작성자 이메일과 현재 로그인한 사용자 이메일이 일치하는 경우
         // Board 엔티티에 getWriterEmail() 메소드가 있어야 합니다.
-        if (board.getWriterEmail() != null && !board.getWriterEmail().equals(userEmail)) {
+        if (!(isAdmin || (board.getWriterEmail() != null && board.getWriterEmail().equals(userEmail)))) {
             throw new AccessDeniedException("삭제 권한이 없습니다.");
         }
         // ===== 권한 확인 로직 끝 =====
         boardRepository.deleteById(id);
     }
 
-    // 게시글 수정 메서드
+    /**
+     * 게시글 수정 메서드
+     * @param board 수정할 Board 엔티티 (ID, 수정된 내용 포함)
+     * @param userEmail 현재 로그인한 사용자의 이메일
+     * @param isAdmin 현재 로그인한 사용자가 관리자(ROLE_ADMIN)인지 여부
+     */
     @Transactional
-    public void modify(Board board, String userEmail) {
+    public void modify(Board board, String userEmail, boolean isAdmin) {
         Board existingBoard = boardRepository.findById(board.getId())
                 .orElseThrow(() -> new IllegalArgumentException("수정할 게시글을 찾을 수 없습니다."));
 
         // ===== 권한 확인 로직 시작 =====
-        if (existingBoard.getWriterEmail() != null && !existingBoard.getWriterEmail().equals(userEmail)) {
+        // 관리자(isAdmin)이거나, 게시글 작성자 이메일과 현재 로그인한 사용자 이메일이 일치하는 경우
+        if (!(isAdmin || (existingBoard.getWriterEmail() != null && existingBoard.getWriterEmail().equals(userEmail)))) {
             throw new AccessDeniedException("수정 권한이 없습니다.");
         }
         // ===== 권한 확인 로직 끝 =====
