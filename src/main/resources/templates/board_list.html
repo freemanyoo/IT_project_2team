@@ -10,6 +10,9 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .filter-form {
@@ -22,6 +25,61 @@
         .filter-form select {
             width: 150px;
             font-size: 0.9rem;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .search-form select {
+            width: 120px;
+            font-size: 0.9rem;
+
+            margin-top: 35px;
+
+        }
+
+        .search-form input {
+            width: 480px;
+            font-size: 0.9rem;
+
+            margin-top: 35px;
+
+        }
+
+        .search-form button {
+            font-size: 0.9rem;
+            width: 80px;
+            background-color: rgb(55, 103, 218);
+            border-color: rgb(35, 66, 200);
+            color: white;
+
+            margin-top: 35px;
+
+        }
+
+        .search-form button:hover {
+            background-color: rgb(230,100,13);
+            border-color: rgb(230,100,13);
+        }
+
+        .write-btn {
+            background-color: rgb(255,111,15);
+            border-color: rgb(255,111,15);
+            color: white;
+        }
+
+        .write-btn:hover {
+            background-color: rgb(230,100,13);
+            border-color: rgb(230,100,13);
+            color: white;
         }
 
         table {
@@ -55,34 +113,6 @@
         .deadline-soon {
             color: #fd7e14;
             font-weight: bold;
-        }
-
-        .search-write {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            align-items: center;
-        }
-
-        .search-form {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 60%;
-        }
-
-        .search-form select {
-            width: 120px;
-            font-size: 0.9rem;
-        }
-
-        .search-form input {
-            flex: 1;
-            font-size: 0.9rem;
-        }
-
-        .search-form button {
-            font-size: 0.9rem;
         }
 
         .pagination-container {
@@ -214,7 +244,27 @@
         <div class="board-title-box">맛슐랭 원정대</div>
     </div>
 
-    <!-- 필터링 섹션 -->
+    <!-- 검색 섹션 (필터 위로 이동) -->
+    <div class="search-section">
+        <form method="get" action="/board/list" class="search-form">
+            <select name="type" class="form-select">
+                <option value="">전체</option>
+                <option value="t" th:selected="${param.type == 't'}">제목</option>
+                <option value="w" th:selected="${param.type == 'w'}">글쓴이</option>
+                <option value="c" th:selected="${param.type == 'c'}">내용</option>
+                <option value="tw" th:selected="${param.type == 'tw'}">제목+글쓴이</option>
+                <option value="tc" th:selected="${param.type == 'tc'}">제목+내용</option>
+            </select>
+            <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${param.keyword}">
+            <button class="btn btn-primary" type="submit">검색</button>
+
+            <!-- 필터 조건 유지 -->
+            <input type="hidden" name="genderFilter" th:value="${param.genderFilter}">
+            <input type="hidden" name="foodFilter" th:value="${param.foodFilter}">
+        </form>
+    </div>
+
+    <!-- 필터링 섹션 (글쓰기 버튼 추가) -->
     <div class="filter-section">
         <form method="get" action="/board/list" class="filter-form">
             <label><strong>필터:</strong></label>
@@ -240,6 +290,11 @@
             <input type="hidden" name="type" th:value="${param.type}">
             <input type="hidden" name="keyword" th:value="${param.keyword}">
         </form>
+
+        <!-- 글쓰기 버튼 (오른쪽 끝) -->
+        <div>
+            <a href="/board/register" class="btn write-btn">글쓰기</a>
+        </div>
     </div>
 
     <!-- 게시글 목록 -->
@@ -307,30 +362,6 @@
                 </li>
             </ul>
         </nav>
-    </div>
-
-    <!-- 검색 & 글쓰기 -->
-    <div class="search-write">
-        <form method="get" action="/board/list" class="search-form">
-            <select name="type" class="form-select">
-                <option value="">전체</option>
-                <option value="t" th:selected="${param.type == 't'}">제목</option>
-                <option value="w" th:selected="${param.type == 'w'}">글쓴이</option>
-                <option value="c" th:selected="${param.type == 'c'}">내용</option>
-                <option value="tw" th:selected="${param.type == 'tw'}">제목+글쓴이</option>
-                <option value="tc" th:selected="${param.type == 'tc'}">제목+내용</option>
-            </select>
-            <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${param.keyword}">
-            <button class="btn btn-primary" type="submit">검색</button>
-
-            <!-- 필터 조건 유지 -->
-            <input type="hidden" name="genderFilter" th:value="${param.genderFilter}">
-            <input type="hidden" name="foodFilter" th:value="${param.foodFilter}">
-        </form>
-
-        <div>
-            <a href="/board/register" class="btn btn-success">글쓰기</a>
-        </div>
     </div>
 
 </div>
