@@ -20,7 +20,7 @@ public class LoginController {
 //    public String rootPage() {
 //        log.info("GET / - Redirecting to main page (or showing index).");
 //        // 실제 메인 페이지가 있다면 해당 경로로 리다이렉트하거나 해당 템플릿을 반환
-//        // 예시: Thymeleaf로 만든 메인 페이지가 "main1.html"이라면
+//        // 예시: Thymeleaf로 만든 메인 페이지가 "main.html"이라면
 //        return "main"; // 또는 "redirect:/main"
 //    }
 
@@ -28,7 +28,7 @@ public class LoginController {
     @GetMapping("/main")
     public String mainPage() {
         log.info("GET /main - Displaying main page.");
-        return "main1"; // src/main/resources/templates/main1.html을 렌더링
+        return "main"; // src/main/resources/templates/main1.html을 렌더링
     }
 }
 
