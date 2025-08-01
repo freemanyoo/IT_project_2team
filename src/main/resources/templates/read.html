@@ -94,10 +94,11 @@
         </div>
     </div>
 
-    <div class="btn-area">
-        <a th:href="@{/board/list} + ${pageRequestDTO.getLink()}" class="btn btn-primary">목록으로</a>
-        <div class="button-group" th:if="${loggedInUserEmail != null}">
-            <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-warning"
+    <div class="btn-area text-center">
+        <a th:href="@{/board/list} + ${pageRequestDTO.getLink()}" class="btn btn-primary me-2">목록으로</a>
+
+        <th:block th:if="${loggedInUserEmail != null}">
+            <a th:href="@{/board/modify/{id}(id=${board.id})}" class="btn btn-warning me-2"
                th:if="${board.writerEmail eq loggedInUserEmail or isAdmin}">수정</a>
 
             <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display:inline;"
@@ -105,8 +106,9 @@
                 <button type="submit" class="btn btn-danger"
                         onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
             </form>
-        </div>
+        </th:block>
     </div>
+
 
     <div class="comment-section">
         <h4>댓글 <span id="commentCount" th:text="${#lists.size(comments)}">0</span>개</h4>

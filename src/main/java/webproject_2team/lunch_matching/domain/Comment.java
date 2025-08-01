@@ -27,5 +27,12 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @Column(name = "writer_email")
-    private String writerEmail; // 이메일 저장용
+        private String writerEmail; // 이메일 저장용
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true, cascade = CascadeType.ALL)
+    private java.util.List<Comment> children = new java.util.ArrayList<>();
 }
