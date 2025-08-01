@@ -112,7 +112,7 @@ main h2 {
 }
 
 main button {
-    background-color: #ffa726;
+    background-color: rgb(255, 111, 15);
     color: #fff;
     border: none;
     padding: 0.4rem 0.8rem;
