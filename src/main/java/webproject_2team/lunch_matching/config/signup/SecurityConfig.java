@@ -83,7 +83,7 @@ public class SecurityConfig {
                 // 3. 로그아웃 설정
                 .logout(logout -> logout
                         .logoutUrl("/logout") // 로그아웃 처리 URL (POST 요청)
-                        .logoutSuccessUrl("/login?logout") // 로그아웃 성공 시 로그인 페이지로 리다이렉트 (logout 파라미터 추가)
+                        .logoutSuccessUrl("/main") // 로그아웃 성공 시 로그인 페이지로 리다이렉트 (logout 파라미터 추가)
                         .invalidateHttpSession(true) // 세션 무효화
                         .deleteCookies("JSESSIONID", "remember-me") // JSESSIONID 및 remember-me 쿠키 삭제
                         .permitAll() // 로그아웃 관련 URL도 인증 없이 접근 가능해야 함

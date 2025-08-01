@@ -31,36 +31,45 @@ public class BoardService {
         String genderFilter = pageRequestDTO.getGenderFilter();
         String foodFilter = pageRequestDTO.getFoodFilter();
 
-        // 검색 조건이 있는 경우
-        if (keyword != null && !keyword.trim().isEmpty() && types != null) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
             boolean searchTitle = false;
             boolean searchContent = false;
             boolean searchWriter = false;
+            boolean searchRegion = false; // '위치' 검색을 위한 플래그 추가
 
-            for (String type : types) {
-                switch (type) {
-                    case "t": // title
-                        searchTitle = true;
-                        break;
-                    case "c": // content
-                        searchContent = true;
-                        break;
-                    case "w": // writer
-                        searchWriter = true;
-                        break;
+            if (types == null || types.length == 0) {
+                searchTitle = true;
+                searchContent = true;
+                searchWriter = true;
+                searchRegion = true; // '전체' 검색 시 위치도 포함
+            } else {
+                for (String type : types) {
+                    switch (type) {
+                        case "t":
+                            searchTitle = true;
+                            break;
+                        case "c":
+                            searchContent = true;
+                            break;
+                        case "w":
+                            searchWriter = true;
+                            break;
+                        case "r": // '위치' 타입(r) 처리
+                            searchRegion = true;
+                            break;
+                    }
                 }
             }
 
+            // Repository 호출 시 searchRegion 플래그 전달
             result = boardRepository.findByKeywordAndTypeAndFilters(
-                    keyword, searchTitle, searchContent, searchWriter,
+                    keyword, searchTitle, searchContent, searchWriter, searchRegion,
                     genderFilter, foodFilter, pageable);
         }
-        // 필터만 있는 경우
         else if ((genderFilter != null && !genderFilter.trim().isEmpty()) ||
                 (foodFilter != null && !foodFilter.trim().isEmpty())) {
             result = boardRepository.findByFilters(genderFilter, foodFilter, pageable);
         }
-        // 조건이 없는 경우
         else {
             result = boardRepository.findAll(pageable);
         }

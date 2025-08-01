@@ -40,14 +40,16 @@
         </div>
 
         <div class="form-group">
-            <div>
-            <input type="radio" id="male" name="gender" value="male">
-             <label for="male">남자</label>
-            <input type="radio" id="female" name="gender" value="female">
-            <label for="female">여자</label>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <label for="male" style="display: flex; flex-direction: row-reverse; align-items: center; gap: 5px;">
+                    <input type="radio" id="male" name="gender" value="male">남자
+                </label>
+                <label for="female" style="display: flex; flex-direction: row-reverse; align-items: center; gap: 5px;">
+                    <input type="radio" id="female" name="gender" value="female">여자
+                </label>
             </div>
             <div class="error-message" id="genderError"></div>
-           <div class="success-message" id="genderSuccess"></div>
+            <div class="success-message" id="genderSuccess"></div>
         </div>
 
         <div class="form-group">
