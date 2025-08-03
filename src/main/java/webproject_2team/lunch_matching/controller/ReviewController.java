@@ -69,6 +69,7 @@ public class ReviewController {
         log.info("register GET...");
         model.addAttribute("emotionMap", emotionMap); // 감정 맵 추가
         model.addAttribute("emoticonMap", emoticonMap); // 이모티콘 맵 추가
+        model.addAttribute("_csrf", model.getAttribute("_csrf")); // CSRF 토큰을 모델에 명시적으로 추가
     }
 
     @PostMapping("/register")

@@ -108,6 +108,8 @@
         const uploadFileNames = [[${reviewDTO.uploadFileNames}]];
         const reviewId = [[${reviewDTO.review_id}]]; // reviewId 추가
         const initialLikeStatus = [[${reviewDTO.likedByCurrentUser}]]; // 초기 좋아요 상태 추가
+        const csrfToken = [[${_csrf != null ? _csrf.token : ''}]]; // CSRF 토큰 추가
+        const csrfHeaderName = [[${_csrf != null ? _csrf.headerName : ''}]]; // CSRF 헤더 이름 추가
 
         document.getElementById('toListBtn').addEventListener('click', function() {
             const page = [[${reviewPageRequestDTO.page}]];

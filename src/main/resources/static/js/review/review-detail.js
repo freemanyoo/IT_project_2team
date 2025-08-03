@@ -61,11 +61,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         likeButton.addEventListener('click', async function() {
             try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (csrfToken && csrfHeaderName) {
+                    headers[csrfHeaderName] = csrfToken;
+                }
+
                 const response = await fetch(`/review/${reviewId}/like`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: headers
                 });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -158,11 +163,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (csrfToken && csrfHeaderName) {
+                    headers[csrfHeaderName] = csrfToken;
+                }
+
                 const response = await fetch(`/review/${reviewId}/comments`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: headers,
                     body: JSON.stringify({ content: content })
                 });
                 if (!response.ok) {
@@ -179,11 +189,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // 댓글 수정 함수
         async function modifyComment(commentId, newContent) {
             try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (csrfToken && csrfHeaderName) {
+                    headers[csrfHeaderName] = csrfToken;
+                }
+
                 const response = await fetch(`/review/comments/${commentId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: headers,
                     body: JSON.stringify({ content: newContent })
                 });
                 if (!response.ok) {
@@ -199,8 +214,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // 댓글 삭제 함수
         async function deleteComment(commentId) {
             try {
+                const headers = {};
+                if (csrfToken && csrfHeaderName) {
+                    headers[csrfHeaderName] = csrfToken;
+                }
+
                 const response = await fetch(`/review/comments/${commentId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: headers
                 });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

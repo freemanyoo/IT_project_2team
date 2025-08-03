@@ -11,7 +11,7 @@
     <h1>새 리뷰 등록</h1>
 
     <form th:action="@{/review/register}" method="post" enctype="multipart/form-data" class="review-form">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <label for="member_id">작성자 ID:</label>
         <input type="text" id="member_id" name="member_id" required>
 
