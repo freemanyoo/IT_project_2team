@@ -81,12 +81,12 @@
                 display: flex;
                 flex-wrap: wrap;
                 gap: 20px;
-                justify-content: center;
+                justify-content: space-between; /* 아이템들을 양쪽 끝으로 배치, 마지막 줄 홀수 아이템은 앞쪽 정렬 */
             }
 
             .review-item {
                 width: 100%;
-                max-width: 500px;
+                max-width: 600px; /* 폭을 600px로 넓힘 */
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 border-radius: 8px;
                 overflow: hidden;
