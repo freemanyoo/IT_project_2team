@@ -72,36 +72,24 @@ public class ReviewController {
     }
 
     @PostMapping("/register")
-    public String registerPOST(ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
-        log.info("register POST...");
-        if (reviewDTO.getUploadFileNames() != null) {
-            log.info("ReviewDTO uploadFileNames size: " + reviewDTO.getUploadFileNames().size());
-            reviewDTO.getUploadFileNames().forEach(fileDto ->
-                log.info("  ReviewDTO File: uuid=" + fileDto.getUuid() + ", fileName=" + fileDto.getFileName() + ", img=" + fileDto.isImg())
-            );
+    public String registerPOST(ReviewDTO reviewDTO,
+                               @RequestParam(value = "files", required = false) List<MultipartFile> files,
+                               RedirectAttributes redirectAttributes) {
+        log.info("register POST with files...");
+
+        // 파일 업로드 처리
+        if (files != null && !files.isEmpty() && !files.get(0).isEmpty()) {
+            log.info("Files are present, processing upload...");
+            List<UploadResultDTO> resultList = uploadUtil.uploadFiles(files).join();
+            reviewDTO.setUploadFileNames(resultList);
+            log.info("Uploaded file names set to DTO.");
         } else {
-            log.info("ReviewDTO uploadFileNames is null.");
+            log.info("No files were uploaded.");
         }
 
         Long review_id = reviewService.register(reviewDTO);
         redirectAttributes.addFlashAttribute("result", review_id);
         return "redirect:/review/list";
-    }
-
-    // 파일 업로드 처리
-    @PostMapping("/upload")
-    @ResponseBody
-    public List<UploadResultDTO> upload(List<MultipartFile> files) {
-        log.info("upload POST...");
-        log.info("Received files count: " + files.size());
-        files.forEach(file -> log.info("  MultipartFile: " + file.getOriginalFilename() + ", size: " + file.getSize()));
-
-        List<UploadResultDTO> resultList = uploadUtil.uploadFiles(files).join();
-
-        log.info("UploadUtil returned resultList count: " + resultList.size());
-        resultList.forEach(dto -> log.info("  UploadResultDTO: uuid=" + dto.getUuid() + ", fileName=" + dto.getFileName() + ", img=" + dto.isImg()));
-
-        return resultList;
     }
 
     @GetMapping({"/read", "/modify"})

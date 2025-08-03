@@ -53,8 +53,11 @@ public class SecurityConfig {
         log.info("=====securityFilterChain=====");
 
         // CSRF 비활성화 (REST API 개발중)
-        http.csrf(AbstractHttpConfigurer::disable);
+        // http.csrf(AbstractHttpConfigurer::disable); // CSRF 비활성화 (REST API 개발중)
         // 특정 경로에 대한 접근 권한 설정
+        http.csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**") // /api/로 시작하는 모든 요청에 대해 CSRF 보호 비활성화
+        );
         http.authorizeHttpRequests(authorize -> authorize
 
                 // 루트 경로 및 메인 페이지 (컨트롤러에서 "/" 또는 "/main"을 처리할 경우)

@@ -10,7 +10,8 @@
 <div layout:fragment="content">
     <h1>새 리뷰 등록</h1>
 
-    <form th:action="@{/review/register}" method="post" class="review-form">
+    <form th:action="@{/review/register}" method="post" enctype="multipart/form-data" class="review-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <label for="member_id">작성자 ID:</label>
         <input type="text" id="member_id" name="member_id" required>
 
@@ -34,7 +35,7 @@
         <input type="hidden" id="rating" name="rating" value="0" required>
 
         <label for="fileInput">사진 업로드:</label>
-        <input type="file" id="fileInput" multiple>
+        <input type="file" id="fileInput" name="files" multiple>
         <div id="uploadResult" class="upload-result-area">
             <!-- 업로드된 파일 미리보기가 여기에 표시됩니다. -->
         </div>
