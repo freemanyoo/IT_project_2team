@@ -27,13 +27,11 @@
             .search-form select {
                 width: 120px;
                 font-size: 0.9rem;
-                margin-top: 35px;
             }
 
             .search-form input {
                 width: 480px;
                 font-size: 0.9rem;
-                margin-top: 35px;
             }
 
             .search-form button {
@@ -42,7 +40,6 @@
                 background-color: rgb(55, 103, 218);
                 border-color: rgb(35, 66, 200);
                 color: white;
-                margin-top: 35px;
             }
 
             .search-form button:hover {
@@ -154,11 +151,9 @@
                     <option value="p" th:selected="${reviewPageRequestDTO.type == 'p'}">장소</option>
                 </select>
                 <input type="text" name="keyword" th:value="${reviewPageRequestDTO.keyword}" class="form-control" placeholder="검색어를 입력하세요">
-                <button type="submit" class="btn btn-primary">검색</button>
-                <a href="/review/list" class="btn btn-outline-secondary btn-sm">초기화</a>
-                <div class="mb-4 text-end">
-                    <a href="/review/register" class="btn write-btn">새 리뷰 등록</a>
-                </div>
+                <button type="submit" class="btn btn-primary" style="margin-bottom: 15px;">검색</button>
+                <a href="/review/list" class="btn btn-outline-secondary">초기화</a>
+                <a href="/review/register" class="btn write-btn" style="margin-left: auto;">새 리뷰 등록</a>
             </form>
         </div>
 
