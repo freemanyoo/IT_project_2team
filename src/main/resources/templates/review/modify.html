@@ -20,8 +20,9 @@
         <label>리뷰 ID</label>
         <p class="form-control-static" th:text="${reviewDTO.review_id}"></p>
 
-        <label for="member_id">작성자 ID</label>
-        <input type="text" id="member_id" name="member_id" th:value="${reviewDTO.member_id}" readonly>
+        <input type="hidden" name="member_id" th:value="${reviewDTO.member_id}">
+        <label>작성자</label>
+        <p class="form-control-static" th:text="${reviewDTO.nickname}"></p>
 
         <label for="content">내용</label>
         <textarea id="content" name="content" required th:text="${reviewDTO.content}"></textarea>
