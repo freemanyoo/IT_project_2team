@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentRating = value; // 현재 선택된 평점 업데이트
             console.log(`Clicked star value: ${value}, currentRating: ${currentRating}`);
             updateStarVisuals(value); // 클릭 시 selected 클래스 적용
+            validateForm(); // 평점 변경 시 폼 유효성 검사
         });
 
         star.addEventListener('mouseover', function() {
@@ -153,15 +154,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // 업로드 시작 시 로딩 표시 및 버튼 비활성화
+            // 업로드 시작 시 로딩 표시 및 버튼 비활성화 (validateForm이 처리하도록 변경)
             if (uploadLoadingDiv) {
                 uploadLoadingDiv.style.display = 'block';
                 console.log('Upload loading div displayed.');
             }
-            if (submitButton) {
-                submitButton.disabled = true;
-                console.log('Submit button disabled.');
-            }
+            // submitButton.disabled = true; // 제거
 
             const formData = new FormData();
             filesToUpload.forEach(file => {
@@ -218,15 +216,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('파일 업로드에 실패했습니다.');
             })
             .finally(() => {
-                // 업로드 완료 시 로딩 숨김 및 버튼 활성화
+                // 업로드 완료 시 로딩 숨김 및 버튼 활성화 (validateForm이 처리하도록 변경)
                 if (uploadLoadingDiv) {
                     uploadLoadingDiv.style.display = 'none';
                     console.log('Upload loading div hidden.');
                 }
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    console.log('Submit button enabled.');
-                }
+                // submitButton.disabled = false; // 제거
+                validateForm(); // 파일 업로드 완료 후 폼 유효성 다시 검사
             });
         });
     }
@@ -286,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateForm() {
         let isValid = true;
 
+        // 글자 수 제한 검사
         if (contentTextarea && contentTextarea.value.length > MAX_LENGTH_CONTENT) {
             isValid = false;
         }
@@ -296,10 +293,10 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
         
-        // 평점 (rating)이 0이면 유효하지 않음
-        if (ratingInput && parseInt(ratingInput.value) === 0) {
-            isValid = false;
-        }
+        // 평점 (rating)이 0이면 유효하지 않음 -> 이 부분을 제거
+        // if (ratingInput && parseInt(ratingInput.value) === 0) {
+        //     isValid = false;
+        // }
 
         // submitButton이 존재할 때만 disabled 속성 제어
         if (submitButton) {

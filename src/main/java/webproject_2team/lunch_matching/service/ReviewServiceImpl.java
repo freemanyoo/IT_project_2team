@@ -106,50 +106,29 @@ public class ReviewServiceImpl implements ReviewService {
         review.change(reviewDTO.getContent(), reviewDTO.getMenu(), reviewDTO.getPlace(), reviewDTO.getRating(), reviewDTO.getEmotion());
 
         // --- File List Management ---
-        // Get current files associated with the review from the database
-        List<webproject_2team.lunch_matching.domain.UploadResult> existingFiles = new java.util.ArrayList<>(review.getFileList());
+        // 기존 파일 목록을 백업하여 삭제할 파일을 식별
+        List<webproject_2team.lunch_matching.domain.UploadResult> oldFiles = new java.util.ArrayList<>(review.getFileList());
 
-        // Create sets for efficient lookup of existing file UUIDs
-        java.util.Set<String> existingFileUuids = existingFiles.stream()
-                .map(webproject_2team.lunch_matching.domain.UploadResult::getUuid)
-                .collect(Collectors.toSet());
-
-        // Only process file changes if reviewDTO.getUploadFileNames() is not null.
-        // If it's null, it means the file input was not touched, so preserve existing files.
+        // 새로운 파일 목록으로 완전히 교체
+        review.getFileList().clear(); // 기존 컬렉션 비우기
         if (reviewDTO.getUploadFileNames() != null) {
-            List<webproject_2team.lunch_matching.dto.UploadResultDTO> incomingFilesDTO = reviewDTO.getUploadFileNames();
-
-            // Create sets for efficient lookup of incoming file UUIDs
-            java.util.Set<String> incomingFileUuids = incomingFilesDTO.stream()
-                    .map(webproject_2team.lunch_matching.dto.UploadResultDTO::getUuid)
-                    .collect(Collectors.toSet());
-
-            // Identify files to remove (exist in DB but not in incoming DTO)
-            java.util.List<webproject_2team.lunch_matching.domain.UploadResult> filesToRemove = existingFiles.stream()
-                    .filter(file -> !incomingFileUuids.contains(file.getUuid()))
-                    .collect(Collectors.toList());
-
-            // Identify files to add (in incoming DTO but not in DB)
-            java.util.List<webproject_2team.lunch_matching.dto.UploadResultDTO> filesToAddDTO = incomingFilesDTO.stream()
-                    .filter(fileDTO -> !existingFileUuids.contains(fileDTO.getUuid()))
-                    .collect(Collectors.toList());
-
-            // Remove files from the review's fileList and MinIO
-            filesToRemove.forEach(file -> {
-                review.getFileList().remove(file); // This will trigger deletion from DB if orphanRemoval=true
-                String originalObjectKey = file.getUuid() + "_" + file.getFileName();
-                deleteFileAsync(originalObjectKey);
-                if (file.isImage()) {
-                    String thumbnailObjectKey = "s_" + originalObjectKey;
-                    deleteFileAsync(thumbnailObjectKey);
-                }
-            });
-
-            // Add new files to the review's fileList
-            filesToAddDTO.forEach(fileDTO -> {
+            reviewDTO.getUploadFileNames().forEach(fileDTO -> {
                 review.getFileList().add(modelMapper.map(fileDTO, webproject_2team.lunch_matching.domain.UploadResult.class));
             });
         }
+
+        // 로컬 파일 시스템에서 삭제할 파일 식별 및 삭제
+        // oldFiles에 있지만 review.getFileList()에 없는 파일들을 찾아 삭제
+        java.util.Set<String> newFileUuids = review.getFileList().stream()
+                .map(webproject_2team.lunch_matching.domain.UploadResult::getUuid)
+                .collect(Collectors.toSet());
+
+        oldFiles.forEach(oldFile -> {
+            if (!newFileUuids.contains(oldFile.getUuid())) {
+                String originalFileName = oldFile.getUuid() + "_" + oldFile.getFileName();
+                uploadUtil.deleteFile(originalFileName); // UploadUtil의 deleteFile 호출
+            }
+        });
         // --- End File List Management ---
 
         reviewRepository.save(review);
@@ -166,29 +145,15 @@ public class ReviewServiceImpl implements ReviewService {
             throw new IllegalArgumentException("You do not have permission to remove this review.");
         }
 
-        // MinIO에서 파일 삭제
+        // 로컬 파일 시스템에서 파일 삭제
         if (review.getFileList() != null && !review.getFileList().isEmpty()) {
             review.getFileList().forEach(file -> {
-                String originalObjectKey = file.getUuid() + "_" + file.getFileName();
-                deleteFileAsync(originalObjectKey);
-                if (file.isImage()) {
-                    String thumbnailObjectKey = "s_" + originalObjectKey;
-                    deleteFileAsync(thumbnailObjectKey);
-                }
+                String originalFileName = file.getUuid() + "_" + file.getFileName();
+                uploadUtil.deleteFile(originalFileName); // UploadUtil의 deleteFile 호출
             });
         }
 
         reviewRepository.deleteById(review_id);
-    }
-
-    @Async
-    public void deleteFileAsync(String objectKey) {
-        try {
-            uploadUtil.deleteFile(objectKey);
-            log.info("Async delete successful for: " + objectKey);
-        } catch (Exception e) {
-            log.error("Async delete failed for: " + objectKey, e);
-        }
     }
 
     @Transactional
