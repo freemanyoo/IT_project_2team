@@ -242,9 +242,83 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 페이지 로드 시 submitButton 활성화
-    if (submitButton) {
-        submitButton.disabled = false;
-        console.log('Submit button enabled on DOMContentLoaded.');
+    // --- 글자 수 카운팅 및 유효성 검사 로직 추가 ---
+    const contentTextarea = document.getElementById('content');
+    const contentCharCountSpan = document.getElementById('contentCharCount');
+    const menuInput = document.getElementById('menu');
+    const menuCharCountSpan = document.getElementById('menuCharCount');
+    const placeInput = document.getElementById('place');
+    const placeCharCountSpan = document.getElementById('placeCharCount');
+
+    const MAX_LENGTH_CONTENT = 2000;
+    const MAX_LENGTH_MENU = 50;
+    const MAX_LENGTH_PLACE = 100;
+
+    function updateCharCount(inputElement, countSpanElement, maxLength) {
+        const currentLength = inputElement.value.length;
+        countSpanElement.textContent = `${currentLength} / ${maxLength}`;
+
+        if (currentLength > maxLength) {
+            countSpanElement.style.color = 'red';
+            // 입력값 자르기 (선택 사항: 사용자에게 경고만 주고 입력은 허용할 수도 있음)
+            // inputElement.value = inputElement.value.substring(0, maxLength);
+        } else {
+            countSpanElement.style.color = 'initial'; // 또는 'black' 등 기본 색상
+        }
+        validateForm(); // 글자 수 변경 시마다 폼 유효성 검사
     }
+
+    // 초기 로드 시 글자 수 업데이트 (수정 페이지의 경우 기존 내용 반영)
+    if (contentTextarea) {
+        updateCharCount(contentTextarea, contentCharCountSpan, MAX_LENGTH_CONTENT);
+        contentTextarea.addEventListener('input', () => updateCharCount(contentTextarea, contentCharCountSpan, MAX_LENGTH_CONTENT));
+    }
+    if (menuInput) {
+        updateCharCount(menuInput, menuCharCountSpan, MAX_LENGTH_MENU);
+        menuInput.addEventListener('input', () => updateCharCount(menuInput, menuCharCountSpan, MAX_LENGTH_MENU));
+    }
+    if (placeInput) {
+        updateCharCount(placeInput, placeCharCountSpan, MAX_LENGTH_PLACE);
+        placeInput.addEventListener('input', () => updateCharCount(placeInput, placeCharCountSpan, MAX_LENGTH_PLACE));
+    }
+
+    // 폼 유효성 검사 함수
+    function validateForm() {
+        let isValid = true;
+
+        if (contentTextarea && contentTextarea.value.length > MAX_LENGTH_CONTENT) {
+            isValid = false;
+        }
+        if (menuInput && menuInput.value.length > MAX_LENGTH_MENU) {
+            isValid = false;
+        }
+        if (placeInput && placeInput.value.length > MAX_LENGTH_PLACE) {
+            isValid = false;
+        }
+        
+        // 평점 (rating)이 0이면 유효하지 않음
+        if (ratingInput && parseInt(ratingInput.value) === 0) {
+            isValid = false;
+        }
+
+        // submitButton이 존재할 때만 disabled 속성 제어
+        if (submitButton) {
+            submitButton.disabled = !isValid;
+        }
+        return isValid;
+    }
+
+    // 폼 제출 시 최종 유효성 검사
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!validateForm()) {
+                event.preventDefault(); // 폼 제출 방지
+                alert('입력된 내용 중 글자 수 제한을 초과한 항목이 있습니다. 확인해주세요.');
+            }
+        });
+    }
+
+    // 초기 로드 시 submitButton 활성화 (기존 로직 유지)
+    // 단, validateForm()을 통해 초기 유효성 검사를 수행하여 disabled 상태를 결정
+    validateForm();
 });
