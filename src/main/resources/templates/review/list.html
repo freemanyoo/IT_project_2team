@@ -169,8 +169,8 @@
                                      th:src="@{/view/{fileName}(fileName=${review.uploadFileNames[0].getThumbnailLink()})}"
                                      alt="Review Image" class="img-fluid rounded-start review-thumbnail">
                                 <img th:unless="${review.uploadFileNames != null and !review.uploadFileNames.isEmpty()}"
-                                     th:src="@{/images/noIcon.png}"
-                                     alt="No Image" class="img-fluid rounded-start review-thumbnail">
+                                     th:src="@{/layoutIMAGE/5.png}"
+                                     alt="로고" class="img-fluid rounded-start review-thumbnail">
                                 <span th:if="${review.uploadFileNames != null and review.uploadFileNames.size() > 1}"
                                       class="image-count-badge"
                                       th:text="'+' + ${review.uploadFileNames.size() - 1}"></span>
