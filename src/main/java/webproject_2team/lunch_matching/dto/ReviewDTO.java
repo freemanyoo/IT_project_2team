@@ -27,4 +27,12 @@ public class ReviewDTO {
     private int likeCount; // 좋아요 수
     private List<ReviewCommentDTO> comments; // 댓글 목록
     private boolean likedByCurrentUser; // 현재 사용자가 좋아요를 눌렀는지 여부
+
+    // 내용이 길 경우 잘라주는 메서드
+    public String getTruncatedContent() {
+        if (content != null && content.length() > 100) {
+            return content.substring(0, 100) + "...";
+        }
+        return content;
+    }
 }

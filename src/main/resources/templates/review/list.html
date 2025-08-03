@@ -181,7 +181,7 @@
                         <div class="card-body review-details">
                             <h5 class="card-title"><a th:href="@{/review/read(review_id=${review.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}" th:text="${review.menu}"></a></h5>
                             <p class="card-text text-muted mb-1"><small th:text="${review.place}"></small></p>
-                            <p class="card-text mb-1" th:text="${review.content}"></p>
+                            <p class="card-text mb-1" th:text="${review.getTruncatedContent()}"></p>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-warning">
                                     <th:block th:each="i : ${#numbers.sequence(1, 5)}">

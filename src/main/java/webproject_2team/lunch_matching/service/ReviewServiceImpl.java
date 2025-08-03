@@ -58,6 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
         return review_id;
     }
 
+    @Transactional // 이 어노테이션을 추가합니다.
     @Override
     public ReviewDTO readOne(Long review_id) {
         java.util.Optional<Review> result = reviewRepository.findByIdWithFiles(review_id);
