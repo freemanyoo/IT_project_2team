@@ -16,8 +16,8 @@
             <p class="form-control-static" th:text="${reviewDTO.review_id}"></p>
         </div>
         <div>
-            <label>작성자 ID</label>
-            <p class="form-control-static" th:text="${reviewDTO.member_id}"></p>
+            <label>작성자</label>
+            <p class="form-control-static" th:text="${reviewDTO.nickname}"></p>
         </div>
         <div>
             <label>내용</label>
@@ -83,9 +83,10 @@
         </div>
 
         <div class="button-area">
-            <a th:href="@{/review/modify(review_id=${reviewDTO.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">
+            <a th:if="${reviewDTO.member_id == currentMemberId}" th:href="@{/review/modify(review_id=${reviewDTO.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">
                 <button type="button">수정</button>
             </a>
+            <button type="button" id="removeBtn" th:if="${reviewDTO.member_id == currentMemberId}">삭제</button>
             <button type="button" id="toListBtn">목록으로</button>
         </div>
 
@@ -108,6 +109,7 @@
         const uploadFileNames = [[${reviewDTO.uploadFileNames}]];
         const reviewId = [[${reviewDTO.review_id}]]; // reviewId 추가
         const initialLikeStatus = [[${reviewDTO.likedByCurrentUser}]]; // 초기 좋아요 상태 추가
+        const currentMemberId = [[${currentMemberId}]]; // 현재 로그인한 사용자 ID 추가
 
         document.getElementById('toListBtn').addEventListener('click', function() {
             const page = [[${reviewPageRequestDTO.page}]];
@@ -121,6 +123,51 @@
             }
             window.location.href = url;
         });
+
+        // 삭제 버튼 클릭 이벤트
+        const removeBtn = document.getElementById('removeBtn');
+        if (removeBtn) { // 버튼이 존재할 때만 이벤트 리스너 추가
+            removeBtn.addEventListener('click', function() {
+                if (confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/review/remove';
+
+                    const reviewIdInput = document.createElement('input');
+                    reviewIdInput.type = 'hidden';
+                    reviewIdInput.name = 'review_id';
+                    reviewIdInput.value = reviewId;
+                    form.appendChild(reviewIdInput);
+
+                    const pageInput = document.createElement('input');
+                    pageInput.type = 'hidden';
+                    pageInput.name = 'page';
+                    pageInput.value = [[${reviewPageRequestDTO.page}]];
+                    form.appendChild(pageInput);
+
+                    const sizeInput = document.createElement('input');
+                    sizeInput.type = 'hidden';
+                    sizeInput.name = 'size';
+                    sizeInput.value = [[${reviewPageRequestDTO.size}]];
+                    form.appendChild(sizeInput);
+
+                    const typeInput = document.createElement('input');
+                    typeInput.type = 'hidden';
+                    typeInput.name = 'type';
+                    typeInput.value = [[${reviewPageRequestDTO.type}]] || '';
+                    form.appendChild(typeInput);
+
+                    const keywordInput = document.createElement('input');
+                    keywordInput.type = 'hidden';
+                    keywordInput.name = 'keyword';
+                    keywordInput.value = [[${reviewPageRequestDTO.keyword}]] || '';
+                    form.appendChild(keywordInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
     </script>
     <script th:src="@{/js/review/review-detail.js}"></script>
 </th:block>

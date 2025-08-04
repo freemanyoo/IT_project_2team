@@ -108,12 +108,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     commentDiv.className = 'comment-item';
                     commentDiv.dataset.commentId = comment.id; // 댓글 ID 저장
 
-                    commentDiv.innerHTML = `
-                        <p><strong>${comment.member_id}</strong>: <span class="comment-text">${comment.content}</span></p>
-                        <p class="comment-meta">${new Date(comment.regDate).toLocaleString()}</p>
-                        <div class="comment-actions">
+                    let commentActionsHtml = '';
+                    if (comment.member_id === currentMemberId) {
+                        commentActionsHtml = `
                             <button type="button" class="modify-comment-button">수정</button>
                             <button type="button" class="delete-comment-button">삭제</button>
+                        `;
+                    }
+
+                    commentDiv.innerHTML = `
+                        <p><strong>${comment.nickname}</strong>: <span class="comment-text">${comment.content}</span></p>
+                        <p class="comment-meta">${new Date(comment.regDate).toLocaleString()}</p>
+                        <div class="comment-actions">
+                            ${commentActionsHtml}
                         </div>
                     `;
                     commentListDiv.appendChild(commentDiv);

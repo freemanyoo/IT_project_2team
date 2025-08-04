@@ -12,8 +12,8 @@ public interface ReviewCommentService {
     List<ReviewCommentDTO> getCommentsOfReview(Long reviewId);
 
     // 댓글 수정
-    void modify(ReviewCommentDTO reviewCommentDTO);
+    void modify(ReviewCommentDTO reviewCommentDTO, String memberId);
 
     // 댓글 삭제
-    void remove(Long commentId);
+    void remove(Long commentId, String memberId);
 }

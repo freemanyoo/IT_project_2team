@@ -118,6 +118,12 @@ main button:hover {
     background-color: #fb8c00;
 }
 
+/* 비활성화된 버튼 스타일 */
+main button:disabled {
+    background-color: #cccccc; /* 회색 */
+    cursor: not-allowed; /* 클릭 불가능 커서 */
+}
+
 
 /* 푸터 */
 footer {
