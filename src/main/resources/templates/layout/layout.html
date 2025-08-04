@@ -13,6 +13,7 @@
         @media (min-width: 992px) {
             .navbar-collapse {
                 display: flex !important;
+                visibility: visible !important;
             }
         }
 
@@ -126,6 +127,7 @@
 
         <div class="navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/main}">오점머</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/board/list}">맛슐랭원정대</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/review/list}">식후감</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/lunchmatch/list}">맛집저장</a></li>
