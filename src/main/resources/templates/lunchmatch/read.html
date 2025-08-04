@@ -1,33 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}"> <head>
+      layout:decorate="~{layout/layout}">
+<head>
     <title th:text="${dto.name} + ' 상세 정보'"></title>
     <th:block layout:fragment="css">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-        <style>
-            /* 레이아웃의 Bootstrap 스타일이 이 페이지의 디자인을 방해하지 않도록 설정 */
-            main.flex-grow-1 > .container {
-                max-width: 100%;
-                padding: 0;
-            }
-            /* 기존 스타일은 변경 없이 그대로 유지- */
-            #map {
-                width: 100%;
-                height: 400px;
-                border-radius: 0.5rem;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                overflow: hidden;
-            }
-            .info {
-                padding: 5px; border-radius: 5px; background: #fff; border: 1px solid #ccc;
-                box-shadow: 0 2px 2px rgba(0,0,0,0.1); white-space: nowrap;
-            }
-            .info .title { font-weight: bold; font-size: 14px; color: #333; }
-        </style>
+        <link rel="stylesheet" th:href="@{/css/lunchmatch/lunchmatch.css}">
     </th:block>
 </head>
 
