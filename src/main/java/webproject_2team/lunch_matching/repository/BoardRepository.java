@@ -7,7 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import webproject_2team.lunch_matching.domain.Board;
 
+import java.util.List;
+
 public interface BoardRepository extends JpaRepository<Board, Long> {
+
+    // ✅ 내가 쓴 글 조회를 위한 메소드 추가
+    // 메소드 이름만으로 JPA가 자동으로 쿼리를 생성합니다.
+    // "작성자 이메일(writerEmail)로 게시글을 찾아서 생성일(createdAt)을 기준으로 내림차순(최신순) 정렬하라"
+    List<Board> findByWriterEmailOrderByCreatedAtDesc(String writerEmail);
 
     @Query("SELECT b FROM Board b WHERE b.title LIKE CONCAT('%',:keyword,'%')")
     Page<Board> findByTitleContaining(@Param("keyword") String keyword, Pageable pageable);
