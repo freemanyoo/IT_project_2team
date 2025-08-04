@@ -173,7 +173,7 @@
             <h4>파티모집 게시글</h4>
             <ul th:if="${not #lists.isEmpty(partyPosts)}">
                 <li th:each="post : ${partyPosts}">
-                    <a th:href="@{/party/detail/{id}(id=${post.id})}" th:text="${post.title}">파티모집 게시글 제목 예시</a>
+                    <a th:href="@{/board/read(id=${post.id})}" th:text="${post.title}">파티모집 게시글 제목 예시</a>
                     <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2025-07-30 10:30</span>
                 </li>
             </ul>
