@@ -7,10 +7,12 @@ import webproject_2team.lunch_matching.dto.ReviewPageResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // Added for @AuthenticationPrincipal
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import webproject_2team.lunch_matching.security.dto.CustomUserDetails; // CustomUserDetails import 추가
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,7 @@ import webproject_2team.lunch_matching.service.ReviewService;
 import webproject_2team.lunch_matching.service.ReviewLikeService;
 import webproject_2team.lunch_matching.service.ReviewCommentService;
 import webproject_2team.lunch_matching.util.UploadUtil;
+import webproject_2team.lunch_matching.repository.MemberRepository; // MemberRepository import 추가
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +40,7 @@ public class ReviewController {
     private final UploadUtil uploadUtil;
     private final ReviewLikeService reviewLikeService;
     private final ReviewCommentService reviewCommentService;
+    private final MemberRepository memberRepository; // MemberRepository 주입
 
     // 감정 목록 정의
     private final Map<String, String> emotionMap = new LinkedHashMap<>();
@@ -72,8 +76,11 @@ public class ReviewController {
     }
 
     @PostMapping("/register")
-    public String registerPOST(ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
+    public String registerPOST(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
         log.info("register POST...");
+        log.info("Authenticated memberId for review registration: {}", customUserDetails.getUsername()); // Debug log
+        reviewDTO.setMember_id(customUserDetails.getUsername()); // Set member_id from authenticated user
+        reviewDTO.setNickname(customUserDetails.getNickname()); // Set nickname from CustomUserDetails
         if (reviewDTO.getUploadFileNames() != null) {
             log.info("ReviewDTO uploadFileNames size: " + reviewDTO.getUploadFileNames().size());
             reviewDTO.getUploadFileNames().forEach(fileDto ->
@@ -105,18 +112,19 @@ public class ReviewController {
     }
 
     @GetMapping({"/read", "/modify"})
-    public void read(Long review_id, ReviewPageRequestDTO reviewPageRequestDTO, Model model) {
+    public void read(@AuthenticationPrincipal CustomUserDetails customUserDetails, Long review_id, ReviewPageRequestDTO reviewPageRequestDTO, Model model) {
         log.info("read or modify GET...");
         ReviewDTO reviewDTO = reviewService.readOne(review_id);
         model.addAttribute("reviewDTO", reviewDTO);
         model.addAttribute("emotionMap", emotionMap); // 감정 맵 추가
         model.addAttribute("emoticonMap", emoticonMap); // 이모티콘 맵 추가
+        model.addAttribute("currentMemberId", customUserDetails.getUsername()); // 현재 로그인한 사용자 ID 추가
     }
 
     @PostMapping("/modify")
-    public String modify(ReviewPageRequestDTO reviewPageRequestDTO, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
+    public String modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewPageRequestDTO reviewPageRequestDTO, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
         log.info("modify POST...");
-        reviewService.modify(reviewDTO);
+        reviewService.modify(reviewDTO, customUserDetails.getUsername());
         redirectAttributes.addFlashAttribute("result", "modified");
         redirectAttributes.addAttribute("review_id", reviewDTO.getReview_id());
         redirectAttributes.addAttribute("page", reviewPageRequestDTO.getPage());
@@ -129,9 +137,9 @@ public class ReviewController {
     }
 
     @PostMapping("/remove")
-    public String remove(Long review_id, ReviewPageRequestDTO reviewPageRequestDTO, RedirectAttributes redirectAttributes) {
+    public String remove(@AuthenticationPrincipal CustomUserDetails customUserDetails, Long review_id, ReviewPageRequestDTO reviewPageRequestDTO, RedirectAttributes redirectAttributes) {
         log.info("remove POST...");
-        reviewService.remove(review_id);
+        reviewService.remove(review_id, customUserDetails.getUsername());
         redirectAttributes.addFlashAttribute("result", "removed");
         redirectAttributes.addAttribute("page", reviewPageRequestDTO.getPage());
         redirectAttributes.addAttribute("size", reviewPageRequestDTO.getSize());
@@ -187,11 +195,11 @@ public class ReviewController {
     // 댓글 등록
     @PostMapping("/{reviewId}/comments")
     @ResponseBody
-    public ResponseEntity<Long> addComment(@PathVariable Long reviewId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
-        // TODO: 실제 사용자 ID는 Spring Security 등 인증 시스템에서 가져와야 합니다.
-        String memberId = "testuser"; // 임시 사용자 ID
+    public ResponseEntity<Long> addComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
+        log.info("Authenticated memberId for comment addition: {}", customUserDetails.getUsername()); // Debug log
         reviewCommentDTO.setReview_id(reviewId);
-        reviewCommentDTO.setMember_id(memberId);
+        reviewCommentDTO.setMember_id(customUserDetails.getUsername()); // Set member_id from authenticated user
+        reviewCommentDTO.setNickname(customUserDetails.getNickname()); // Set nickname from CustomUserDetails
         Long commentId = reviewCommentService.register(reviewCommentDTO);
         return ResponseEntity.ok(commentId);
     }
@@ -199,17 +207,17 @@ public class ReviewController {
     // 댓글 수정
     @PutMapping("/comments/{commentId}")
     @ResponseBody
-    public ResponseEntity<String> modifyComment(@PathVariable Long commentId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
+    public ResponseEntity<String> modifyComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
         reviewCommentDTO.setId(commentId);
-        reviewCommentService.modify(reviewCommentDTO);
+        reviewCommentService.modify(reviewCommentDTO, customUserDetails.getUsername());
         return ResponseEntity.ok("Comment modified successfully");
     }
 
     // 댓글 삭제
     @DeleteMapping("/comments/{commentId}")
     @ResponseBody
-    public ResponseEntity<String> removeComment(@PathVariable Long commentId) {
-        reviewCommentService.remove(commentId);
+    public ResponseEntity<String> removeComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId) {
+        reviewCommentService.remove(commentId, customUserDetails.getUsername());
         return ResponseEntity.ok("Comment removed successfully");
     }
 }
