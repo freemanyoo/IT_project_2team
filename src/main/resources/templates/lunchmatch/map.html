@@ -81,7 +81,7 @@
                         전체 지도 보기
                     </button>
                     <button onclick="displayMyLocation()" class="absolute top-14 right-2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200 text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                     </button>
                     <div class="absolute top-2 left-2 z-10">
                         <select id="radiusSelect" onchange="changeSearchRadius()" class="bg-white text-gray-700 text-sm py-2 px-3 rounded-md shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -101,6 +101,9 @@
                 <div id="fullscreen-map" class="w-full h-full rounded-lg"></div>
                 <button onclick="closeFullScreenMap()" class="absolute top-4 right-4 bg-white text-gray-800 font-bold py-2 px-4 rounded-full shadow-xl hover:bg-gray-200 transition z-10">
                     닫기
+                </button>
+                <button onclick="displayMyLocationOnModal()" class="absolute top-20 right-4 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200 text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                 </button>
             </div>
         </div>
@@ -124,6 +127,10 @@
         let currentActiveMarker = null;
         let currentPage = 1;
         let totalPage = 1;
+        let modalMap;
+        let modalMyLocationMarker = null;
+        let modalMyLocationCircle = null;
+
 
         document.addEventListener("DOMContentLoaded", function() {
             const mapContainer = document.getElementById('map');
@@ -205,10 +212,22 @@
             }
         }
 
-        function getUserLocation(callback) {
-            if (userLocation) return callback();
+        function getUserLocation(callback, forceRefresh = false) {
+            // 강제 새로고침이 아니고, 기존 위치 정보가 있을 때만 캐시를 사용
+            if (userLocation && !forceRefresh) {
+                return callback();
+            }
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
+
+                    // ================================================================
+                    // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ 디버깅 코드 추가 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+                    console.log("브라우저가 전달한 위치 정보:", position);
+                    alert(`새로 받은 좌표:\n위도: ${position.coords.latitude}\n경도: ${position.coords.longitude}`);
+                    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ 디버깅 코드 추가 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+                    // ================================================================
+
                     userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
                     if (callback) callback();
                 }, error => {
@@ -220,30 +239,60 @@
         }
 
         function displayMyLocation() {
-            getUserLocation((errorOccurred) => {
-                if (!errorOccurred && userLocation) {
+            // '내 위치 보기' 기능은 다른 기능과 독립적으로, 항상 새로 위치를 가져옵니다.
+            if (navigator.geolocation) {
+                // 옵션을 통해 브라우저 캐시를 사용하지 않도록 명시합니다.
+                const geoOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                };
+
+                navigator.geolocation.getCurrentPosition(position => {
+                    // 1. 새로 가져온 정확한 위치를 전역 변수에 즉시 업데이트합니다.
+                    //    이렇게 해야 목록의 거리 표시도 이 최신 위치를 기준으로 다시 계산됩니다.
+                    userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+
+                    // 2. 지도에 '내 위치' 마커와 원을 새로 그립니다.
                     const locPosition = new kakao.maps.LatLng(userLocation.lat, userLocation.lng);
                     if (myLocationMarker) myLocationMarker.setMap(null);
                     if (myLocationCircle) myLocationCircle.setMap(null);
+
                     myLocationMarker = new kakao.maps.Marker({
-                        map: map, position: locPosition,
-                        image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35), { offset: new kakao.maps.Point(12, 35) })
+                        map: map,
+                        position: locPosition,
+                        image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35), {offset: new kakao.maps.Point(12, 35)})
                     });
                     myLocationCircle = new kakao.maps.Circle({
-                        map: map, center: locPosition, radius: currentSearchRadius, strokeWeight: 2,
-                        strokeColor: '#004CFF', strokeOpacity: 0.8, strokeStyle: 'dashed',
-                        fillColor: '#CCE7FF', fillOpacity: 0.5
+                        map: map,
+                        center: locPosition,
+                        radius: currentSearchRadius,
+                        strokeWeight: 2,
+                        strokeColor: '#004CFF',
+                        strokeOpacity: 0.8,
+                        strokeStyle: 'dashed',
+                        fillColor: '#CCE7FF',
+                        fillOpacity: 0.5
                     });
                     map.setCenter(locPosition);
                     map.setLevel(calculateLevelForRadius(currentSearchRadius));
-                    const infowindow = new kakao.maps.InfoWindow({
-                        content: '<div style="padding:5px;font-size:12px;">현재 내 위치</div>',
-                        position: locPosition
+
+                    // 3. 현재 표시된 장소 목록의 거리를 새로고침된 위치 기준으로 다시 계산하고,
+                    //    화면을 업데이트하여 즉시 반영합니다.
+                    updatePlacesDistances(originalPlaces, () => {
+                        // 만약 현재 '거리순'으로 정렬된 상태였다면, 목록 순서도 다시 정렬합니다.
+                        if (document.getElementById('sort').value === 'distance') {
+                            originalPlaces.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+                        }
+                        displayPlaces(originalPlaces);
                     });
-                    infowindow.open(map, myLocationMarker);
-                    updatePlacesDistances(originalPlaces, () => displayPlaces(originalPlaces));
-                }
-            });
+
+                }, () => {
+                    alert('오류: 위치 정보를 가져오는 데 실패했습니다.');
+                }, geoOptions);
+            } else {
+                alert('오류: 이 브라우저에서는 위치 정보 기능을 사용할 수 없습니다.');
+            }
         }
 
         function changeSearchRadius() {
@@ -396,7 +445,6 @@
         function removeAllChildNods(el) { while (el.hasChildNodes()) el.removeChild(el.lastChild); }
 
         // ▼▼▼ 전체 지도 보기 JavaScript 함수 추가 ▼▼▼
-        let modalMap;
         function openFullScreenMap() {
             const modal = document.getElementById('fullscreen-map-modal');
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -429,12 +477,64 @@
         function closeFullScreenMap() {
             const modal = document.getElementById('fullscreen-map-modal');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            if (modalMap) {
-                document.getElementById('fullscreen-map').innerHTML = '';
-                modalMap = null;
+
+            document.getElementById('fullscreen-map').innerHTML = '';
+            modalMap = null;
+
+            if (modalMyLocationMarker) {
+                modalMyLocationMarker.setMap(null);
+                modalMyLocationMarker = null;
+            }
+            // [추가] 모달의 원도 함께 제거합니다.
+            if (modalMyLocationCircle) {
+                modalMyLocationCircle.setMap(null);
+                modalMyLocationCircle = null;
             }
         }
-        // ▲▲▲ 함수 추가 완료 ▲▲▲
+        function displayMyLocationOnModal() {
+            if (!modalMap) return;
+
+            if (navigator.geolocation) {
+                const geoOptions = { /* ... */ };
+
+                navigator.geolocation.getCurrentPosition(position => {
+                    const locPosition = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+                    // 기존 마커 제거
+                    if (modalMyLocationMarker) {
+                        modalMyLocationMarker.setMap(null);
+                    }
+                    // [추가] 기존 원 제거
+                    if (modalMyLocationCircle) {
+                        modalMyLocationCircle.setMap(null);
+                    }
+
+                    // 새로운 마커 생성
+                    modalMyLocationMarker = new kakao.maps.Marker({
+                        map: modalMap,
+                        position: locPosition,
+                        image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35), {offset: new kakao.maps.Point(12, 35)})
+                    });
+
+                    // [추가] 새로운 원 생성
+                    modalMyLocationCircle = new kakao.maps.Circle({
+                        map: modalMap,
+                        center: locPosition,
+                        radius: currentSearchRadius,
+                        strokeWeight: 2,
+                        strokeColor: '#004CFF',
+                        strokeOpacity: 0.8,
+                        strokeStyle: 'dashed',
+                        fillColor: '#CCE7FF',
+                        fillOpacity: 0.5
+                    });
+
+                    modalMap.setCenter(locPosition);
+                }, () => { /* ... */ }, geoOptions);
+            } else { /* ... */ }
+        }
+
+
     </script>
 </th:block>
 </html>
