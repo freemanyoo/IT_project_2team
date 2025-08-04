@@ -84,9 +84,9 @@
                         <a th:href="@{/lunchmatch/read/{rno}(rno=*{rno})}" class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition">
                             취소
                         </a>
-                        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                        <a href="#" onclick="this.closest('form').submit(); return false;" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
                             저장하기
-                        </button>
+                        </a>
                     </div>
                 </form>
             </div>
@@ -94,7 +94,7 @@
     </div>
 </div>
 
-<!-- 이 페이지는 별도 JavaScript가 없으므로 script 조각은 비워둡니다. -->
+<!--- 이 페이지는 별도 JavaScript가 없으므로 script 조각은 비워둡니다. ---->
 <th:block layout:fragment="script">
 </th:block>
 

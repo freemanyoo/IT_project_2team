@@ -14,7 +14,7 @@
                 max-width: 100%;
                 padding: 0;
             }
-            /* 기존 스타일은 변경 없이 그대로 유지 */
+            /* 기존 스타일은 변경 없이 그대로 유지- */
             #map {
                 width: 100%;
                 height: 400px;
@@ -71,15 +71,9 @@
                 </div>
 
                 <div class="flex justify-end mt-6">
-                    <a href="/lunchmatch/list" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300 mr-2">
-                        목록으로
-                    </a>
-                    <a th:href="@{/lunchmatch/modify/{rno}(rno=${dto.rno})}" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300 mr-2">
-                        수정하기
-                    </a>
-                    <button type="button" onclick="deleteRestaurant()" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300">
-                        삭제하기
-                    </button>
+                    <a href="/lunchmatch/list" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300">목록으로</a>
+                    <a th:href="@{/lunchmatch/modify/{rno}(rno=${dto.rno})}" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300">수정하기</a>
+                    <a href="#" onclick="deleteRestaurant()" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300">삭제하기</a>
                 </div>
             </main>
         </div>
@@ -89,7 +83,7 @@
 <th:block layout:fragment="script">
     <script th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsApiKey}&libraries=services|"></script>
     <script th:inline="javascript">
-        // ======== 기존의 모든 JavaScript 함수 (변경 없음) ========
+        // =========== 기존의 모든 JavaScript 함수 (변경 없음) ==========
         const restaurantData = {
             rno: /*[[${dto.rno}]]*/ null,
             name: /*[[${dto.name}]]*/ 'Unknown Restaurant',
