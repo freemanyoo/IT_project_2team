@@ -1,0 +1,43 @@
+/* 맛집 정보 검색 (search.html) */
+main.flex-grow-1 > .container {
+    max-width: 100%;
+    padding: 0;
+}
+body { font-family: 'Noto Sans KR', 'Inter', sans-serif; }
+#map { width: 100%; height: 100%; }
+#menu_wrap { height: 100%; display: flex; flex-direction: column; }
+#placesList { flex-grow: 1; overflow-y: auto; }
+#pagination { flex-shrink: 0; }
+.info { padding: 5px; border-radius: 5px; }
+.info .title { font-weight: bold; font-size: 14px; }
+.highlighted { background-color: #e0f2fe !important; }
+#fullscreen-map-modal { transition: opacity 0.3s ease-in-out; }
+
+/* 내가 저장한 맛집 (list.html) */
+.card-fade-in { animation: fadeIn 0.5s ease-in-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+#map {
+    width: 100%; height: 600px; border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+.info { background: #fff; border: 1px solid #ccc; box-shadow: 0 2px 2px rgba(0,0,0,0.1); white-space: nowrap; }
+.info .title { color: #333; }
+.text-center { text-align: center; }
+.board-title-box {
+    background-color: rgb(255, 111, 15); /* 주황색 계열 배경 */
+    color: white;              /* 글자색 흰색 */
+    padding: 10px 30px;        /* 안쪽 여백 */
+    border-radius: 8px;       /* 둥근 모서리 */
+    display: inline-block;     /* 내용물만큼만 너비 설정 */
+    font-size: 2rem;         /* 글자 크기 */
+    font-weight: bold;
+    margin: 20px auto;/* 글자 굵기 */
+}
+.shadow-hr {
+    height: 2px; border: none; background: #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
