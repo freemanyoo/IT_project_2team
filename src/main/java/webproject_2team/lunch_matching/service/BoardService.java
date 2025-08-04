@@ -22,6 +22,11 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
+
+    public List<Board> findMyBoardsByEmail(String email) {
+        return boardRepository.findByWriterEmailOrderByCreatedAtDesc(email);
+    }
+
     public PageResponseDTO<Board> getBoardList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable("id");
 
