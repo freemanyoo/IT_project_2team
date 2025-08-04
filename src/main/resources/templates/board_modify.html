@@ -39,29 +39,22 @@
 <body class="container">
 
 <div class="container-box">
-    <div class="sidebar">
-        <div class="menu">메뉴</div>
-        <ul>
-            <li><a href="#" style="text-decoration:none;">오점머</a></li>
-            <li><a href="#" style="text-decoration:none;">맛잘알모집소</a></li>
-            <li><a href="#" style="text-decoration:none;">오점완</a></li>
-            <li><a href="#" style="text-decoration:none;">맛집정보</a></li>
-            <li><a href="#" style="text-decoration:none;">신고센터</a></li>
-            <li><a href="#" style="text-decoration:none;">MyPage</a></li>
-            <li><a href="#" style="text-decoration:none;">맛지도</a></li>
-        </ul>
-    </div>
+
 
     <div class="form-area">
         <h2>게시글 수정</h2>
         <form method="post" th:action="@{/board/modify}" th:object="${board}" onsubmit="return validateForm()">
+            <input type="hidden" th:field="*{id}">
 <!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-            <input type="hidden" name="id" th:field="*{id}">
-            <input type="text" id="title" name="title" class="form-control" placeholder="제목을 입력하세요" maxlength="100" th:field="*{title}">
-            <div id="titleCounter" class="char-counter">0/100 bytes</div>
-
-            <input type="text" id="writer" name="writer" class="form-control" th:field="*{writer}" readonly>
-            <input type="text" id="region" name="region" class="form-control" placeholder="주요 활동 지역 (예: 부산진구)" th:field="*{region}">
+            <div class="row">
+                <div class="col-9">
+                    <input type="text" id="title" name="title" class="form-control" placeholder="제목을 입력하세요" maxlength="100" th:field="*{title}">
+                    <div id="titleCounter" class="char-counter">0/100 bytes</div>
+                </div>
+                <div class="col-3">
+                    <input type="text" id="writer" name="writer" class="form-control" th:value="${loggedInNickname}" readonly>
+                </div>
+            </div>
 
             <div class="mt-3">
                 <h5 class="mb-3">📍 모집 장소 수정</h5>

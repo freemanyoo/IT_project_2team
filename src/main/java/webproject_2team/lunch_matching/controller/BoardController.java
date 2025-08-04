@@ -163,15 +163,18 @@ public class BoardController {
             return "redirect:/board/list";
         }
 
+
         // **수정 권한 확인 로직 추가**
         boolean isAdmin = userDetails != null && userDetails.isAdmin();
         if (userDetails == null || !(isAdmin || board.getWriterEmail().equals(userDetails.getEmail()))) {
             redirectAttributes.addFlashAttribute("error_message", "게시글을 수정할 권한이 없습니다.");
             return "redirect:/board/read?id=" + id; // 권한 없으면 상세 페이지로 리다이렉트
+
         }
 
         model.addAttribute("board", board);
         model.addAttribute("kakaoJsApiKey", kakaoJavascriptApiKey);
+        model.addAttribute("loggedInNickname", userDetails.getNickname());
         return "board_modify";
     }
 
