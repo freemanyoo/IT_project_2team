@@ -1,33 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}"> <head>
+      layout:decorate="~{layout/layout}">
+<head>
     <title>맛집 정보 검색</title>
     <th:block layout:fragment="css">
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            /* 레이아웃의 Bootstrap 스타일이 이 페이지의 디자인을 방해하지 않도록 설정 */
             main.flex-grow-1 > .container {
                 max-width: 100%;
                 padding: 0;
             }
-            .board-title-box {
-                background-color: rgb(255, 111, 15);
-                color: white;
-                font-size: 2rem;
-                font-weight: bold;
-                padding: 10px 30px;
-                border-radius: 8px;
-                display: inline-block;
-                margin: 20px auto;
-            }
-            .shadow-hr {
-                height: 2px;
-                border: none;
-                background: #ccc;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            }
-            /* 기존 스타일은 변경 없이 그대로 유지 */
             body { font-family: 'Noto Sans KR', 'Inter', sans-serif; }
             #map { width: 100%; height: 100%; }
             #menu_wrap { height: 100%; display: flex; flex-direction: column; }
@@ -36,6 +19,8 @@
             .info { padding: 5px; border-radius: 5px; }
             .info .title { font-weight: bold; font-size: 14px; }
             .highlighted { background-color: #e0f2fe !important; }
+            /* ▼▼▼ 전체 지도 보기 모달 CSS 추가 ▼▼▼ */
+            #fullscreen-map-modal { transition: opacity 0.3s ease-in-out; }
         </style>
     </th:block>
 </head>
@@ -43,13 +28,14 @@
 <div layout:fragment="content">
     <div class="bg-gray-100">
         <div class="container mx-auto p-4 flex flex-col" style="height: calc(100vh - 130px);">
-            <div class="text-center">
-                <div class="board-title-box">맛지도</div>
+            <header class="mb-4 pb-4 border-b flex-shrink-0">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">맛집 정보 검색</h1>
                         <p class="text-gray-600">원하는 장소를 검색하여 맛집을 찾아보세요.</p>
                     </div>
-            <hr class="my-4 shadow-hr">
-
-
+                </div>
+            </header>
 
             <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 min-h-0">
                 <div id="menu_wrap" class="bg-white p-4 rounded-lg shadow-md col-span-1 flex flex-col h-full overflow-hidden">
@@ -91,8 +77,11 @@
                 </div>
                 <div class="relative col-span-1 md:col-span-2 rounded-lg shadow-md overflow-hidden">
                     <div id="map"></div>
-                    <button onclick="displayMyLocation()" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <button onclick="openFullScreenMap()" class="absolute top-2 right-2 bg-white text-gray-700 font-semibold py-2 px-4 rounded-full shadow-lg z-10 hover:bg-gray-200 transition">
+                        전체 지도 보기
+                    </button>
+                    <button onclick="displayMyLocation()" class="absolute top-14 right-2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200 text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                     </button>
                     <div class="absolute top-2 left-2 z-10">
                         <select id="radiusSelect" onchange="changeSearchRadius()" class="bg-white text-gray-700 text-sm py-2 px-3 rounded-md shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -106,17 +95,24 @@
                 </div>
             </div>
         </div>
+
+        <div id="fullscreen-map-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center opacity-0 pointer-events-none">
+            <div class="relative w-11/12 h-5/6 bg-white rounded-lg shadow-2xl p-4">
+                <div id="fullscreen-map" class="w-full h-full rounded-lg"></div>
+                <button onclick="closeFullScreenMap()" class="absolute top-4 right-4 bg-white text-gray-800 font-bold py-2 px-4 rounded-full shadow-xl hover:bg-gray-200 transition z-10">
+                    닫기
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         const KAKAO_JAVASCRIPT_API_KEY = /*[[${kakaoJsApiKey}]]*/ 'YOUR_DEFAULT_KEY';
-        console.log("카카오 JavaScript API 키 (HTML에 주입됨):", KAKAO_JAVASCRIPT_API_KEY);
     </script>
     <script th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsApiKey}&libraries=services|"></script>
     <script>
-        // ======== 기존의 모든 JavaScript 함수 (변경 없음) ========
         let map;
         let markers = [];
         let infowindow = new kakao.maps.InfoWindow({zIndex:1});
@@ -130,7 +126,6 @@
         let totalPage = 1;
 
         document.addEventListener("DOMContentLoaded", function() {
-            console.log('DOMContentLoaded 이벤트 발생.');
             const mapContainer = document.getElementById('map');
             const mapOption = { center: new kakao.maps.LatLng(35.1576, 129.0594), level: 4 };
             map = new kakao.maps.Map(mapContainer, mapOption);
@@ -146,11 +141,7 @@
             const fullKeyword = `${keyword} ${category}`;
             try {
                 const response = await fetch(`/lunchmatch/searchKakaoPlaces?query=${encodeURIComponent(fullKeyword)}&page=${currentPage}`);
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('서버 API 호출 실패:', response.status, errorText);
-                    throw new Error(`서버 API 호출 실패: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`서버 API 호출 실패`);
                 const data = await response.json();
                 originalPlaces = data.documents;
                 renderPagination(data.meta);
@@ -162,11 +153,8 @@
                             bounds.extend(new kakao.maps.LatLng(parseFloat(place.y), parseFloat(place.x)));
                         }
                     });
-                    if (!bounds.isEmpty()) {
-                        map.setBounds(bounds);
-                    } else {
-                        map.setCenter(new kakao.maps.LatLng(35.1576, 129.0594));
-                    }
+                    if (!bounds.isEmpty()) map.setBounds(bounds);
+                    else map.setCenter(new kakao.maps.LatLng(35.1576, 129.0594));
                 } else {
                     map.setCenter(new kakao.maps.LatLng(35.1576, 129.0594));
                 }
@@ -189,8 +177,7 @@
         function renderPagination(meta) {
             const pageableCount = meta.pageable_count > 45 ? 45 : meta.pageable_count;
             totalPage = Math.ceil(pageableCount / 15);
-            const pageInfoEl = document.getElementById('pageInfo');
-            pageInfoEl.textContent = `${currentPage} / ${totalPage}`;
+            document.getElementById('pageInfo').textContent = `${currentPage} / ${totalPage}`;
             document.getElementById('prevBtn').disabled = currentPage === 1;
             document.getElementById('nextBtn').disabled = currentPage === totalPage || meta.is_end;
         }
@@ -207,38 +194,27 @@
                         return;
                     }
                     updatePlacesDistances(processedPlaces);
-                    processedPlaces.sort((a, b) => {
-                        if (a.distance === null || isNaN(a.distance)) return 1;
-                        if (b.distance === null || isNaN(b.distance)) return -1;
-                        return a.distance - b.distance;
-                    });
+                    processedPlaces.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
                     displayPlaces(processedPlaces);
                 });
             } else {
                 if (sort === 'name') {
                     processedPlaces.sort((a, b) => a.place_name.localeCompare(b.place_name));
                 }
-                updatePlacesDistances();
-                displayPlaces(processedPlaces);
+                updatePlacesDistances(processedPlaces, () => displayPlaces(processedPlaces));
             }
         }
 
         function getUserLocation(callback) {
-            if (userLocation) {
-                if (callback) callback();
-                return;
-            }
+            if (userLocation) return callback();
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
                     if (callback) callback();
                 }, error => {
-                    console.error("위치 정보를 가져오는 데 실패했습니다.", error);
-                    alert("현재 위치를 가져올 수 없습니다. 브라우저 설정에서 위치 정보 접근을 허용해주세요.");
                     if (callback) callback(true);
                 }, { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
             } else {
-                alert("이 브라우저에서는 Geolocation을 지원하지 않습니다.");
                 if (callback) callback(true);
             }
         }
@@ -250,20 +226,13 @@
                     if (myLocationMarker) myLocationMarker.setMap(null);
                     if (myLocationCircle) myLocationCircle.setMap(null);
                     myLocationMarker = new kakao.maps.Marker({
-                        map: map,
-                        position: locPosition,
+                        map: map, position: locPosition,
                         image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35), { offset: new kakao.maps.Point(12, 35) })
                     });
                     myLocationCircle = new kakao.maps.Circle({
-                        map: map,
-                        center: locPosition,
-                        radius: currentSearchRadius,
-                        strokeWeight: 2,
-                        strokeColor: '#004CFF',
-                        strokeOpacity: 0.8,
-                        strokeStyle: 'dashed',
-                        fillColor: '#CCE7FF',
-                        fillOpacity: 0.5
+                        map: map, center: locPosition, radius: currentSearchRadius, strokeWeight: 2,
+                        strokeColor: '#004CFF', strokeOpacity: 0.8, strokeStyle: 'dashed',
+                        fillColor: '#CCE7FF', fillOpacity: 0.5
                     });
                     map.setCenter(locPosition);
                     map.setLevel(calculateLevelForRadius(currentSearchRadius));
@@ -272,49 +241,41 @@
                         position: locPosition
                     });
                     infowindow.open(map, myLocationMarker);
-                    updatePlacesDistances();
+                    updatePlacesDistances(originalPlaces, () => displayPlaces(originalPlaces));
                 }
             });
         }
 
         function changeSearchRadius() {
             currentSearchRadius = parseInt(document.getElementById('radiusSelect').value);
-            if (userLocation) {
-                displayMyLocation();
-            }
+            if (myLocationCircle) myLocationCircle.setRadius(currentSearchRadius);
         }
 
         function calculateLevelForRadius(radius) {
-            if (radius <= 500) return 4;
-            if (radius <= 1000) return 5;
-            if (radius <= 2000) return 6;
-            if (radius <= 5000) return 7;
-            if (radius <= 10000) return 8;
-            return 9;
+            if (radius <= 500) return 4; if (radius <= 1000) return 5;
+            if (radius <= 2000) return 6; if (radius <= 5000) return 7;
+            return 8;
         }
 
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
-            const dLat = deg2rad(lat2 - lat1);
-            const dLon = deg2rad(lon2 - lon1);
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
+            const dLat = (lat2-lat1) * Math.PI/180; const dLon = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
-        function deg2rad(deg) { return deg * (Math.PI / 180); }
 
-        function updatePlacesDistances() {
-            if (!userLocation) return;
-            originalPlaces.forEach(place => {
-                const lat = parseFloat(place.y);
-                const lng = parseFloat(place.x);
+        function updatePlacesDistances(places, callback) {
+            if (!userLocation || !places) {
+                if (callback) callback();
+                return;
+            }
+            places.forEach(place => {
+                const lat = parseFloat(place.y); const lng = parseFloat(place.x);
                 if (!isNaN(lat) && !isNaN(lng)) {
                     place.distance = getDistance(userLocation.lat, userLocation.lng, lat, lng);
-                } else {
-                    place.distance = null;
-                }
+                } else { place.distance = null; }
             });
-            displayPlaces(originalPlaces);
+            if (callback) callback();
         }
 
         function displayPlaces(places) {
@@ -333,10 +294,7 @@
                     listEl.appendChild(itemEl);
                     itemEl.onmouseover = () => {
                         const targetMarker = markers.find(m => m.placeId === place.id);
-                        if (targetMarker) {
-                            if (currentActiveMarker && currentActiveMarker !== targetMarker) {
-                                currentActiveMarker.setImage(currentActiveMarker.normalImage);
-                            }
+                        if (targetMarker && currentActiveMarker !== targetMarker) {
                             targetMarker.setImage(targetMarker.hoverImage);
                             infowindow.setContent(`<div class="info"><div class="title">${place.place_name}</div></div>`);
                             infowindow.open(map, targetMarker);
@@ -353,9 +311,7 @@
                         if (event.target.tagName === 'BUTTON' || event.target.closest('a')) return;
                         const targetMarker = markers.find(m => m.placeId === place.id);
                         if (targetMarker) {
-                            if (currentActiveMarker && currentActiveMarker !== targetMarker) {
-                                currentActiveMarker.setImage(currentActiveMarker.normalImage);
-                            }
+                            if (currentActiveMarker && currentActiveMarker !== targetMarker) currentActiveMarker.setImage(currentActiveMarker.normalImage);
                             targetMarker.setImage(targetMarker.hoverImage);
                             currentActiveMarker = targetMarker;
                             map.panTo(targetMarker.getPosition());
@@ -369,40 +325,28 @@
         }
 
         function addMarker(position, idx, placeId, placeName) {
-            const normalImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
-            const imageSize = new kakao.maps.Size(36, 37);
+            const normalImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', imageSize = new kakao.maps.Size(36, 37);
             const normalImgOptions = { spriteSize: new kakao.maps.Size(36, 691), spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), offset: new kakao.maps.Point(13, 37) };
             const markerImageNormal = new kakao.maps.MarkerImage(normalImageSrc, imageSize, normalImgOptions);
-            const hoverImageSrc = 'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
-            const hoverImageSize = new kakao.maps.Size(31, 35);
+            const hoverImageSrc = 'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', hoverImageSize = new kakao.maps.Size(31, 35);
             const hoverImgOptions = { offset: new kakao.maps.Point(13, 34) };
             const markerImageHover = new kakao.maps.MarkerImage(hoverImageSrc, hoverImageSize, hoverImgOptions);
             const marker = new kakao.maps.Marker({ position: position, image: markerImageNormal });
-            marker.normalImage = markerImageNormal;
-            marker.hoverImage = markerImageHover;
-            marker.placeId = placeId;
-            marker.placeName = placeName;
-            marker.setMap(map);
-            markers.push(marker);
-            return marker;
+            marker.normalImage = markerImageNormal; marker.hoverImage = markerImageHover;
+            marker.placeId = placeId; marker.placeName = placeName;
+            marker.setMap(map); markers.push(marker); return marker;
         }
 
         function removeMarker() {
-            for (let i = 0; i < markers.length; i++) { markers[i].setMap(null); }
-            markers = [];
-            currentActiveMarker = null;
-            infowindow.close();
+            markers.forEach(m => m.setMap(null)); markers = [];
+            currentActiveMarker = null; infowindow.close();
         }
 
         function highlightListItem(placeId) {
-            document.querySelectorAll('#placesList .highlighted').forEach(el => {
-                el.classList.remove('highlighted');
-                el.style.backgroundColor = '';
-            });
+            document.querySelectorAll('#placesList .highlighted').forEach(el => el.classList.remove('highlighted'));
             const itemEl = document.querySelector(`#placesList div[data-place-id="${placeId}"]`);
             if (itemEl) {
                 itemEl.classList.add('highlighted');
-                itemEl.style.backgroundColor = '#e0f2fe';
                 itemEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
@@ -410,34 +354,25 @@
         function getListItem(index, place) {
             const el = document.createElement('li');
             const distanceInfo = place.distance ? `<span class="text-sm font-semibold ${place.distance * 1000 <= currentSearchRadius ? 'text-red-500' : 'text-blue-500'}">거리: ${place.distance.toFixed(2)}km</span>` : '';
-            let itemStr = `<div class="p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" data-place-id="${place.id}"> <div class="flex justify-between items-start">
-                                   <div><h5 class="font-bold text-blue-600">${index + 1}. ${place.place_name}</h5></div>
-                                   <div class="flex flex-col items-end gap-2">${distanceInfo}<button onclick="savePlace(event, ${index})" class="bg-green-500 text-white text-xs px-2 py-1 rounded hover:bg-green-600">저장</button></div>
-                               </div>`;
-            if (place.road_address_name) {
-                itemStr += `<span class="text-sm text-gray-700">${place.road_address_name}</span><span class="text-xs text-gray-500 block">${place.address_name}</span>`;
-            } else {
-                itemStr += `<span class="text-sm text-gray-700">${place.address_name}</span>`;
-            }
-            itemStr += `<span class="text-sm text-green-600">${place.phone}</span></div>`;
-            el.innerHTML = itemStr;
+            el.innerHTML = `<div class="p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" data-place-id="${place.id}">
+                                <div class="flex justify-between items-start">
+                                    <div><h5 class="font-bold text-blue-600">${index + 1}. ${place.place_name}</h5></div>
+                                    <div class="flex flex-col items-end gap-2">${distanceInfo}<button onclick="savePlace(event, ${index})" class="bg-green-500 text-white text-xs px-2 py-1 rounded hover:bg-green-600">저장</button></div>
+                                </div>
+                                ${place.road_address_name ? `<span class="text-sm text-gray-700">${place.road_address_name}</span><span class="text-xs text-gray-500 block">${place.address_name}</span>` : `<span class="text-sm text-gray-700">${place.address_name}</span>`}
+                                <span class="text-sm text-green-600">${place.phone}</span>
+                            </div>`;
             return el;
         }
 
         async function savePlace(event, index) {
             event.stopPropagation();
             const place = originalPlaces[index];
-            if (!place) { alert("맛집 정보를 찾을 수 없습니다."); return; }
             const placeData = {
-                name: place.place_name,
-                address: place.road_address_name || place.address_name,
-                phoneNumber: place.phone,
-                category: place.category_name,
-                latitude: parseFloat(place.y),
-                longitude: parseFloat(place.x),
-                rating: null,
-                priceLevel: null,
-                operatingHours: null
+                name: place.place_name, address: place.road_address_name || place.address_name,
+                phoneNumber: place.phone, category: place.category_name,
+                latitude: parseFloat(place.y), longitude: parseFloat(place.x),
+                rating: null, priceLevel: null, operatingHours: null
             };
             if (placeData.category && placeData.category.includes('>')) {
                 placeData.category = placeData.category.split('>').pop().trim();
@@ -446,29 +381,60 @@
             }
             try {
                 const response = await fetch('/api/lunchmatches', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(placeData),
                 });
-                if (response.status === 201) {
-                    alert(`'${place.place_name}' 맛집이 저장되었습니다.`);
-                } else if (response.status === 409) {
-                    const message = await response.text();
-                    alert(message);
-                } else {
-                    throw new Error(`서버 오류: ${response.status}`);
-                }
+                if (response.status === 201) alert(`'${place.place_name}' 맛집이 저장되었습니다.`);
+                else if (response.status === 409) alert(await response.text());
+                else throw new Error(`서버 오류: ${response.status}`);
             } catch (error) {
                 console.error('맛집 저장 중 오류 발생:', error);
                 alert('맛집을 저장하는 중 오류가 발생했습니다.');
             }
         }
 
-        function removeAllChildNods(el) {
-            while (el.hasChildNodes()) {
-                el.removeChild(el.lastChild);
+        function removeAllChildNods(el) { while (el.hasChildNodes()) el.removeChild(el.lastChild); }
+
+        // ▼▼▼ 전체 지도 보기 JavaScript 함수 추가 ▼▼▼
+        let modalMap;
+        function openFullScreenMap() {
+            const modal = document.getElementById('fullscreen-map-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            const mapContainer = document.getElementById('fullscreen-map');
+            if (!modalMap) {
+                modalMap = new kakao.maps.Map(mapContainer, {
+                    center: map.getCenter(),
+                    level: map.getLevel()
+                });
+            }
+            setTimeout(() => {
+                modalMap.relayout();
+                modalMap.setCenter(map.getCenter());
+                modalMap.setLevel(map.getLevel());
+                markers.forEach(marker => {
+                    new kakao.maps.Marker({
+                        map: modalMap, position: marker.getPosition(),
+                        image: marker.getImage()
+                    });
+                });
+                if (myLocationMarker) {
+                    new kakao.maps.Marker({
+                        map: modalMap, position: myLocationMarker.getPosition(),
+                        image: myLocationMarker.getImage()
+                    });
+                }
+            }, 100);
+        }
+
+        function closeFullScreenMap() {
+            const modal = document.getElementById('fullscreen-map-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            if (modalMap) {
+                document.getElementById('fullscreen-map').innerHTML = '';
+                modalMap = null;
             }
         }
+        // ▲▲▲ 함수 추가 완료 ▲▲▲
     </script>
 </th:block>
 </html>
