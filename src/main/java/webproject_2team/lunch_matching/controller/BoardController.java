@@ -199,8 +199,6 @@ public class BoardController {
         board.setWriterEmail(userDetails.getEmail());
         // ===== 로그인 사용자 처리 끝 =====
 
-        // ... 기존 유효성 검사 (작성자 필드 검사는 제거) ...
-
         board.setCreatedAt(LocalDateTime.now());
         boardService.save(board);
         redirectAttributes.addFlashAttribute("success_message", "게시글이 성공적으로 등록되었습니다.");
@@ -278,6 +276,7 @@ public class BoardController {
             commentData.put("id", comment.getId());
             commentData.put("content", comment.getContent());
             commentData.put("writer", comment.getWriter());
+            commentData.put("writerEmail", comment.getWriterEmail());
             commentData.put("createdAt", comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
             response.put("success", true);
             response.put("comment", commentData);
