@@ -71,15 +71,9 @@
                 </div>
 
                 <div class="flex justify-end mt-6">
-                    <a href="/lunchmatch/list" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300 mr-2">
-                        목록으로
-                    </a>
-                    <a th:href="@{/lunchmatch/modify/{rno}(rno=${dto.rno})}" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300 mr-2">
-                        수정하기
-                    </a>
-                    <button type="button" onclick="deleteRestaurant()" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300">
-                        삭제하기
-                    </button>
+                    <a href="/lunchmatch/list" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300">목록으로</a>
+                    <a th:href="@{/lunchmatch/modify/{rno}(rno=${dto.rno})}" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300">수정하기</a>
+                    <a href="#" onclick="deleteRestaurant()" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300">삭제하기</a>
                 </div>
             </main>
         </div>
