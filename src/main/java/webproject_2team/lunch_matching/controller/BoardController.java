@@ -283,11 +283,7 @@ public class BoardController {
             response.put("comment", commentData);
             return ResponseEntity.ok(response);
         }
-        //이부분 추가해도되고 상관없음!
-//            catch (IllegalStateException e) { // 마감된 게시글 댓글 작성 시 예외 처리
-//            response.put("success", false);
-//            response.put("message", e.getMessage());
-//            return ResponseEntity.status(400).body(response); // 400: Bad Request
+
         catch (Exception e) {
             response.put("success", false);
             response.put("message", e.getMessage());
