@@ -1,0 +1,183 @@
+.filter-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.shadow-hr {
+    height: 2px;
+    border: none;
+    background: #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.board-title-box {
+    background-color: rgb(255, 111, 15);
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 10px 30px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 20px auto;
+}
+
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-form select {
+    width: 150px;
+    font-size: 0.9rem;
+}
+
+.search-section {
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.search-form select {
+    width: 120px;
+    font-size: 0.9rem;
+
+    margin-top: 35px;
+
+}
+
+.search-form input {
+    width: 480px;
+    font-size: 0.9rem;
+
+    margin-top: 35px;
+
+}
+
+.search-form button {
+    font-size: 0.9rem;
+    width: 80px;
+    background-color: rgb(55, 103, 218);
+    border-color: rgb(35, 66, 200);
+    color: white;
+
+    margin-top: 35px;
+
+}
+
+.search-form button:hover {
+    background-color: rgb(230,100,13);
+    border-color: rgb(230,100,13);
+}
+
+.write-btn {
+    background-color: rgb(255,111,15);
+    border-color: rgb(255,111,15);
+    color: white;
+}
+
+.write-btn:hover {
+    background-color: rgb(230,100,13);
+    border-color: rgb(230,100,13);
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead tr {
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+}
+
+tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+td, th {
+    padding: 12px 8px;
+    text-align: center;
+}
+
+td.title-cell {
+    text-align: left;
+}
+
+.expired {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.deadline-soon {
+    color: #fd7e14;
+    font-weight: bold;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.pagination .page-link {
+    color: #ff7f50;
+    border-color: #ff7f50;
+}
+
+.pagination .page-link:hover {
+    background-color: #ff7f50;
+    border-color: #ff7f50;
+    color: white;
+}
+
+.gender-badge {
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: white;
+}
+
+.gender-male {
+    background-color: #007bff;
+}
+
+.gender-female {
+    background-color: #e83e8c;
+}
+
+.gender-any {
+    background-color: #6c757d;
+}
+
+.food-badge {
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    background-color: #28a745;
+    color: white;
+}
+
+.countdown-timer {
+    font-size: 0.8rem;
+    color: #fd7e14;
+    font-weight: bold;
+}
+
+.user-gender-selector {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
