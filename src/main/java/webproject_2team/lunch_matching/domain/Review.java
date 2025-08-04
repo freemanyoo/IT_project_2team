@@ -26,7 +26,7 @@ public class Review extends BaseEntity {
     @Column(length = 200, nullable = false)
     private String member_id; // 우선 String으로, 추후 Member 엔티티와 연결
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 2000, nullable = false)
     private String content;
 
     @Column(length = 50, nullable = false)

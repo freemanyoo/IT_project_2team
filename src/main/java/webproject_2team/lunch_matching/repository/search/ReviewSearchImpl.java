@@ -11,14 +11,19 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import webproject_2team.lunch_matching.domain.QReview;
 import webproject_2team.lunch_matching.domain.Review;
 import webproject_2team.lunch_matching.dto.ReviewPageRequestDTO;
+import webproject_2team.lunch_matching.repository.MemberRepository; // MemberRepository import 추가
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class ReviewSearchImpl extends QuerydslRepositorySupport implements ReviewSearch {
 
-    public ReviewSearchImpl() {
+    private final MemberRepository memberRepository; // MemberRepository 주입
+
+    public ReviewSearchImpl(MemberRepository memberRepository) {
         super(Review.class);
+        this.memberRepository = memberRepository;
     }
 
     @Override
@@ -44,8 +49,15 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
                 case "p": // place
                     booleanBuilder.or(review.place.contains(reviewPageRequestDTO.getKeyword()));
                     break;
-                case "w": // member_id (writer)
-                    booleanBuilder.or(review.member_id.contains(reviewPageRequestDTO.getKeyword()));
+                case "w": // member_id (writer) - search by nickname
+                    String nicknameKeyword = reviewPageRequestDTO.getKeyword();
+                    Optional<webproject_2team.lunch_matching.domain.signup.Member> memberOptional = memberRepository.findByNickname(nicknameKeyword);
+                    if (memberOptional.isPresent()) {
+                        booleanBuilder.or(review.member_id.eq(memberOptional.get().getUsername()));
+                    } else {
+                        // If no member found with the nickname, ensure no results are returned for this type
+                        booleanBuilder.or(review.member_id.isNull()); // Or any condition that yields no results
+                    }
                     break;
             }
         }
