@@ -104,8 +104,8 @@
           <button onclick="openFullScreenMap()" class="absolute top-2 right-2 bg-white text-gray-700 font-semibold py-2 px-4 rounded-full shadow-lg z-10 hover:bg-gray-200 transition">
             전체 지도 보기
           </button>
-          <button onclick="displayMyLocation()" class="absolute top-14 right-2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <button onclick="displayMyLocation()" class="absolute top-14 right-2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-200 text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
           </button>
           <div class="absolute top-2 left-2 z-10">
             <select id="radiusSelect" onchange="changeSearchRadius()" class="bg-white text-gray-700 text-sm py-2 px-3 rounded-md shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -231,18 +231,49 @@
       if (itemEl) { itemEl.classList.add('highlighted'); itemEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
     }
     function getUserLocation(callback) { if (userLocation) return callback(null); navigator.geolocation.getCurrentPosition(p => { userLocation = { lat: p.coords.latitude, lng: p.coords.longitude }; callback(null); }, () => callback(new Error())); }
+    // 기존 displayMyLocation 함수를 아래 코드로 교체하세요.
+
+    // 기존 displayMyLocation 함수를 아래 코드로 완전히 교체해 주세요.
+
     function displayMyLocation() {
       getUserLocation(err => {
-        if (err) { alert("위치 정보를 가져올 수 없습니다."); return; }
-        const locPos = new kakao.maps.LatLng(userLocation.lat, userLocation.lng);
-        if (!myLocationMarker) {
-          myLocationMarker = new kakao.maps.Marker({ map, position: locPos, image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35)) });
-          myLocationCircle = new kakao.maps.Circle({ map, center: locPos, radius: currentSearchRadius, strokeWeight: 2, strokeColor: '#004CFF', fillOpacity: 0.5 });
-        } else {
-          myLocationMarker.setPosition(locPos);
-          myLocationCircle.setPosition(locPos);
+        if (err) {
+          alert("위치 정보를 가져올 수 없습니다.");
+          return;
         }
-        myLocationCircle.setRadius(currentSearchRadius);
+        const locPos = new kakao.maps.LatLng(userLocation.lat, userLocation.lng);
+
+        // 1. 기존에 표시된 내 위치 마커와 원이 있다면 지도에서 먼저 제거합니다.
+        if (myLocationMarker) {
+          myLocationMarker.setMap(null);
+        }
+        if (myLocationCircle) {
+          myLocationCircle.setMap(null);
+        }
+
+        // 2. 내 위치 마커를 새로 생성합니다.
+        myLocationMarker = new kakao.maps.Marker({
+          position: locPos,
+          image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24, 35))
+        });
+        // 3. 생성된 마커를 지도에 명시적으로 표시합니다. (★ 순서 중요)
+        myLocationMarker.setMap(map);
+
+        // 4. 내 위치 원을 새로 생성합니다.
+        myLocationCircle = new kakao.maps.Circle({
+          center: locPos,
+          radius: currentSearchRadius,
+          strokeWeight: 1,
+          strokeColor: '#004CFF',
+          strokeOpacity: 0.8,
+          fillColor: '#CFE7FF',
+          fillOpacity: 0.2,
+          zIndex: 1
+        });
+        // 5. 생성된 원을 지도에 명시적으로 표시합니다.
+        myLocationCircle.setMap(map);
+
+        // 6. 지도 중심 이동 및 나머지 로직 수행
         map.setCenter(locPos);
         map.setLevel(calculateLevelForRadius(currentSearchRadius));
         updateRestaurantDistances(restaurantsFromServer);
