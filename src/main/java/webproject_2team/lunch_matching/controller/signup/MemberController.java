@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User; // Spring Security User 클래스
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.servlet.http.HttpServletRequest;
 
 import jakarta.validation.Valid;
 import java.util.Map;
@@ -115,7 +116,8 @@ public class MemberController { // 또는 MemberRestController
     // 회원 삭제 엔드포인트 (username 기준)
     @DeleteMapping("/{username}")
     public ResponseEntity<Map<String, String>> deleteMember(@PathVariable String username,
-                                                            @AuthenticationPrincipal User user) { // 로그인된 사용자 정보 주입
+                                                            @AuthenticationPrincipal User user,
+                                                            HttpServletRequest request) { // HttpServletRequest 파라미터 추가
         log.info("회원 삭제 요청, Username: {}", username);
 
         // 현재 로그인된 사용자와 삭제하려는 username이 일치하는지 확인 (보안 강화)
@@ -127,6 +129,11 @@ public class MemberController { // 또는 MemberRestController
         try {
             memberService.deleteMember(username);
             log.info("회원 삭제 성공, Username: {}", username);
+
+            // 회원 삭제 성공 후 로그아웃 처리
+            // 세션을 무효화하여 현재 사용자의 인증 상태를 제거합니다.
+            request.getSession().invalidate();
+
             return ResponseEntity.ok(Map.of("message", "회원이 성공적으로 삭제되었습니다."));
         } catch (IllegalArgumentException e) {
             log.warn("회원 삭제 실패: {}", e.getMessage());

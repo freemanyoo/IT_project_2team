@@ -1,0 +1,39 @@
+/* 기본 스타일 (최소한의 가독성을 위해 포함) */
+body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+.container { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #fff; }
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; }
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"] {
+    width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+}
+/* 버튼 그룹을 위한 스타일 */
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+    gap: 10px; /* 버튼 간 간격 */
+    margin-top: 20px;
+}
+button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+button:disabled { background-color: #cccccc; cursor: not-allowed; }
+.btn-back { /* 뒤로가기 버튼을 위한 새로운 스타일 */
+    background-color: #6c757d; /* 회색 계열 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+.btn-back:hover {
+    opacity: 0.9;
+}
+.error-message { color: red; font-size: 0.9em; margin-top: 5px; display: none; }
+.success-message { color: green; font-size: 0.9em; margin-top: 5px; display: none; }
+#profileImagePreview { width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 50%; overflow: hidden; margin: 10px auto; display: block; }
+#profileImagePreview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+.delete-profile-image-container { display: flex; align-items: center; margin-top: 10px; }
+.delete-profile-image-container input { width: auto; margin-right: 5px; }
+
+/* 모달 스타일 */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+.modal-content { background-color: #fefefe; padding: 20px; border: 1px solid #888; border-radius: 8px; width: 80%; max-width: 400px; text-align: center; }
+.modal-content button { margin-top: 15px; }
