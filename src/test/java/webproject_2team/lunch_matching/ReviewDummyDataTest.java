@@ -74,7 +74,7 @@ public class ReviewDummyDataTest {
             String emotion = "emotion" + (i % 9); // emotion0부터 emotion8까지
 
             ReviewDTO reviewDTO = ReviewDTO.builder()
-                    .member_id(testMember.getUsername())
+                    
                     .nickname(testMember.getNickname())
                     .content(content)
                     .menu(menu)
@@ -83,7 +83,7 @@ public class ReviewDummyDataTest {
                     .emotion(emotion)
                     .build();
 
-            Long reviewId = reviewService.register(reviewDTO);
+            Long reviewId = reviewService.register(reviewDTO, testMember.getUsername());
             log.info("Registered dummy review {} with ID: {}", i, reviewId);
         });
 

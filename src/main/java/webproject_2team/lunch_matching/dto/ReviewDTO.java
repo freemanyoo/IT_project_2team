@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ReviewDTO {
     private Long review_id;
-    private String member_id;
+    
     private String nickname; // Add nickname field
     private String content;
     private String menu;

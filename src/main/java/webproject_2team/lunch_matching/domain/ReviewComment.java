@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "review") // Review 엔티티와의 무한 루프 방지
+@ToString(exclude = {"review", "member"})
 public class ReviewComment extends BaseEntity {
 
     @Id
@@ -20,8 +20,9 @@ public class ReviewComment extends BaseEntity {
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
-    @Column(length = 200, nullable = false)
-    private String member_id; // 댓글 작성자 ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id") // Member 엔티티의 PK인 'id'를 참조합니다.
+    private webproject_2team.lunch_matching.domain.signup.Member member;
 
     @Column(length = 1000, nullable = false)
     private String content; // 댓글 내용

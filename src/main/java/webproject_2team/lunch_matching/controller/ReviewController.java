@@ -79,7 +79,7 @@ public class ReviewController {
     public String registerPOST(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
         log.info("register POST...");
         log.info("Authenticated memberId for review registration: {}", customUserDetails.getUsername()); // Debug log
-        reviewDTO.setMember_id(customUserDetails.getUsername()); // Set member_id from authenticated user
+        
         reviewDTO.setNickname(customUserDetails.getNickname()); // Set nickname from CustomUserDetails
         if (reviewDTO.getUploadFileNames() != null) {
             log.info("ReviewDTO uploadFileNames size: " + reviewDTO.getUploadFileNames().size());
@@ -90,7 +90,7 @@ public class ReviewController {
             log.info("ReviewDTO uploadFileNames is null.");
         }
 
-        Long review_id = reviewService.register(reviewDTO);
+        Long review_id = reviewService.register(reviewDTO, customUserDetails.getUsername());
         redirectAttributes.addFlashAttribute("result", review_id);
         return "redirect:/review/list";
     }
@@ -171,9 +171,9 @@ public class ReviewController {
     // 좋아요 추가/취소
     @PostMapping("/{reviewId}/like")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable Long reviewId) {
+    public ResponseEntity<Map<String, Object>> toggleLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId) {
         // TODO: 실제 사용자 ID는 Spring Security 등 인증 시스템에서 가져와야 합니다.
-        String memberId = "testuser"; // 임시 사용자 ID
+        String memberId = customUserDetails.getUsername(); // 실제 사용자 ID
 
         boolean liked = reviewLikeService.toggleLike(reviewId, memberId);
         int likeCount = reviewLikeService.getLikeCount(reviewId);
@@ -198,9 +198,9 @@ public class ReviewController {
     public ResponseEntity<Long> addComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId, @RequestBody webproject_2team.lunch_matching.dto.ReviewCommentDTO reviewCommentDTO) {
         log.info("Authenticated memberId for comment addition: {}", customUserDetails.getUsername()); // Debug log
         reviewCommentDTO.setReview_id(reviewId);
-        reviewCommentDTO.setMember_id(customUserDetails.getUsername()); // Set member_id from authenticated user
+        
         reviewCommentDTO.setNickname(customUserDetails.getNickname()); // Set nickname from CustomUserDetails
-        Long commentId = reviewCommentService.register(reviewCommentDTO);
+        Long commentId = reviewCommentService.register(reviewCommentDTO, customUserDetails.getUsername());
         return ResponseEntity.ok(commentId);
     }
 

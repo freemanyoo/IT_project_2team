@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString // ToString(exclude = "board")에서 board 제외 부분 제거
+@ToString(exclude = {"member", "likes", "comments"})
 public class Review extends BaseEntity {
 
     @Id
@@ -23,8 +23,9 @@ public class Review extends BaseEntity {
     // @JoinColumn(name = "bno")
     // private Board board; // 이 부분 제거
 
-    @Column(length = 200, nullable = false)
-    private String member_id; // 우선 String으로, 추후 Member 엔티티와 연결
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id") // Member 엔티티의 PK인 'id'를 참조합니다.
+    private webproject_2team.lunch_matching.domain.signup.Member member;
 
     @Column(length = 2000, nullable = false)
     private String content;

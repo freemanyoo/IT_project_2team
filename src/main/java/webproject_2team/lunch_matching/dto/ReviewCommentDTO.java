@@ -15,7 +15,7 @@ public class ReviewCommentDTO {
 
     private Long id;
     private Long review_id;
-    private String member_id;
+    
     private String nickname; // Add nickname field
     private String content;
     private LocalDateTime regDate;

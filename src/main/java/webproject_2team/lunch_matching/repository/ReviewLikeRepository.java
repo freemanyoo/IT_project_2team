@@ -12,8 +12,8 @@ public interface ReviewLikeRepository extends JpaRepository<ReviewLike, Long> {
     int countByReview(Review review);
 
     // 특정 리뷰에 특정 사용자가 좋아요를 눌렀는지 확인
-    @Query("SELECT rl FROM ReviewLike rl WHERE rl.review.review_id = :reviewId AND rl.member_id = :memberId")
-    Optional<ReviewLike> findByReview_Review_idAndMemberId(@Param("reviewId") Long reviewId, @Param("memberId") String memberId);
+    @Query("SELECT rl FROM ReviewLike rl WHERE rl.review.review_id = :reviewId AND rl.member.username = :username")
+    Optional<ReviewLike> findByReview_Review_idAndMember_Username(@Param("reviewId") Long reviewId, @Param("username") String username);
 
     // 특정 리뷰의 좋아요 수 계산
     @Query("SELECT COUNT(rl) FROM ReviewLike rl WHERE rl.review.review_id = :reviewId")

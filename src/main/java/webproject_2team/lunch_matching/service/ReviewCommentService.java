@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface ReviewCommentService {
     // 댓글 등록
-    Long register(ReviewCommentDTO reviewCommentDTO);
+    Long register(ReviewCommentDTO reviewCommentDTO, String username);
 
     // 특정 리뷰의 댓글 목록 조회
     List<ReviewCommentDTO> getCommentsOfReview(Long reviewId);
 
     // 댓글 수정
-    void modify(ReviewCommentDTO reviewCommentDTO, String memberId);
+    void modify(ReviewCommentDTO reviewCommentDTO, String username);
 
     // 댓글 삭제
-    void remove(Long commentId, String memberId);
+    void remove(Long commentId, String username);
 }

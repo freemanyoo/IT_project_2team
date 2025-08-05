@@ -53,11 +53,9 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
                     String nicknameKeyword = reviewPageRequestDTO.getKeyword();
                     Optional<webproject_2team.lunch_matching.domain.signup.Member> memberOptional = memberRepository.findByNickname(nicknameKeyword);
                     if (memberOptional.isPresent()) {
-                        booleanBuilder.or(review.member_id.eq(memberOptional.get().getUsername()));
-                    } else {
-                        // If no member found with the nickname, ensure no results are returned for this type
-                        booleanBuilder.or(review.member_id.isNull()); // Or any condition that yields no results
+                                                booleanBuilder.or(review.member.username.eq(memberOptional.get().getUsername()));
                     }
+                    
                     break;
             }
         }

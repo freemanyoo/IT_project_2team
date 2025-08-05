@@ -28,13 +28,18 @@ public class ReviewCommentServiceImpl implements ReviewCommentService {
 
     @Transactional
     @Override
-    public Long register(ReviewCommentDTO reviewCommentDTO) {
+    public Long register(ReviewCommentDTO reviewCommentDTO, String username) {
         log.info("댓글 등록: {}", reviewCommentDTO);
         Review review = reviewRepository.findById(reviewCommentDTO.getReview_id())
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다. ID: " + reviewCommentDTO.getReview_id()));
 
         ReviewComment reviewComment = modelMapper.map(reviewCommentDTO, ReviewComment.class);
         reviewComment.setReview(review);
+
+        // Member 엔티티를 조회하여 ReviewComment에 설정
+        memberRepository.findByUsername(username).ifPresent(member -> {
+            reviewComment.setMember(member);
+        });
 
         return reviewCommentRepository.save(reviewComment).getId();
     }
@@ -45,13 +50,15 @@ public class ReviewCommentServiceImpl implements ReviewCommentService {
         List<ReviewComment> comments = reviewCommentRepository.findByReview_Review_idOrderByRegDateAsc(reviewId);
 
         log.info("Fetched comments count: {}", comments.size());
-        comments.forEach(comment -> log.info("  Comment: id={}, memberId={}, content={}", comment.getId(), comment.getMember_id(), comment.getContent()));
+        comments.forEach(comment -> log.info("  Comment: id={}, memberId={}, content={}", comment.getId(), comment.getMember() != null ? comment.getMember().getUsername() : "N/A", comment.getContent()));
 
         return comments.stream()
                 .map(reviewComment -> {
                     ReviewCommentDTO reviewCommentDTO = modelMapper.map(reviewComment, ReviewCommentDTO.class);
                     // Set nickname for reviewCommentDTO
-                    memberRepository.findByUsername(reviewComment.getMember_id()).ifPresent(member -> reviewCommentDTO.setNickname(member.getNickname()));
+                    if (reviewComment.getMember() != null) {
+                        reviewCommentDTO.setNickname(reviewComment.getMember().getNickname());
+                    }
                     return reviewCommentDTO;
                 })
                 .collect(Collectors.toList());
@@ -59,13 +66,13 @@ public class ReviewCommentServiceImpl implements ReviewCommentService {
 
     @Transactional
     @Override
-    public void modify(ReviewCommentDTO reviewCommentDTO, String memberId) {
+    public void modify(ReviewCommentDTO reviewCommentDTO, String username) {
         log.info("댓글 수정: {}", reviewCommentDTO);
         ReviewComment reviewComment = reviewCommentRepository.findById(reviewCommentDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. ID: " + reviewCommentDTO.getId()));
 
         // 권한 확인
-        if (!reviewComment.getMember_id().equals(memberId)) {
+        if (reviewComment.getMember() == null || !reviewComment.getMember().getUsername().equals(username)) {
             throw new IllegalArgumentException("You do not have permission to modify this comment.");
         }
 
@@ -74,13 +81,13 @@ public class ReviewCommentServiceImpl implements ReviewCommentService {
 
     @Transactional
     @Override
-    public void remove(Long commentId, String memberId) {
+    public void remove(Long commentId, String username) {
         log.info("댓글 삭제: commentId={}", commentId);
         ReviewComment reviewComment = reviewCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. ID: " + commentId));
 
         // 권한 확인
-        if (!reviewComment.getMember_id().equals(memberId)) {
+        if (reviewComment.getMember() == null || !reviewComment.getMember().getUsername().equals(username)) {
             throw new IllegalArgumentException("You do not have permission to remove this comment.");
         }
 

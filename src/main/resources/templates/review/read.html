@@ -83,10 +83,10 @@
         </div>
 
         <div class="button-area">
-            <a th:if="${reviewDTO.member_id == currentMemberId}" th:href="@{/review/modify(review_id=${reviewDTO.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">
+            <a th:if="${reviewDTO.nickname == currentMemberId}" th:href="@{/review/modify(review_id=${reviewDTO.review_id}, page=${reviewPageRequestDTO.page}, size=${reviewPageRequestDTO.size}, type=${reviewPageRequestDTO.type}, keyword=${reviewPageRequestDTO.keyword})}">
                 <button type="button">수정</button>
             </a>
-            <button type="button" id="removeBtn" th:if="${reviewDTO.member_id == currentMemberId}">삭제</button>
+            <button type="button" id="removeBtn" th:if="${reviewDTO.nickname == currentMemberId}">삭제</button>
             <button type="button" id="toListBtn">목록으로</button>
         </div>
 

@@ -36,9 +36,14 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberRepository memberRepository; // MemberRepository 주입
 
     @Override
-    public Long register(ReviewDTO reviewDTO) {
+    public Long register(ReviewDTO reviewDTO, String username) {
         log.info("register...");
         Review review = modelMapper.map(reviewDTO, Review.class);
+
+        // Member 엔티티를 조회하여 Review에 설정
+        memberRepository.findByUsername(username).ifPresent(member -> {
+            review.setMember(member);
+        });
 
         // ModelMapper가 이미 UploadResultDTO 리스트를 Review 엔티티의 fileList에 매핑합니다.
         // 따라서 아래의 수동 추가 로직은 제거합니다.
@@ -82,7 +87,9 @@ public class ReviewServiceImpl implements ReviewService {
         ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
 
         // Set nickname for reviewDTO
-        memberRepository.findByUsername(review.getMember_id()).ifPresent(member -> reviewDTO.setNickname(member.getNickname()));
+        if (review.getMember() != null) {
+            reviewDTO.setNickname(review.getMember().getNickname());
+        }
 
         // TODO: 실제 사용자 ID는 Spring Security 등 인증 시스템에서 가져와야 합니다.
         String memberId = "testuser"; // 임시 사용자 ID
@@ -94,12 +101,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void modify(ReviewDTO reviewDTO, String memberId) {
+    public void modify(ReviewDTO reviewDTO, String username) {
         java.util.Optional<Review> result = reviewRepository.findByIdWithFiles(reviewDTO.getReview_id()); // Fetch with files
         Review review = result.orElseThrow(() -> new IllegalArgumentException("Review not found"));
 
         // 권한 확인
-        if (!review.getMember_id().equals(memberId)) {
+        if (review.getMember() == null || !review.getMember().getUsername().equals(username)) {
             throw new IllegalArgumentException("You do not have permission to modify this review.");
         }
 
@@ -136,12 +143,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public void remove(Long review_id, String memberId) {
+    public void remove(Long review_id, String username) {
         java.util.Optional<Review> result = reviewRepository.findByIdWithFiles(review_id);
         Review review = result.orElseThrow(() -> new IllegalArgumentException("Review not found"));
 
         // 권한 확인
-        if (!review.getMember_id().equals(memberId)) {
+        if (review.getMember() == null || !review.getMember().getUsername().equals(username)) {
             throw new IllegalArgumentException("You do not have permission to remove this review.");
         }
 
@@ -183,7 +190,9 @@ public class ReviewServiceImpl implements ReviewService {
                                 .collect(Collectors.toList()));
                     }
                     // Set nickname for reviewDTO
-                    memberRepository.findByUsername(review.getMember_id()).ifPresent(member -> reviewDTO.setNickname(member.getNickname()));
+                    if (review.getMember() != null) {
+                        reviewDTO.setNickname(review.getMember().getNickname());
+                    }
 
                     return reviewDTO;
                 })
