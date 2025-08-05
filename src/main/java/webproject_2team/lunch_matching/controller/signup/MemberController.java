@@ -26,8 +26,7 @@ import java.util.Map;
 public class MemberController { // 또는 MemberRestController
 
     private final MemberService memberService;
-
-    // 회원 가입 엔드포인트 (기존 코드 유지)
+    // 회원 가입 엔드포인트
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> signupMember(
             @Valid @RequestPart("memberSignupDTO") MemberSignupDTO memberSignupDTO,

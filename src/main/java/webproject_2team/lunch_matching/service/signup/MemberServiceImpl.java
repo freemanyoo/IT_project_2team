@@ -43,24 +43,19 @@ public class MemberServiceImpl implements MemberService {
     private String uploadPath;
 
     @Override
-    public Long registerMember(MemberSignupDTO memberSignupDTO, ProfileDTO profileDTO) {
+    public Long registerMember(MemberSignupDTO memberSignupDTO,
+                               ProfileDTO profileDTO) {
         // 1. DTO 유효성 검증 (Controller에서 @Valid로 처리되지만, 서비스에서도 핵심 로직 전 검증 권장)
         // 비밀번호와 비밀번호 확인 일치 여부
         if (!memberSignupDTO.getPassword().equals(memberSignupDTO.getConfirmPassword())) {
-            throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-        }
-
-        // 중복 확인
+            throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");}
+        // 로그인 ID 중복확인
         if (isUsernameExists(memberSignupDTO.getUsername())) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        } // 로그인아이디중복
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");}
+        // 이메일 중복확인
         if (isEmailExists(memberSignupDTO.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        } // 이메일중복
-        if (isPhoneNumberExists(memberSignupDTO.getPhoneNumber())) {
-            throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
-        } // 전화번호중복
-
+        }
         // 닉네임 중복 처리 (랜덤 숫자 추가)
         String finalNickname = memberSignupDTO.getNickname();
         if (isNicknameExists(finalNickname)) {
@@ -112,8 +107,10 @@ public class MemberServiceImpl implements MemberService {
         try {
             Member savedMember = memberRepository.save(member);
             log.info("회원 가입 성공: {}", savedMember.getUsername());
-            emailAuthService.removeAuthInfo(memberSignupDTO.getEmail()); // <-- DB에 저장한 후 인증삭제.
-            log.info("회원가입 성공 및 이메일 인증 정보 삭제 완료: {}", memberSignupDTO.getEmail());
+            emailAuthService.removeAuthInfo(memberSignupDTO.getEmail());
+                    // <-- DB에 저장한 후 인증삭제.
+            log.info("회원가입 성공 및 이메일 인증 정보 삭제 완료: {}",
+                    memberSignupDTO.getEmail());
             return savedMember.getId(); // 저장된 회원의 ID 반환
 
         } catch (DataIntegrityViolationException e) {
@@ -216,11 +213,6 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean isNameExists(String name) {
-        return false; // 이름 중복 확인은 현재 구현되어 있지 않음
-    }
-
-    @Override
     public boolean isNicknameExists(String nickname) {
         return memberRepository.existsByNickname(nickname);
     }
@@ -262,10 +254,6 @@ public class MemberServiceImpl implements MemberService {
         // 닉네임 중복 확인 (본인 닉네임 제외)
         if (!member.getNickname().equals(memberUpdateDTO.getNickname()) && isNicknameExists(memberUpdateDTO.getNickname())) {
             throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
-        // 전화번호 중복 확인 (본인 전화번호 제외)
-        if (!member.getPhoneNumber().equals(memberUpdateDTO.getPhoneNumber()) && isPhoneNumberExists(memberUpdateDTO.getPhoneNumber())) {
-            throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
         }
 
         // 닉네임 및 전화번호 업데이트

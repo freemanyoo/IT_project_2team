@@ -27,8 +27,6 @@ public class MemberSignupDTO {
     // 비밀번호
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해주세요.")
-    // 정규식 추가: 최소 8자, 영문 대소문자, 숫자, 특수문자 중 3가지 이상 포함 (선택 사항, 보안 강화)
-    // @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호는 영문, 숫자, 특수문자를 포함하여 8~20자여야 합니다.")
     private String password;
 
     // 비밀번호 확인 (백엔드에서도 일치 여부 검증 로직 추가 필요)

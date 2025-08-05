@@ -19,7 +19,8 @@ public class EmailAuthController {
 
     // 인증번호 요청
     @PostMapping("/send-code")
-    public ResponseEntity<String> sendCode(@Valid @RequestBody EmailAuthRequestDTO authRequestDTO) {
+    public ResponseEntity<String> sendCode(@Valid @RequestBody 
+                       EmailAuthRequestDTO authRequestDTO) {
         emailAuthService.sendAuthCode(authRequestDTO.getEmail());
         return ResponseEntity.ok("인증번호가 전송되었습니다.");
     }
