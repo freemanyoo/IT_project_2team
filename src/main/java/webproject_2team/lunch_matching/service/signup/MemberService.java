@@ -15,8 +15,7 @@ public interface MemberService {
     boolean isNicknameExists(String nickname);
     // 이메일 중복 확인
     boolean isEmailExists(String email);
-    // 전화번호 중복 확인
-    boolean isPhoneNumberExists(String phoneNumber);
+
 
     // username(사용자 아이디)를 가지고 정보 조회하기.
 //    Member getMemberByUsername(String username);

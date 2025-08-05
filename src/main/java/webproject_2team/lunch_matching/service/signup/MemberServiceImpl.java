@@ -222,10 +222,6 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-    @Override
-    public boolean isPhoneNumberExists(String phoneNumber) {
-        return memberRepository.existsByPhoneNumber(phoneNumber);
-    }
 
     // username(사용자 아이디)를 가지고 정보 조회하기. (반환 타입 MemberResponseDTO로 변경)
     @Override

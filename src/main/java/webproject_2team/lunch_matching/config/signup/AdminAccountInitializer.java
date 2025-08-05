@@ -44,7 +44,6 @@ public class AdminAccountInitializer implements CommandLineRunner {
                     .roles(Set.of(MemberRole.USER, MemberRole.ADMIN)) // USER와 ADMIN 역할 모두 부여
                     .hasProfileImage(false) // 프로필 이미지 없음
                     .build();
-
             memberRepository.save(admin);
             log.info("관리자 계정 '{}'이 성공적으로 생성되었습니다.", adminUsername);
         } else {
