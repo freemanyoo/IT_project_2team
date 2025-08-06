@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadResultDiv = document.getElementById('uploadResult');
     const uploadLoadingDiv = document.getElementById('uploadLoading'); // 로딩 div 추가
     const submitButton = document.getElementById('submitButton'); // submit 버튼 추가
-    const form = document.querySelector('form');
+    const form = document.querySelector('.review-form');
 
     // NEW: Client-side array to manage uploaded files
     let uploadedFiles = [];
@@ -128,6 +128,12 @@ document.addEventListener('DOMContentLoaded', function() {
             imgInput.name = `uploadFileNames[${index}].img`;
             imgInput.value = fileInfo.img; // Boolean will be converted to string "true" or "false"
             form.appendChild(imgInput);
+
+            const linkInput = document.createElement('input');
+            linkInput.type = 'hidden';
+            linkInput.name = `uploadFileNames[${index}].link`;
+            linkInput.value = fileInfo.link;
+            form.appendChild(linkInput);
         });
     }
 

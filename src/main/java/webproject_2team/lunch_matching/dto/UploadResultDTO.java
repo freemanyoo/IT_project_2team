@@ -13,13 +13,8 @@ public class UploadResultDTO {
     private String uuid;
     private String fileName;
     private boolean img;
-
     public String getLink() {
-        if (img) {
-            return uuid + "_" + fileName;
-        } else {
-            return "default.png";
-        }
+        return uuid + "_" + fileName;
     }
 
     public String getThumbnailLink() {

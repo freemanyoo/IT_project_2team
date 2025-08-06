@@ -38,29 +38,34 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Long register(ReviewDTO reviewDTO, String username) {
         log.info("register...");
+        log.info("Attempting to save review: {}", reviewDTO);
         Review review = modelMapper.map(reviewDTO, Review.class);
 
         // Member 엔티티를 조회하여 Review에 설정
-        memberRepository.findByUsername(username).ifPresent(member -> {
+        memberRepository.findByUsername(username).ifPresentOrElse(member -> {
             review.setMember(member);
+            log.info("Member found and set for review: {}", member.getUsername());
+        }, () -> {
+            log.error("Member not found for username: {}", username);
+            throw new IllegalArgumentException("Member not found for username: " + username);
         });
 
-        // ModelMapper가 이미 UploadResultDTO 리스트를 Review 엔티티의 fileList에 매핑합니다.
-        // 따라서 아래의 수동 추가 로직은 제거합니다.
-        // if (reviewDTO.getUploadFileNames() != null && !reviewDTO.getUploadFileNames().isEmpty()) {
-        //     reviewDTO.getUploadFileNames().forEach(uploadResultDTO -> {
-        //         review.getFileList().add(modelMapper.map(uploadResultDTO, webproject_2team.lunch_matching.domain.UploadResult.class));
-        //     });
-        // }
-
-        Long review_id = reviewRepository.save(review).getReview_id();
-
-        log.info("Review entity before saving: " + review);
+        // Log fileList state after mapping
         if (review.getFileList() != null) {
-            review.getFileList().forEach(file -> log.info("  File in review entity: " + file.getFileName() + ", isImage: " + file.isImage()));
+            log.info("Review entity fileList after mapping: size={}", review.getFileList().size());
+            review.getFileList().forEach(file -> log.info("  - File: {}, UUID: {}", file.getFileName(), file.getUuid()));
+        } else {
+            log.info("Review entity fileList is null after mapping.");
         }
 
-        return review_id;
+        try {
+            Long review_id = reviewRepository.save(review).getReview_id();
+            log.info("Review saved successfully with ID: {}", review_id);
+            return review_id;
+        } catch (Exception e) {
+            log.error("Error saving review entity", e);
+            throw new RuntimeException("Error saving review", e);
+        }
     }
 
     @Transactional // 이 어노테이션을 추가합니다.
@@ -178,7 +183,7 @@ public class ReviewServiceImpl implements ReviewService {
                     log.info("--- Debug: Review entity fileList before mapping ---");
                     if (review.getFileList() != null) {
                         log.info("  Review ID: " + review.getReview_id() + ", FileList Size: " + review.getFileList().size());
-                        review.getFileList().forEach(file -> log.info("  File: " + file.getFileName() + ", isImage: " + file.isImage()));
+                        review.getFileList().forEach(file -> log.info("  File: " + file.getFileName() + ", isImage: " + file.isImage() + ", UUID: " + file.getUuid()));
                     } else {
                         log.info("  Review ID: " + review.getReview_id() + ", fileList is null");
                     }

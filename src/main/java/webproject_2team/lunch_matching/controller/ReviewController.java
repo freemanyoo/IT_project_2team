@@ -78,6 +78,7 @@ public class ReviewController {
     @PostMapping("/register")
     public String registerPOST(@AuthenticationPrincipal CustomUserDetails customUserDetails, ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
         log.info("register POST...");
+        log.info("Review registration POST request received: {}", reviewDTO);
         log.info("Authenticated memberId for review registration: {}", customUserDetails.getUsername()); // Debug log
         
         reviewDTO.setNickname(customUserDetails.getNickname()); // Set nickname from CustomUserDetails

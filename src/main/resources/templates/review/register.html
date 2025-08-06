@@ -10,7 +10,7 @@
 <div layout:fragment="content">
     <h1>새 리뷰 등록</h1>
 
-    <form th:action="@{/review/register}" method="post" class="review-form">
+    <form th:action="@{/review/register}" method="post" class="review-form" enctype="multipart/form-data">
         <!-- 작성자 ID는 서버에서 자동으로 설정되므로 숨김 처리 -->
         <input type="hidden" id="member_id" name="member_id">
 
